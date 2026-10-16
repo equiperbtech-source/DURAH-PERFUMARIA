@@ -24,18 +24,44 @@ export const TAG_SUGGESTIONS = ['viciante', 'elogiado', 'doce', 'fresco', 'marca
 // ─── Regras de produto ───
 export const finalPrice = (p) => (p.promoPrice && p.promoPrice < p.price ? p.promoPrice : p.price);
 export const discount = (p) => (p.promoPrice && p.promoPrice < p.price ? Math.round((1 - p.promoPrice / p.price) * 100) : 0);
-export const isSoldOut = (p) => p.status === 'esgotado' || Number(p.stock) <= 0;
-export const isLastUnits = (p) => !isSoldOut(p) && Number(p.stock) > 0 && Number(p.stock) <= 3;
 export const isArab = (p) => /emirad|árab|arab|dubai|omã|oma\b|catar|kuwait|saudita/i.test(p.origin || '');
-export const isDecant = (p) => p.decant || (parseInt(p.volume, 10) > 0 && parseInt(p.volume, 10) <= 10);
+
+// ─── Variantes: frasco completo, decant 5ml e decant 10ml ───
+// O frasco usa preço/estoque/status do produto; os decants existem quando o preço deles está preenchido.
+export const fullAvailable = (p) => p.status !== 'esgotado' && Number(p.stock) > 0;
+export function variants(p) {
+  const list = [{ key: 'full', label: p.volume ? `Frasco ${p.volume}` : 'Frasco completo', size: p.volume || 'Frasco completo', price: finalPrice(p), old: discount(p) ? p.price : null, available: fullAvailable(p) }];
+  if (Number(p.decant5Price) > 0) list.push({ key: 'd5', label: 'Decant 5ml', size: 'Decant 5ml', price: Number(p.decant5Price), old: null, available: true });
+  if (Number(p.decant10Price) > 0) list.push({ key: 'd10', label: 'Decant 10ml', size: 'Decant 10ml', price: Number(p.decant10Price), old: null, available: true });
+  return list;
+}
+export const getVariant = (p, key) => variants(p).find((v) => v.key === key) || variants(p)[0];
+export const defaultVariant = (p) => variants(p).find((v) => v.available) || variants(p)[0];
+export const hasDecants = (p) => variants(p).length > 1;
+export const minDecantPrice = (p) => Math.min(...variants(p).filter((v) => v.key !== 'full').map((v) => v.price));
+export const isSoldOut = (p) => !variants(p).some((v) => v.available);
+export const isLastUnits = (p) => fullAvailable(p) && Number(p.stock) <= 3;
+export const isDecant = (p) => p.decant || hasDecants(p) || (parseInt(p.volume, 10) > 0 && parseInt(p.volume, 10) <= 10);
+
+// ─── Confiança (textos editáveis no painel → Banner & loja) ───
+export const DEFAULT_TRUST = {
+  authenticity: 'Produtos 100% originais',
+  payment: 'Pix, débito e crédito',
+  installments: 10,
+  shipping: 'Postagem em até 1 dia útil',
+};
+export const installmentText = (price, n) => (n > 1 && price > 0 ? `${n}x de R$ ${money(price / n)} sem juros` : '');
+export const stars = (n) => '★★★★★'.slice(0, Math.round(n)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(n));
 
 export function badges(p) {
   const b = [];
   if (isSoldOut(p)) b.push(['Esgotado', 'off']);
+  else if (!fullAvailable(p)) b.push(['Só decants', 'warn']);
   else if (isLastUnits(p)) b.push(['Últimas unidades', 'warn']);
   if (p.launch) b.push(['Lançamento', 'solid']);
   if (discount(p)) b.push([`-${discount(p)}%`, 'solid']);
   if (p.niche) b.push(['Nicho', '']);
+  if (hasDecants(p) && fullAvailable(p)) b.push(['Tem decant', '']);
   if (p.imported) b.push(['Importado', '']);
   return b.map(([t, c]) => `<span class="badge ${c ? 'badge--' + c : ''}">${esc(t)}</span>`).join('');
 }
@@ -43,16 +69,18 @@ export function badges(p) {
 // ─── WhatsApp ───
 export const waUrl = (num, msg) => `https://wa.me/${String(num || DEFAULT_WA).replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
 
-export const msgProduct = (p) =>
-`Olá, DURAH Perfumes e Importados! 👋✨
+export const msgProduct = (p, key = 'full') => {
+  const v = getVariant(p, key);
+  return `Olá, DURAH Perfumes e Importados! 👋✨
 Vim pelo catálogo e fiquei apaixonado(a) por esta fragrância:
 
 🖤 Perfume: ${p.name}
 🏷️ Marca: ${p.brand}
-📏 Tamanho: ${p.volume}
-💰 Valor: R$ ${money(finalPrice(p))}
+📏 Tamanho: ${v.size}
+💰 Valor: R$ ${money(v.price)}
 
 Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
+};
 
 export const msgGeneral = () => 'Olá, DURAH Perfumes e Importados! 👋 Gostaria de ajuda para escolher o perfume ideal para mim. Pode me atender?';
 
@@ -64,9 +92,10 @@ export const msgHelp = (gender, notes, occasion) =>
 
 export function msgList(items, intro = 'montei minha sacola') {
   let total = 0;
-  const lines = items.map(({ p, qty }, i) => {
-    const sub = finalPrice(p) * qty; total += sub;
-    return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${p.volume} · Qtd: ${qty} · 💰 R$ ${money(sub)}`;
+  const lines = items.map(({ p, qty, v }, i) => {
+    const vr = getVariant(p, v);
+    const sub = vr.price * qty; total += sub;
+    return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${vr.size} · Qtd: ${qty} · 💰 R$ ${money(sub)}`;
   });
   return `Olá, DURAH Perfumes e Importados! 👋✨
 Vim pelo catálogo e ${intro}:

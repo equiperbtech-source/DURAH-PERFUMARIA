@@ -1,6 +1,6 @@
 import { store, optimizeImage } from './store.js';
 import {
-  $, $$, esc, money, icon, toast, productImages, finalPrice, isSoldOut,
+  $, $$, esc, money, icon, toast, productImages, finalPrice, isSoldOut, DEFAULT_TRUST, stars,
   CONCENTRATIONS, GENDERS, FAMILIES, LONGEVITY, PROJECTION, SEASONS, OCCASIONS, VOLUMES, ORIGINS, NICHE_HOUSES, TAG_SUGGESTIONS,
 } from './ui.js';
 
@@ -66,6 +66,7 @@ function render() {
       <button data-tab="products" class="${tab === 'products' ? 'is-active' : ''}">${icon('box')} Produtos</button>
       <button data-tab="new" class="${tab === 'new' ? 'is-active' : ''}">${icon('plus')} Novo produto</button>
       <button data-tab="settings" class="${tab === 'settings' ? 'is-active' : ''}">${icon('sliders')} Banner &amp; loja</button>
+      <button data-tab="reviews" class="${tab === 'reviews' ? 'is-active' : ''}">${icon('star')} Avaliações</button>
       <button data-tab="backup" class="${tab === 'backup' ? 'is-active' : ''}">${icon('download')} Backup</button>
     </nav>
     <div id="adminBody"></div>
@@ -77,6 +78,7 @@ function render() {
   else if (tab === 'new') renderForm(body, null);
   else if (tab === 'edit') renderForm(body, editing);
   else if (tab === 'settings') renderSettings(body);
+  else if (tab === 'reviews') renderReviews(body);
   else renderBackup(body);
 }
 
@@ -242,6 +244,8 @@ function renderForm(body, p) {
       <div class="form-grid form-grid--3">
         <div class="field"><label class="label" for="f-price">Preço (R$) *</label><input class="input" id="f-price" name="price" type="number" step="0.01" min="0" inputmode="decimal" required value="${p.price ?? ''}"></div>
         <div class="field"><label class="label" for="f-promo">Preço promocional (R$)</label><input class="input" id="f-promo" name="promoPrice" type="number" step="0.01" min="0" inputmode="decimal" value="${p.promoPrice ?? ''}" placeholder="Opcional"></div>
+        <div class="field"><label class="label" for="f-d5">Preço decant 5ml (R$)</label><input class="input" id="f-d5" name="decant5Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant5Price ?? ''}" placeholder="Vazio = não vende"></div>
+        <div class="field"><label class="label" for="f-d10">Preço decant 10ml (R$)</label><input class="input" id="f-d10" name="decant10Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant10Price ?? ''}" placeholder="Vazio = não vende"></div>
         <div class="field"><label class="label" for="f-vol">Tamanho / volume</label><input class="input" id="f-vol" name="volume" list="dl-vol" value="${esc(p.volume)}" placeholder="Ex.: 100ml"></div>
         <div class="field"><label class="label" for="f-conc">Concentração</label><select class="input" id="f-conc" name="concentration">${opt(CONCENTRATIONS, p.concentration)}</select></div>
         <div class="field"><label class="label" for="f-gender">Gênero</label><select class="input" id="f-gender" name="gender">${opt(GENDERS, p.gender)}</select></div>
@@ -249,7 +253,8 @@ function renderForm(body, p) {
         <div class="field"><label class="label" for="f-stock">Estoque (quantidade)</label><input class="input" id="f-stock" name="stock" type="number" min="0" step="1" inputmode="numeric" value="${p.stock ?? 0}"></div>
         <div class="field"><label class="label" for="f-status">Status</label><select class="input" id="f-status" name="status"><option value="disponivel" ${p.status !== 'esgotado' ? 'selected' : ''}>Disponível</option><option value="esgotado" ${p.status === 'esgotado' ? 'selected' : ''}>Esgotado</option></select></div>
       </div>
-      <p class="hint">Com estoque de 1 a 3 unidades, o selo “Últimas unidades” aparece automaticamente. Com estoque 0, o produto aparece como esgotado.</p>
+      <p class="hint">Com estoque de 1 a 3 unidades, o selo “Últimas unidades” aparece automaticamente. Com estoque 0, o frasco aparece como esgotado.<br>
+      <strong class="gold">Decants:</strong> preencha o preço do decant de 5ml e/ou 10ml para o cliente poder escolher entre frasco completo e decant na página do produto. Deixe vazio para não oferecer. Os decants continuam à venda mesmo com o frasco esgotado.</p>
     </section>
 
     <section class="fsection"><h2>${icon('upload')} Fotos</h2><div id="f-images"></div></section>
@@ -338,6 +343,7 @@ function renderForm(body, p) {
       ...p,
       name: fd.get('name').trim(), brand: fd.get('brand').trim(),
       price: parseFloat(fd.get('price')), promoPrice: promo || null,
+      decant5Price: parseFloat(fd.get('decant5Price')) || null, decant10Price: parseFloat(fd.get('decant10Price')) || null,
       volume: fd.get('volume').trim().replace(/\s+/g, '').replace(/ML$/i, 'ml'),
       concentration: fd.get('concentration'), gender: fd.get('gender'), origin: fd.get('origin').trim(),
       stock: parseInt(fd.get('stock'), 10) || 0, status: fd.get('status'),
@@ -365,6 +371,7 @@ function renderForm(body, p) {
 // ─── Banner & informações da loja ───
 function renderSettings(body) {
   const s = data.settings || {}, b = s.banner || {}, a = s.announcement || {};
+  const t = { ...DEFAULT_TRUST, ...(s.trust || {}) };
   body.innerHTML = `<form id="sform">
     <section class="fsection"><h2>${icon('sparkles')} Barra de anúncio (topo do site)</h2>
       <label class="chip-check"><input type="checkbox" name="annActive" ${a.active ? 'checked' : ''}><span>Exibir barra de anúncio</span></label>
@@ -373,14 +380,21 @@ function renderSettings(body) {
 
     <section class="fsection"><h2>${icon('star')} Banner de promoções (página inicial)</h2>
       <label class="chip-check"><input type="checkbox" name="bActive" ${b.active ? 'checked' : ''}><span>Exibir banner</span></label>
-      <div class="form-grid form-grid--2 mt-1">
+      <div class="field mt-1"><label class="label" for="s-prod">Produto em promoção</label>
+        <select class="input" id="s-prod" name="bProduct">
+          <option value="">— Nenhum (banner só com texto) —</option>
+          ${data.products.map((p) => `<option value="${esc(p.id)}" ${p.id === b.productId ? 'selected' : ''}>${esc(p.name)} — R$ ${money(finalPrice(p))}${p.promoPrice ? ` (de R$ ${money(p.price)})` : ''}</option>`).join('')}
+        </select>
+        <p class="hint">O banner mostra a foto, o preço “de / por” e o botão de compra direta pelo WhatsApp. O preço “de / por” vem do <strong>preço promocional</strong> do produto. Se o título ficar vazio, aparece o nome do perfume.</p>
+      </div>
+      <div class="form-grid form-grid--2">
         <div class="field"><label class="label" for="s-tag">Etiqueta</label><input class="input" id="s-tag" name="bTag" value="${esc(b.tag)}" placeholder="Ex.: Promoção da semana"></div>
         <div class="field"><label class="label" for="s-title">Título</label><input class="input" id="s-title" name="bTitle" value="${esc(b.title)}"></div>
       </div>
       <div class="field"><label class="label" for="s-text">Texto</label><textarea class="input" id="s-text" name="bText" rows="3">${esc(b.text)}</textarea></div>
       <div class="form-grid form-grid--2">
         <div class="field"><label class="label" for="s-cta">Texto do botão</label><input class="input" id="s-cta" name="bCta" value="${esc(b.cta)}"></div>
-        <div class="field"><label class="label" for="s-link">Link do botão</label>
+        <div class="field"><label class="label" for="s-link">Link do botão (quando não há produto)</label>
           <select class="input" id="s-link" name="bLink">
             <option value="#/catalogo">Catálogo completo</option>
             <option value="#/catalogo?cat=lancamentos">Lançamentos</option>
@@ -388,7 +402,16 @@ function renderSettings(body) {
             ${data.products.map((p) => `<option value="#/produto/${esc(p.slug)}">Produto: ${esc(p.name)}</option>`).join('')}
           </select></div>
       </div>
-      <div class="field"><span class="label">Imagem do banner (opcional)</span><div id="s-img"></div></div>
+      <div class="field"><span class="label">Imagem do banner (opcional — se vazio, usa a foto do produto)</span><div id="s-img"></div></div>
+    </section>
+
+    <section class="fsection"><h2>${icon('shield')} Confiança (aparece perto dos produtos e botões de compra)</h2>
+      <div class="form-grid form-grid--2">
+        <div class="field"><label class="label" for="s-auth">Autenticidade</label><input class="input" id="s-auth" name="tAuth" value="${esc(t.authenticity)}" maxlength="80"></div>
+        <div class="field"><label class="label" for="s-pay">Formas de pagamento</label><input class="input" id="s-pay" name="tPay" value="${esc(t.payment)}" maxlength="80"></div>
+        <div class="field"><label class="label" for="s-inst">Parcelas sem juros (máx.)</label><input class="input" id="s-inst" name="tInst" type="number" min="1" max="24" value="${esc(t.installments)}"><p class="hint">Use 1 para não mostrar parcelamento.</p></div>
+        <div class="field"><label class="label" for="s-ship">Prazo de envio</label><input class="input" id="s-ship" name="tShip" value="${esc(t.shipping)}" maxlength="80"></div>
+      </div>
     </section>
 
     <section class="fsection"><h2>${icon('chat')} Contato e atendimento</h2>
@@ -415,10 +438,51 @@ function renderSettings(body) {
       ...s, whatsapp: wa, instagram: String(fd.get('instagram')).trim().replace(/^@/, ''),
       hours: fd.get('hours').trim(), city: fd.get('city').trim(),
       announcement: { active: !!fd.get('annActive'), text: fd.get('annText').trim() },
-      banner: { active: !!fd.get('bActive'), tag: fd.get('bTag').trim(), title: fd.get('bTitle').trim(), text: fd.get('bText').trim(), cta: fd.get('bCta').trim(), link: fd.get('bLink'), image: img.get()[0] || '' },
+      banner: { active: !!fd.get('bActive'), productId: fd.get('bProduct') || '', tag: fd.get('bTag').trim(), title: fd.get('bTitle').trim(), text: fd.get('bText').trim(), cta: fd.get('bCta').trim(), link: fd.get('bLink'), image: img.get()[0] || '' },
+      trust: { authenticity: fd.get('tAuth').trim(), payment: fd.get('tPay').trim(), installments: parseInt(fd.get('tInst'), 10) || 1, shipping: fd.get('tShip').trim() },
     };
     try { await store.saveSettings(out); await afterChange('Configurações salvas ✓'); } catch (err) { handleError(err); }
   });
+}
+
+// ─── Avaliações de clientes ───
+function renderReviews(body) {
+  const s = data.settings || {};
+  const list = s.reviews || [];
+  body.innerHTML = `<div class="mode-note">${icon('star', 'i--sm')} Cadastre <strong>avaliações reais</strong> de clientes (por exemplo, mensagens recebidas no WhatsApp ou comentários no Instagram). Avaliações inventadas são consideradas propaganda enganosa pelo Código de Defesa do Consumidor.</div>
+    <section class="fsection"><h2>${icon('plus')} Nova avaliação</h2>
+      <form id="rform">
+        <div class="form-grid form-grid--3">
+          <div class="field"><label class="label" for="r-name">Nome do cliente</label><input class="input" id="r-name" name="name" required maxlength="60" placeholder="Ex.: Mariana S."></div>
+          <div class="field"><label class="label" for="r-city">Cidade (opcional)</label><input class="input" id="r-city" name="city" maxlength="60" placeholder="Ex.: Florianópolis/SC"></div>
+          <div class="field"><label class="label" for="r-rating">Nota</label><select class="input" id="r-rating" name="rating">${[5, 4, 3, 2, 1].map((n) => `<option value="${n}">${stars(n)} (${n})</option>`).join('')}</select></div>
+        </div>
+        <div class="field"><label class="label" for="r-prod">Perfume avaliado (opcional)</label>
+          <select class="input" id="r-prod" name="productId"><option value="">— Avaliação geral da loja —</option>${data.products.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></div>
+        <div class="field"><label class="label" for="r-text">Comentário</label><textarea class="input" id="r-text" name="text" rows="3" required maxlength="600" placeholder="O que o cliente disse"></textarea></div>
+        <button class="btn btn--primary" type="submit">${icon('check')} Adicionar avaliação</button>
+      </form>
+    </section>
+    <div class="alist">${list.length ? list.map((r, i) => `<div class="arow" style="grid-template-columns:1fr auto">
+        <div><div class="arow__name"><span class="gold">${stars(r.rating)}</span> ${esc(r.name)}${r.city ? ` · <span class="muted">${esc(r.city)}</span>` : ''}</div>
+        <div class="arow__meta">${r.productName ? esc(r.productName) + ' — ' : ''}“${esc(r.text)}”</div></div>
+        <div class="arow__actions"><button class="btn btn--danger btn--sm" data-rdel="${i}" aria-label="Excluir">${icon('trash', 'i--sm')}</button></div>
+      </div>`).join('') : '<div class="empty">Nenhuma avaliação cadastrada. Enquanto não houver avaliações, a seção fica oculta no site.</div>'}</div>`;
+
+  const save = async (reviews, msg) => {
+    try { await store.saveSettings({ ...s, reviews }); await afterChange(msg); } catch (err) { handleError(err); }
+  };
+  $('#rform').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const prod = data.products.find((p) => p.id === fd.get('productId'));
+    const r = { id: 'r' + Date.now().toString(36), name: fd.get('name').trim(), city: fd.get('city').trim(), rating: +fd.get('rating'), text: fd.get('text').trim(), productId: prod ? prod.id : '', productName: prod ? prod.name : '', date: new Date().toISOString().slice(0, 10) };
+    save([r, ...list], 'Avaliação adicionada ✓');
+  });
+  $$('[data-rdel]').forEach((b) => b.addEventListener('click', () => {
+    if (!confirm('Excluir esta avaliação?')) return;
+    save(list.filter((_, i) => i !== +b.dataset.rdel), 'Avaliação excluída.');
+  }));
 }
 
 // ─── Backup ───

@@ -2,6 +2,7 @@ import { store } from './store.js';
 import {
   $, $$, esc, money, icon, toast, badges, bottleArt, productImages, finalPrice, discount, isSoldOut, isLastUnits, isArab, isDecant,
   waUrl, msgProduct, msgGeneral, msgHelp, msgList, joinPt, joinOr,
+  variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars,
   GENDERS, FAMILIES, LONGEVITY, LONGEVITY_HINT, PROJECTION, PROJECTION_HINT, SEASONS, OCCASIONS,
 } from './ui.js';
 
@@ -30,9 +31,43 @@ export const CATS = [
 ];
 
 // ═══════════════ Componentes ═══════════════
+// ─── Confiança e avaliações ───
+const trust = () => ({ ...DEFAULT_TRUST, ...(S.settings.trust || {}) });
+const reviewsList = () => (S.settings.reviews || []).filter((r) => r && r.text);
+function ratingSummary(list = reviewsList()) {
+  if (!list.length) return null;
+  const avg = list.reduce((a, r) => a + (Number(r.rating) || 5), 0) / list.length;
+  return { avg, count: list.length };
+}
+function trustBar(variant = 'bar') {
+  const t = trust(), rs = ratingSummary();
+  const items = [
+    ['shield', t.authenticity, 'Autenticidade garantida'],
+    ['card', t.installments > 1 ? `Até ${t.installments}x sem juros` : t.payment, t.installments > 1 ? t.payment : 'Formas de pagamento'],
+    ['truck', t.shipping, 'Envio para todo o Brasil'],
+    rs ? ['star', `${rs.avg.toFixed(1).replace('.', ',')} de 5 estrelas`, `${rs.count} ${rs.count === 1 ? 'avaliação' : 'avaliações'} de clientes`]
+       : ['chat', 'Atendimento personalizado', 'Tire dúvidas pelo WhatsApp'],
+  ];
+  return `<div class="trust trust--${variant}">${items.map(([i, a, b]) => `<div class="trust__item">${icon(i)}<div><strong>${esc(a)}</strong><span>${esc(b)}</span></div></div>`).join('')}</div>`;
+}
+function reviewsSection(list, title = 'Quem comprou, recomenda') {
+  if (!list.length) return '';
+  const rs = ratingSummary(list);
+  return `<div class="reviews">
+    <div class="reviews__head"><span class="reviews__stars" aria-label="${rs.avg.toFixed(1)} de 5">${stars(rs.avg)}</span><strong>${rs.avg.toFixed(1).replace('.', ',')}</strong><span class="muted">· ${rs.count} ${rs.count === 1 ? 'avaliação' : 'avaliações'}</span></div>
+    <h2 class="sr-only">${esc(title)}</h2>
+    <div class="reviews__list">${list.map((r) => `<figure class="review">
+      <div class="review__stars" aria-label="${Number(r.rating) || 5} de 5">${stars(Number(r.rating) || 5)}</div>
+      <blockquote>“${esc(r.text)}”</blockquote>
+      <figcaption><strong>${esc(r.name || 'Cliente')}</strong>${r.city ? ` · ${esc(r.city)}` : ''}${r.productName ? `<span>${esc(r.productName)}</span>` : ''}</figcaption>
+    </figure>`).join('')}</div>
+  </div>`;
+}
+
 function card(p) {
   const fav = S.favs.includes(p.id);
   const sold = isSoldOut(p);
+  const v = defaultVariant(p);
   const img = productImages(p)[0];
   return `<article class="card ${sold ? 'is-soldout' : ''}">
     <div class="card__media">
@@ -45,13 +80,15 @@ function card(p) {
       <h3 class="card__name"><a class="card__link" href="#/produto/${esc(p.slug)}">${esc(p.name)}</a></h3>
       <span class="card__meta">${esc([p.volume, p.concentration, p.family].filter(Boolean).join(' · '))}</span>
       <div class="card__price">
-        ${discount(p) ? `<span class="price-old">R$ ${money(p.price)}</span>` : ''}
-        <span class="price">R$ ${money(finalPrice(p))}</span>
+        ${v.key !== 'full' ? `<span class="card__from">${esc(v.label)}</span>` : v.old ? `<span class="price-old">R$ ${money(v.old)}</span>` : ''}
+        <span class="price">R$ ${money(v.price)}</span>
       </div>
+      ${installmentText(v.price, trust().installments) ? `<span class="card__inst">ou ${installmentText(v.price, trust().installments)}</span>` : ''}
+      ${hasDecants(p) && v.key === 'full' ? `<span class="card__decant">${icon('drop', 'i--sm')} Decant a partir de R$ ${money(minDecantPrice(p))}</span>` : ''}
     </div>
     <div class="card__actions">
-      <a class="btn btn--primary" href="${wa(msgProduct(p))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Consultar' : 'Comprar'}</a>
-      <button class="icon-btn" data-add="${p.id}" aria-label="Adicionar à sacola" ${sold ? 'disabled' : ''}>${icon('bag')}</button>
+      <a class="btn btn--primary" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Consultar' : 'Comprar'}</a>
+      <button class="icon-btn" data-add="${p.id}" data-variant="${v.key}" aria-label="Adicionar à sacola" ${sold ? 'disabled' : ''}>${icon('bag')}</button>
     </div>
   </article>`;
 }
@@ -121,17 +158,9 @@ function pageHome() {
     </div>
   </section>
 
-  ${b.active && b.title ? `<section class="section" style="padding-bottom:0"><div class="container">
-    <div class="promo">
-      <div>
-        ${b.tag ? `<span class="promo__tag">${esc(b.tag)}</span>` : ''}
-        <h2>${esc(b.title)}</h2>
-        ${b.text ? `<p>${esc(b.text)}</p>` : ''}
-        ${b.cta ? `<a class="btn btn--primary mt-2" href="${esc(safeLink(b.link))}" ${/^https?:/.test(b.link) ? 'target="_blank" rel="noopener"' : ''}>${esc(b.cta)} ${icon('arrow')}</a>` : ''}
-      </div>
-      ${b.image ? `<img class="promo__img" src="${esc(b.image)}" alt="" loading="lazy">` : ''}
-    </div>
-  </div></section>` : ''}
+  <section class="trust-wrap"><div class="container">${trustBar()}</div></section>
+
+  ${promoBlock(b)}
 
   <section class="section">
     <div class="container">
@@ -146,6 +175,11 @@ function pageHome() {
       ${grid((featured.length ? featured : S.products).slice(0, 8), 'grid--4')}
     </div>
   </section>
+
+  ${reviewsList().length ? `<section class="section" style="padding-top:0"><div class="container">
+    <div class="section__head"><div><span class="eyebrow">Avaliações</span><h2 class="h2 mt-1">Quem comprou, recomenda</h2></div></div>
+    ${reviewsSection(reviewsList().slice(0, 8))}
+  </div></section>` : ''}
 
   <section class="section" style="padding-top:0"><div class="container">${helpCta()}</div></section>
 
@@ -165,6 +199,40 @@ function pageHome() {
     </div>
   </section>` : ''}
   </div>`;
+}
+
+// ─── Promoção da semana (produto, preço de/por e compra direta) ───
+function promoBlock(b) {
+  if (!b.active) return '';
+  const p = b.productId ? byId(b.productId) : null;
+  if (!p && !b.title) return '';
+  const img = b.image || (p ? productImages(p)[0] : '');
+  const v = p ? (fullAvailable(p) ? getVariant(p, 'full') : defaultVariant(p)) : null;
+  const href = p ? `#/produto/${p.slug}` : safeLink(b.link);
+  const t = trust();
+  return `<section class="section section--promo"><div class="container">
+    <div class="promo ${p ? 'promo--product' : ''}">
+      ${img ? `<a class="promo__media" href="${esc(href)}" aria-label="${esc(p ? p.name : b.title)}"><img src="${esc(img)}" alt="${esc(p ? p.name : '')}" loading="lazy"></a>` : ''}
+      <div class="promo__body">
+        ${b.tag ? `<span class="promo__tag">${esc(b.tag)}</span>` : ''}
+        ${p ? `<span class="promo__brand">${esc(p.brand)}</span>` : ''}
+        <h2>${esc(b.title || (p && p.name) || '')}</h2>
+        ${b.text ? `<p>${esc(b.text)}</p>` : ''}
+        ${v ? `<div class="promo__prices">
+            ${v.old ? `<span class="promo__old">De <s>R$ ${money(v.old)}</s></span>` : ''}
+            <span class="promo__now"><small>${v.old ? 'Por' : v.key === 'full' ? '' : esc(v.label)}</small> R$ ${money(v.price)}</span>
+            ${v.old ? `<span class="price-off">-${Math.round((1 - v.price / v.old) * 100)}% OFF</span>` : ''}
+          </div>
+          ${installmentText(v.price, t.installments) ? `<p class="promo__inst">ou ${installmentText(v.price, t.installments)} · ${esc(t.payment)}</p>` : ''}` : ''}
+        <div class="promo__ctas">
+          ${p ? `<a class="btn btn--primary btn--lg" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${esc(b.cta || 'Comprar agora')}</a>
+                 <a class="btn btn--outline" href="${esc(href)}">Ver detalhes</a>`
+              : b.cta ? `<a class="btn btn--primary btn--lg" href="${esc(href)}" ${/^https?:/.test(b.link) ? 'target="_blank" rel="noopener"' : ''}>${esc(b.cta)} ${icon('arrow')}</a>` : ''}
+        </div>
+        <div class="promo__trust"><span>${icon('shield', 'i--sm')} ${esc(t.authenticity)}</span><span>${icon('truck', 'i--sm')} ${esc(t.shipping)}</span></div>
+      </div>
+    </div>
+  </div></section>`;
 }
 
 // ─── Catálogo ───
@@ -268,6 +336,7 @@ function pageCatalog(q) {
     </aside>
 
     <div>
+      ${trustBar('compact')}
       <div class="toolbar">
         <span class="toolbar__count" id="count"></span>
         <button class="btn btn--ghost btn--sm" id="openFilters">${icon('filter', 'i--sm')} Filtros</button>
@@ -322,6 +391,8 @@ function pageProduct(slug) {
   const imgs = productImages(p);
   const sold = isSoldOut(p);
   const fav = S.favs.includes(p.id);
+  const sel = defaultVariant(p);
+  const prodReviews = reviewsList().filter((r) => !r.productId || r.productId === p.id);
   const lvl = (arr, v) => arr.indexOf(v);
   const lon = lvl(LONGEVITY, p.longevity), pro = lvl(PROJECTION, p.projection);
   const refs = (p.references || []).filter((r) => r.name || r.house);
@@ -377,21 +448,27 @@ function pageProduct(slug) {
           ${p.origin ? `<span class="chip chip--muted">${icon('pin', 'i--sm')} ${esc(p.origin)}</span>` : ''}
         </div>
 
-        <div class="pinfo__price">
-          ${discount(p) ? `<span class="price-old">R$ ${money(p.price)}</span><span class="price-off">-${discount(p)}%</span>` : ''}
-          <span class="price" style="width:100%">R$ ${money(finalPrice(p))}</span>
-        </div>
-        <p class="pinfo__inst">Pagamento facilitado: Pix, cartão e parcelamento — consulte condições pelo WhatsApp.</p>
+        <div class="pinfo__price" id="pPrice"></div>
+        <p class="pinfo__inst" id="pInst"></p>
 
-        <div class="pinfo__stock">${sold ? '<span class="dot dot--off"></span> Esgotado no momento — consulte reposição' : isLastUnits(p) ? `<span class="dot dot--warn"></span> Últimas unidades em estoque` : '<span class="dot"></span> Disponível para envio imediato'}</div>
+        ${hasDecants(p) ? `<fieldset class="variants">
+          <legend class="label">Escolha o tamanho</legend>
+          <div class="variants__list">${variants(p).map((v) => `<label class="variant ${v.available ? '' : 'is-off'}">
+            <input type="radio" name="variant" value="${v.key}" ${v.key === sel.key ? 'checked' : ''} ${v.available ? '' : 'disabled'}>
+            <span><strong>${esc(v.label)}</strong><em>R$ ${money(v.price)}</em><small>${!v.available ? 'Esgotado' : v.key === 'full' ? 'Lacrado, original' : 'Fracionado do original'}</small></span>
+          </label>`).join('')}</div>
+        </fieldset>` : ''}
+
+        <div class="pinfo__stock" id="pStock"></div>
 
         <div class="pinfo__buy">
-          <a class="btn btn--primary btn--lg btn--block btn--wa" href="${wa(msgProduct(p))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Consultar pelo WhatsApp' : 'Comprar pelo WhatsApp'}</a>
+          <a class="btn btn--primary btn--lg btn--block btn--wa" id="buyWa" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Comprar pelo WhatsApp</span></a>
           <div class="pinfo__buy-row">
-            <button class="btn btn--outline" data-add="${p.id}" ${sold ? 'disabled' : ''}>${icon('bag')} Adicionar à sacola</button>
+            <button class="btn btn--outline" id="buyAdd" data-add="${p.id}" data-variant="${sel.key}" ${sold ? 'disabled' : ''}>${icon('bag')} Adicionar à sacola</button>
             <button class="icon-btn card__fav ${fav ? 'is-on' : ''}" style="position:static;width:46px;height:46px;border:1px solid var(--gold-line)" data-fav="${p.id}" aria-label="Lista de desejos" aria-pressed="${fav}">${icon('heart')}</button>
           </div>
         </div>
+        ${trustBar('list')}
 
         ${p.family ? `<div class="mt-2"><div class="family-seal"><span class="family-seal__icon">${icon('drop')}</span><span><small>Família olfativa</small><strong>${esc(p.family)}</strong></span></div></div>` : ''}
         ${(p.tags || []).length ? `<div class="chips mt-2">${p.tags.map((t) => `<span class="chip chip--muted">#${esc(t)}</span>`).join('')}</div>` : ''}
@@ -447,16 +524,41 @@ function pageProduct(slug) {
       </div>
     </div>
 
+    ${prodReviews.length ? `<section class="section" style="padding-top:20px">
+      <div class="section__head"><div><span class="eyebrow">Avaliações</span><h2 class="h2 mt-1">Quem comprou, recomenda</h2></div></div>
+      ${reviewsSection(prodReviews.slice(0, 6))}
+    </section>` : ''}
+
     ${related.length ? `<section class="section" style="padding-top:20px">
       <div class="section__head"><div><span class="eyebrow">Você também pode gostar</span><h2 class="h2 mt-1">Produtos relacionados</h2></div></div>
       ${grid(related, 'grid--4')}
     </section>` : ''}
   </div>
   <div class="buybar">
-    <div><span class="price">R$ ${money(finalPrice(p))}</span></div>
-    <a class="btn btn--primary" href="${wa(msgProduct(p))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Consultar' : 'Comprar pelo WhatsApp'}</a>
+    <div><span class="price" id="bbPrice"></span></div>
+    <a class="btn btn--primary" id="buyWa2" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Comprar</span></a>
   </div>
   </div>`;
+
+  // atualiza preço, parcelas, estoque e links de compra conforme o tamanho escolhido
+  const t = trust();
+  const applyVariant = (key) => {
+    const v = getVariant(p, key);
+    $('#pPrice').innerHTML = `${v.old ? `<span class="price-old">R$ ${money(v.old)}</span><span class="price-off">-${Math.round((1 - v.price / v.old) * 100)}%</span>` : ''}
+      <span class="price" style="width:100%">R$ ${money(v.price)}</span>`;
+    $('#pInst').textContent = [installmentText(v.price, t.installments) && 'ou ' + installmentText(v.price, t.installments), t.payment].filter(Boolean).join(' · ');
+    $('#pStock').innerHTML = !v.available ? '<span class="dot dot--off"></span> Esgotado no momento — consulte reposição'
+      : v.key === 'full' && isLastUnits(p) ? '<span class="dot dot--warn"></span> Últimas unidades em estoque'
+      : `<span class="dot"></span> Disponível · ${esc(t.shipping)}`;
+    const label = v.available ? (v.key === 'full' ? 'Comprar pelo WhatsApp' : `Comprar ${v.label}`) : 'Consultar pelo WhatsApp';
+    $('#buyWa').href = $('#buyWa2').href = wa(msgProduct(p, v.key));
+    $('#buyWa span').textContent = label;
+    $('#buyWa2 span').textContent = v.available ? 'Comprar' : 'Consultar';
+    $('#bbPrice').textContent = `R$ ${money(v.price)}`;
+    const add = $('#buyAdd'); add.dataset.variant = v.key; add.disabled = !v.available;
+  };
+  applyVariant(sel.key);
+  $$('input[name="variant"]').forEach((r) => r.addEventListener('change', () => applyVariant(r.value)));
 
   let cur = 0;
   const show = (i) => {
@@ -553,18 +655,21 @@ function setSeo(title, description, ld) {
 // ═══════════════ Sacola & desejos ═══════════════
 function saveCart() { persist('durah_cart', S.cart); updateCounts(); }
 function saveFavs() { persist('durah_favs', S.favs); updateCounts(); }
+const cartItems = () => S.cart.map((i) => ({ p: byId(i.id), qty: i.qty, v: i.v || 'full' })).filter((i) => i.p);
 function updateCounts() {
   const c = S.cart.reduce((a, i) => a + (byId(i.id) ? i.qty : 0), 0);
   const f = S.favs.filter(byId).length;
   $('#cartCount').textContent = c; $('#cartCount').hidden = !c;
   $('#favCount').textContent = f; $('#favCount').hidden = !f;
 }
-function addToCart(id) {
+function addToCart(id, key) {
   const p = byId(id); if (!p) return;
-  if (isSoldOut(p)) return toast('Este perfume está esgotado no momento.', true);
-  const it = S.cart.find((i) => i.id === id);
-  if (it) it.qty = Math.min(it.qty + 1, Math.max(1, p.stock || 99)); else S.cart.push({ id, qty: 1 });
-  saveCart(); toast('Adicionado à sacola ✓');
+  const v = key ? getVariant(p, key) : defaultVariant(p);
+  if (!v.available) return toast('Este tamanho está esgotado no momento.', true);
+  const it = S.cart.find((i) => i.id === id && (i.v || 'full') === v.key);
+  const max = v.key === 'full' ? Math.max(1, p.stock || 99) : 99;
+  if (it) it.qty = Math.min(it.qty + 1, max); else S.cart.push({ id, v: v.key, qty: 1 });
+  saveCart(); toast(`${v.key === 'full' ? 'Frasco' : v.label} adicionado à sacola ✓`);
   if ($('#drawer').classList.contains('is-open')) renderDrawer();
 }
 function toggleFav(id) {
@@ -587,20 +692,21 @@ function renderDrawer() {
   $$('#drawer .tab').forEach((t) => t.classList.toggle('is-active', t.dataset.tab === drawerTab));
   const body = $('#drawerBody'), foot = $('#drawerFoot');
   if (drawerTab === 'cart') {
-    const items = S.cart.map((i) => ({ p: byId(i.id), qty: i.qty })).filter((i) => i.p);
+    S.cart = S.cart.filter((i) => byId(i.id));
+    const items = cartItems();
     if (!items.length) {
       body.innerHTML = `<div class="empty">${icon('bag')}<p><strong>Sua sacola está vazia.</strong></p><p class="mt-1">Adicione perfumes e finalize tudo em uma única mensagem no WhatsApp.</p></div>`;
       foot.innerHTML = `<a class="btn btn--primary btn--block" href="#/catalogo" data-close>Ver catálogo</a>`; return;
     }
-    const total = items.reduce((a, { p, qty }) => a + finalPrice(p) * qty, 0);
-    body.innerHTML = items.map(({ p, qty }) => `<div class="line-item">
+    const total = items.reduce((a, { p, qty, v }) => a + getVariant(p, v).price * qty, 0);
+    body.innerHTML = items.map(({ p, qty, v }, i) => { const vr = getVariant(p, v); return `<div class="line-item">
       <img src="${esc(productImages(p)[0])}" alt="" loading="lazy">
-      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta">${esc(p.volume)} · R$ ${money(finalPrice(p))}</div>${isSoldOut(p) ? '<span class="badge badge--off mt-1">Esgotado</span>' : ''}</div>
+      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta"><span class="line-item__variant">${esc(vr.label)}</span> · R$ ${money(vr.price)}</div>${!vr.available ? '<span class="badge badge--off mt-1">Esgotado</span>' : ''}</div>
       <div class="line-item__right">
-        <div class="qty"><button data-qty="${p.id}" data-d="-1" aria-label="Diminuir">${icon('minus')}</button><span>${qty}</span><button data-qty="${p.id}" data-d="1" aria-label="Aumentar">${icon('plus')}</button></div>
-        <button class="link-btn" data-remove="${p.id}">Remover</button>
+        <div class="qty"><button data-qty="${i}" data-d="-1" aria-label="Diminuir">${icon('minus')}</button><span>${qty}</span><button data-qty="${i}" data-d="1" aria-label="Aumentar">${icon('plus')}</button></div>
+        <button class="link-btn" data-remove="${i}">Remover</button>
       </div>
-    </div>`).join('');
+    </div>`; }).join('');
     foot.innerHTML = `<div class="drawer__total"><span>Total estimado</span><strong>R$ ${money(total)}</strong></div>
       <a class="btn btn--primary btn--block btn--lg" href="${wa(msgList(items))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} Finalizar pelo WhatsApp</a>
       <p class="hint" style="text-align:center">Você confirma disponibilidade, frete e pagamento direto com a loja.</p>`;
@@ -612,13 +718,13 @@ function renderDrawer() {
     }
     body.innerHTML = items.map((p) => `<div class="line-item">
       <img src="${esc(productImages(p)[0])}" alt="" loading="lazy">
-      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta">${esc(p.volume)} · R$ ${money(finalPrice(p))}</div></div>
+      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta">${esc(defaultVariant(p).label)} · R$ ${money(defaultVariant(p).price)}</div></div>
       <div class="line-item__right">
         <button class="btn btn--outline btn--sm" data-add="${p.id}" ${isSoldOut(p) ? 'disabled' : ''}>${icon('bag', 'i--sm')}</button>
         <button class="link-btn" data-unfav="${p.id}">Remover</button>
       </div>
     </div>`).join('');
-    foot.innerHTML = `<a class="btn btn--primary btn--block btn--lg" href="${wa(msgList(items.map((p) => ({ p, qty: 1 })), 'separei minha lista de desejos'))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} Enviar lista pelo WhatsApp</a>`;
+    foot.innerHTML = `<a class="btn btn--primary btn--block btn--lg" href="${wa(msgList(items.map((p) => ({ p, qty: 1, v: defaultVariant(p).key })), 'separei minha lista de desejos'))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} Enviar lista pelo WhatsApp</a>`;
   }
 }
 
@@ -639,7 +745,7 @@ function applySettings() {
   const st = S.settings;
   const ann = $('#announce');
   ann.hidden = !(st.announcement && st.announcement.active && st.announcement.text);
-  ann.textContent = st.announcement?.text || '';
+  ann.innerHTML = `<span>${esc(st.announcement?.text || '')}</span>`;
   $('#waFloat').href = wa(msgGeneral());
   $('#headerWa').href = wa(msgGeneral());
   $('#footerContact').innerHTML = `
@@ -693,13 +799,16 @@ document.addEventListener('click', (e) => {
   const t = e.target.closest('[data-fav],[data-add],[data-help],[data-close],[data-qty],[data-remove],[data-unfav],#drawer .tab');
   if (!t) return;
   if (t.dataset.fav) { e.preventDefault(); toggleFav(t.dataset.fav); }
-  else if (t.dataset.add) { e.preventDefault(); addToCart(t.dataset.add); }
+  else if (t.dataset.add) { e.preventDefault(); addToCart(t.dataset.add, t.dataset.variant); }
   else if (t.hasAttribute('data-help')) { e.preventDefault(); closeMobileNav(); $('#helpModal').showModal(); }
   else if (t.hasAttribute('data-close')) { closeDrawer(); }
-  else if (t.dataset.qty) {
-    const it = S.cart.find((i) => i.id === t.dataset.qty); const p = byId(t.dataset.qty);
-    if (it) { it.qty = Math.max(1, Math.min(it.qty + +t.dataset.d, Math.max(1, p?.stock || 99))); saveCart(); renderDrawer(); }
-  } else if (t.dataset.remove) { S.cart = S.cart.filter((i) => i.id !== t.dataset.remove); saveCart(); renderDrawer(); }
+  else if (t.dataset.qty !== undefined) {
+    const it = S.cart[+t.dataset.qty]; const p = it && byId(it.id);
+    if (it && p) {
+      const max = (it.v || 'full') === 'full' ? Math.max(1, p.stock || 99) : 99;
+      it.qty = Math.max(1, Math.min(it.qty + +t.dataset.d, max)); saveCart(); renderDrawer();
+    }
+  } else if (t.dataset.remove !== undefined) { S.cart.splice(+t.dataset.remove, 1); saveCart(); renderDrawer(); }
   else if (t.dataset.unfav) { toggleFav(t.dataset.unfav); }
   else if (t.dataset.tab) { drawerTab = t.dataset.tab; renderDrawer(); }
 });

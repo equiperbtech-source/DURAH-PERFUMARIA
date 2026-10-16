@@ -45,6 +45,8 @@ function normalizeProduct(input, existing = {}) {
     images: (Array.isArray(p.images) ? p.images : []).filter(isImg).slice(0, 4),
     price: num(p.price) ?? 0,
     promoPrice: num(p.promoPrice) || null,
+    decant5Price: num(p.decant5Price) || null,
+    decant10Price: num(p.decant10Price) || null,
     volume: str(p.volume, 20),
     concentration: str(p.concentration, 40),
     gender: str(p.gender, 20),
@@ -86,6 +88,8 @@ function normalizeSettings(s, cur) {
   const m = { ...cur, ...s };
   const banner = { ...cur.banner, ...(s.banner || {}) };
   const ann = { ...cur.announcement, ...(s.announcement || {}) };
+  const trust = { ...(cur.trust || {}), ...(s.trust || {}) };
+  const reviews = Array.isArray(s.reviews) ? s.reviews : (cur.reviews || []);
   return {
     storeName: str(m.storeName, 80) || 'DURAH Perfumes e Importados',
     whatsapp: str(m.whatsapp, 20).replace(/\D/g, '') || '5548991154821',
@@ -101,7 +105,24 @@ function normalizeSettings(s, cur) {
       cta: str(banner.cta, 40),
       link: str(banner.link, 300),
       image: isImg(banner.image) ? banner.image : '',
+      productId: str(banner.productId, 40),
     },
+    trust: {
+      authenticity: str(trust.authenticity, 80) || 'Produtos 100% originais',
+      payment: str(trust.payment, 80) || 'Pix, débito e crédito',
+      installments: Math.min(24, Math.max(1, parseInt(trust.installments, 10) || 1)),
+      shipping: str(trust.shipping, 80) || 'Postagem em até 1 dia útil',
+    },
+    reviews: reviews.slice(0, 60).map((r) => ({
+      id: str(r && r.id, 40) || 'r' + crypto.randomBytes(5).toString('hex'),
+      name: str(r && r.name, 60),
+      city: str(r && r.city, 60),
+      rating: Math.min(5, Math.max(1, parseInt(r && r.rating, 10) || 5)),
+      text: str(r && r.text, 600),
+      productId: str(r && r.productId, 40),
+      productName: str(r && r.productName, 120),
+      date: str(r && r.date, 30),
+    })).filter((r) => r.text),
   };
 }
 
