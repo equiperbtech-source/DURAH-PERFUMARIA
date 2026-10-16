@@ -8,8 +8,9 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-const SEED_FILE = path.join(__dirname, 'public', 'data', 'seed.json');
-const readSeed = () => JSON.parse(fs.readFileSync(SEED_FILE, 'utf8'));
+// require() garante que o arquivo de exemplos seja incluído no pacote da função na Vercel
+const SEED = require('./public/data/seed.json');
+const readSeed = () => JSON.parse(JSON.stringify(SEED));
 const CACHE_MS = 10 * 1000;
 
 function diskStorage(dir, kind) {
@@ -99,4 +100,4 @@ function createStorage() {
   return diskStorage(process.env.DATA_DIR || path.join(__dirname, 'data'), 'disk');
 }
 
-module.exports = { createStorage };
+module.exports = { createStorage, readSeed };

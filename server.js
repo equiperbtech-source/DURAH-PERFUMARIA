@@ -7,7 +7,7 @@ const express = require('express');
 const compression = require('compression');
 const path = require('path');
 const crypto = require('crypto');
-const { createStorage } = require('./storage');
+const { createStorage, readSeed } = require('./storage');
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'durah2026';
@@ -201,6 +201,13 @@ api.post('/import', auth, async (req, res) => {
   if (!Array.isArray(b.products)) return res.status(400).json({ error: 'Arquivo de backup inválido.' });
   db = { settings: normalizeSettings(b.settings || {}, db.settings), products: [] };
   for (const p of b.products) db.products.push(normalizeProduct(p, { id: p.id, createdAt: p.createdAt }));
+  await storage.save(db); res.json({ ok: true, count: db.products.length });
+});
+
+api.post('/reset-demo', auth, async (req, res) => {
+  await loadDb(true);
+  const seed = readSeed();
+  db.products = [...seed.products, ...db.products.filter((p) => !seed.products.some((s) => s.id === p.id))];
   await storage.save(db); res.json({ ok: true, count: db.products.length });
 });
 

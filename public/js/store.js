@@ -118,7 +118,10 @@ export const store = {
     if (!Array.isArray(data.products)) throw new Error('Arquivo de backup inválido.');
     saveLocal({ settings: data.settings, products: data.products });
   },
-  async resetDemo() { safeLS.del(LS_DB); },
+  async resetDemo() {
+    if (mode === 'api') return api('reset-demo', { method: 'POST' });
+    safeLS.del(LS_DB);
+  },
   async uploadImage(dataUrl) {
     if (mode === 'api') return (await api('upload', { method: 'POST', body: { dataUrl } })).url;
     return dataUrl; // modo demonstração: guarda a imagem no próprio navegador

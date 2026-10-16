@@ -431,7 +431,7 @@ function renderBackup(body) {
       <p class="muted">Restaura um backup exportado anteriormente. <strong class="gold">Substitui</strong> todos os produtos atuais.</p>
       <label class="btn btn--outline mt-2">${icon('upload')} Escolher arquivo<input type="file" id="imp" accept="application/json,.json" hidden></label>
     </section>
-    ${store.mode === 'local' ? `<section class="fsection"><h2>${icon('trash')} Dados de demonstração</h2><p class="muted">Restaura os 6 perfumes de exemplo, apagando as alterações feitas neste navegador.</p><button class="btn btn--danger mt-2" id="reset">Restaurar exemplos</button></section>` : ''}`;
+    <section class="fsection"><h2>${icon('sparkles')} Perfumes de exemplo</h2><p class="muted">${store.mode === 'local' ? 'Restaura os 6 perfumes de exemplo, apagando as alterações feitas neste navegador.' : 'Adiciona de volta os 6 perfumes de exemplo (seus produtos cadastrados são mantidos).'}</p><button class="btn btn--outline mt-2" id="reset">Restaurar exemplos</button></section>`;
   $('#exp').addEventListener('click', () => {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
