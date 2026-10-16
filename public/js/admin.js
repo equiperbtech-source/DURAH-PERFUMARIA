@@ -78,6 +78,7 @@ function render() {
   const body = $('#adminBody');
   if (tab === 'products') renderList(body);
   else if (tab === 'new') renderForm(body, null);
+  else if (tab === 'newkit') renderForm(body, null, 'kit');
   else if (tab === 'edit') renderForm(body, editing);
   else if (tab === 'settings') renderSettings(body);
   else if (tab === 'reviews') renderReviews(body);
@@ -101,6 +102,7 @@ function renderList(body) {
         <option value="all">Todos</option><option value="active">Visíveis</option><option value="inactive">Ocultos</option>
         <option value="soldout">Esgotados</option><option value="featured">Destaques</option>
       </select>
+      <button class="btn btn--outline" id="newKitBtn">${icon('box')} Novo kit</button>
       <button class="btn btn--primary" id="newBtn">${icon('plus')} Novo produto</button>
     </div>
     <div class="alist" id="alist"></div>`;
@@ -108,6 +110,7 @@ function renderList(body) {
   $('#aq').addEventListener('input', (e) => { listFilter.q = e.target.value; drawRows(); });
   $('#ast').addEventListener('change', (e) => { listFilter.status = e.target.value; drawRows(); });
   $('#newBtn').addEventListener('click', () => { tab = 'new'; render(); });
+  $('#newKitBtn').addEventListener('click', () => { tab = 'newkit'; render(); });
   drawRows();
 }
 
@@ -228,16 +231,16 @@ function uploader(el, images, max = 4) {
 }
 
 // ─── Formulário de produto ───
-function renderForm(body, p) {
+function renderForm(body, p, presetType) {
   const isNew = !p || !p.id;
-  p = p || { gender: 'Masculino', concentration: 'Eau de Parfum', volume: '100ml', status: 'disponivel', stock: 1, active: true, imported: true, notes: {}, references: [], seasons: [], occasions: [], tags: [], images: [] };
+  p = p || { type: presetType || 'perfume', brand: presetType === 'kit' ? 'DURAH' : '', gender: presetType === 'kit' ? 'Unissex' : 'Masculino', concentration: 'Eau de Parfum', volume: presetType === 'kit' ? '' : '100ml', status: 'disponivel', stock: 1, active: true, imported: presetType !== 'kit', notes: {}, references: [], seasons: [], occasions: [], tags: [], images: [] };
   const brands = [...new Set(data.products.map((x) => x.brand).filter(Boolean))];
   const opt = (arr, v, empty) => (empty ? `<option value="">${empty}</option>` : '') + arr.map((a) => `<option ${a === v ? 'selected' : ''}>${esc(a)}</option>`).join('');
   const checks = (name, arr, sel) => `<div class="chips">${arr.map(([a, i]) => `<label class="chip-check"><input type="checkbox" name="${name}" value="${esc(a)}" ${(sel || []).includes(a) ? 'checked' : ''}><span>${icon(i, 'i--sm')} ${esc(a)}</span></label>`).join('')}</div>`;
   const sw = (name, label, on, hint) => `<label class="chip-check" title="${esc(hint)}"><input type="checkbox" name="${name}" ${on ? 'checked' : ''}><span>${label}</span></label>`;
 
   body.innerHTML = `<form id="pform" novalidate>
-    <h2 class="h2" style="margin-bottom:16px">${isNew ? 'Novo produto' : 'Editar: ' + esc(p.name)}</h2>
+    <h2 class="h2" style="margin-bottom:16px">${isNew ? (presetType === 'kit' ? 'Novo kit' : 'Novo produto') : 'Editar: ' + esc(p.name)}</h2>
 
     <section class="fsection"><h2>${icon('tag')} Informações principais</h2>
       <div class="form-grid form-grid--2">
@@ -253,8 +256,8 @@ function renderForm(body, p) {
         <div class="field"><label class="label" for="f-brand">Marca / casa de perfumaria *</label><input class="input" id="f-brand" name="brand" list="dl-brands" required value="${esc(p.brand)}" placeholder="Ex.: Maison Durand Paris"></div>
       </div>
       <div class="form-grid form-grid--3">
-        <div class="field"><label class="label" for="f-price">Preço (R$) *</label><input class="input" id="f-price" name="price" type="number" step="0.01" min="0" inputmode="decimal" required value="${p.price ?? ''}"></div>
-        <div class="field"><label class="label" for="f-promo">Preço promocional (R$)</label><input class="input" id="f-promo" name="promoPrice" type="number" step="0.01" min="0" inputmode="decimal" value="${p.promoPrice ?? ''}" placeholder="Opcional"></div>
+        <div class="field" data-hide="kit"><label class="label" for="f-price">Preço (R$) *</label><input class="input" id="f-price" name="price" type="number" step="0.01" min="0" inputmode="decimal" required value="${p.price ?? ''}"></div>
+        <div class="field" data-hide="kit"><label class="label" for="f-promo">Preço promocional (R$)</label><input class="input" id="f-promo" name="promoPrice" type="number" step="0.01" min="0" inputmode="decimal" value="${p.promoPrice ?? ''}" placeholder="Opcional"></div>
         <div class="field" data-only="perfume"><label class="label" for="f-d5">Preço decant 5ml (R$)</label><input class="input" id="f-d5" name="decant5Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant5Price ?? ''}" placeholder="Vazio = não vende"></div>
         <div class="field" data-only="perfume"><label class="label" for="f-d10">Preço decant 10ml (R$)</label><input class="input" id="f-d10" name="decant10Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant10Price ?? ''}" placeholder="Vazio = não vende"></div>
         <div class="field" data-hide="kit"><label class="label" for="f-vol">Tamanho / volume</label><input class="input" id="f-vol" name="volume" list="dl-vol" value="${esc(p.volume)}" placeholder="Ex.: 100ml"></div>
@@ -271,7 +274,7 @@ function renderForm(body, p) {
     <section class="fsection"><h2>${icon('upload')} Fotos</h2><div id="f-images"></div></section>
 
     <section class="fsection"><h2>${icon('sparkles')} Descrição</h2>
-      <div class="field"><label class="label" for="f-desc">Descrição geral (storytelling do perfume)</label>
+      <div class="field"><label class="label" for="f-desc">Descrição geral (conte a história do produto)</label>
         <textarea class="input" id="f-desc" name="description" rows="7" placeholder="Conte a história da fragrância: abertura, acorde principal, drydown, sillage…">${esc(p.description)}</textarea></div>
     </section>
 
@@ -281,8 +284,20 @@ function renderForm(body, p) {
         <button type="button" class="btn btn--outline btn--sm" id="addKitItem">${icon('plus', 'i--sm')} Adicionar produto do catálogo</button>
         <button type="button" class="btn btn--ghost btn--sm" id="addKitFree">${icon('plus', 'i--sm')} Item avulso (ex.: necessaire, brinde)</button>
       </div>
-      <div class="kit-sum" id="kitSum"></div>
-      <p class="hint">Escolha os produtos e o tamanho de cada um (frasco, decant 5ml ou decant 10ml). O site calcula o “valor separado” e mostra ao cliente quanto ele economiza com o preço do kit definido em “Preço (R$)”.</p>
+      <p class="hint">Escolha os produtos e o tamanho de cada um (frasco, decant 5ml ou decant 10ml). Itens avulsos entram como “incluso”.</p>
+
+      <div class="kit-pricing">
+        <div class="kit-pricing__full">
+          <span>Valor cheio <small>(soma automática dos itens)</small></span>
+          <strong id="kitFull">R$ 0,00</strong>
+        </div>
+        <div class="kit-pricing__final">
+          <label class="label" for="f-kitfinal">Preço final do kit (com desconto) *</label>
+          <input class="input" id="f-kitfinal" type="number" step="0.01" min="0" inputmode="decimal" value="${isKit(p) ? (p.promoPrice || p.price || '') : ''}" placeholder="Ex.: 129,90">
+          <div class="kit-pricing__quick"><span>Desconto rápido:</span>${[5, 10, 15, 20, 25].map((d) => `<button type="button" class="pill" data-kitoff="${d}">-${d}%</button>`).join('')}</div>
+        </div>
+        <div class="kit-pricing__save" id="kitSave"></div>
+      </div>
     </section>
 
     <section class="fsection" data-only="simple"><h2>${icon('sparkles')} Como é o cheiro</h2>
@@ -325,7 +340,7 @@ function renderForm(body, p) {
         ${sw('active', 'Ativo (visível na loja)', p.active, 'Desmarque para ocultar o produto da loja')}
         ${sw('featured', '★ Destaque', p.featured, 'Aparece na seção Destaques da página inicial')}
         ${sw('imported', 'Importado', p.imported, 'Selo Importado')}
-        ${sw('niche', 'Nicho', p.niche, 'Selo Nicho e categoria Nicho')}
+        <span data-only="perfume">${sw('niche', 'Nicho', p.niche, 'Selo Nicho e categoria Nicho')}</span>
         ${sw('launch', 'Lançamento', p.launch, 'Selo Lançamento e categoria Lançamentos')}
         <span data-only="perfume">${sw('decant', 'Decant / miniatura', p.decant, 'Categoria Decants/Miniaturas')}</span>
       </div>
@@ -363,6 +378,7 @@ function renderForm(body, p) {
   const kitEl = $('#f-kit');
   const itemProducts = data.products.filter((x) => !isKit(x) && x.id !== p.id);
   const unitPrice = (pid, vkey) => { const pr = itemProducts.find((x) => x.id === pid); if (!pr) return 0; const v = variants(pr).find((x) => x.key === vkey); return v ? v.price : 0; };
+  let kitFullValue = 0;
   const updateKitSum = () => {
     let sum = 0;
     $$('.kit-row', kitEl).forEach((row) => {
@@ -370,8 +386,13 @@ function renderForm(body, p) {
       const u = pid ? unitPrice(pid, vk) : 0; sum += u * q;
       const pr = $('[data-k=price]', row); if (pr) pr.textContent = pid ? (u ? `R$ ${money(u * q)}` : 'tamanho indisponível') : 'incluso';
     });
-    const kitPrice = parseFloat($('#f-promo').value) || parseFloat($('#f-price').value) || 0;
-    $('#kitSum').innerHTML = sum ? `Valor separado: <strong>R$ ${money(sum)}</strong>${kitPrice ? ` · Preço do kit: <strong>R$ ${money(kitPrice)}</strong> · ${kitPrice < sum ? `<span class="gold">cliente economiza R$ ${money(sum - kitPrice)}</span>` : '<span style="color:var(--danger)">o kit está mais caro que os itens separados</span>'}` : ''}` : '';
+    kitFullValue = Math.round(sum * 100) / 100;
+    $('#kitFull').textContent = `R$ ${money(kitFullValue)}`;
+    const fin = parseFloat($('#f-kitfinal').value) || 0;
+    $('#kitSave').innerHTML = !fin || !kitFullValue ? '<span class="muted">Defina o preço final para ver a economia do cliente.</span>'
+      : fin < kitFullValue ? `O cliente vê: <s>De R$ ${money(kitFullValue)}</s> <strong>Por R$ ${money(fin)}</strong> · <span class="gold">economiza R$ ${money(kitFullValue - fin)} (${Math.round((1 - fin / kitFullValue) * 100)}% OFF)</span>`
+      : fin === kitFullValue ? '<span class="muted">Sem desconto: o preço final é igual ao valor cheio.</span>'
+      : '<span style="color:var(--danger)">Atenção: o preço final está mais alto que o valor cheio dos itens.</span>';
   };
   const addKitRow = (it = {}) => {
     const row = document.createElement('div');
@@ -394,7 +415,13 @@ function renderForm(body, p) {
   (p.kitItems || []).forEach(addKitRow);
   $('#addKitItem').addEventListener('click', () => addKitRow());
   $('#addKitFree').addEventListener('click', () => addKitRow({ free: true }));
-  $('#f-price').addEventListener('input', updateKitSum); $('#f-promo').addEventListener('input', updateKitSum);
+  $('#f-kitfinal').addEventListener('input', updateKitSum);
+  $$('[data-kitoff]', body).forEach((b) => b.addEventListener('click', () => {
+    if (!kitFullValue) { toast('Adicione os itens do kit primeiro.', true); return; }
+    const alvo = kitFullValue * (1 - +b.dataset.kitoff / 100);
+    $('#f-kitfinal').value = (alvo >= 10 ? Math.floor(alvo) - 0.1 : alvo).toFixed(2); // preço “redondo”, ex.: 214,90
+    updateKitSum();
+  }));
 
   const syncType = () => {
     const t = $('#f-type').value;
@@ -415,13 +442,20 @@ function renderForm(body, p) {
     const f = e.target, fd = new FormData(f);
     if (!fd.get('name').trim()) { toast('Informe o nome do perfume.', true); f.name.focus(); return; }
     if (!fd.get('brand').trim()) { toast('Informe a marca.', true); f.brand.focus(); return; }
-    if (!(parseFloat(fd.get('price')) > 0)) { toast('Informe o preço.', true); f.price.focus(); return; }
-    const promo = parseFloat(fd.get('promoPrice'));
-    if (promo && promo >= parseFloat(fd.get('price'))) { toast('O preço promocional deve ser menor que o preço normal.', true); f.promoPrice.focus(); return; }
+    const kitMode = fd.get('type') === 'kit';
+    const kitFinal = parseFloat($('#f-kitfinal').value) || 0;
+    if (kitMode) {
+      if (!$$('.kit-row', kitEl).some((r) => $('[data-k=product]', r)?.value || $('[data-k=name]', r)?.value.trim())) { toast('Adicione pelo menos um item ao kit.', true); return; }
+      if (!(kitFinal > 0)) { toast('Informe o preço final do kit.', true); $('#f-kitfinal').focus(); return; }
+    } else if (!(parseFloat(fd.get('price')) > 0)) { toast('Informe o preço.', true); f.price.focus(); return; }
+    // kit: preço "cheio" = soma dos itens; preço promocional = preço final com desconto
+    const basePrice = kitMode ? Math.max(kitFullValue, kitFinal) : parseFloat(fd.get('price'));
+    const promo = kitMode ? (kitFinal < kitFullValue ? kitFinal : null) : parseFloat(fd.get('promoPrice'));
+    if (!kitMode && promo && promo >= basePrice) { toast('O preço promocional deve ser menor que o preço normal.', true); f.promoPrice.focus(); return; }
     const out = {
       ...p,
       name: fd.get('name').trim(), brand: fd.get('brand').trim(),
-      price: parseFloat(fd.get('price')), promoPrice: promo || null,
+      price: basePrice, promoPrice: promo || null,
       type: fd.get('type'), vsKind: fd.get('type') === 'victorias-secret' ? fd.get('vsKind') : '',
       scentProfile: ['body-spray', 'victorias-secret'].includes(fd.get('type')) ? fd.getAll('scentProfile') : [],
       intensity: ['body-spray', 'victorias-secret'].includes(fd.get('type')) ? fd.get('intensity') : '',
