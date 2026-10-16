@@ -1,6 +1,6 @@
 import { store, optimizeImage } from './store.js';
 import {
-  $, $$, esc, money, icon, toast, productImages, finalPrice, isSoldOut, DEFAULT_TRUST, stars,
+  $, $$, esc, money, icon, toast, productImages, finalPrice, isSoldOut, DEFAULT_TRUST, stars, guessProductByTitle,
   CONCENTRATIONS, GENDERS, FAMILIES, LONGEVITY, PROJECTION, SEASONS, OCCASIONS, VOLUMES, ORIGINS, NICHE_HOUSES, TAG_SUGGESTIONS,
 } from './ui.js';
 
@@ -372,6 +372,7 @@ function renderForm(body, p) {
 function renderSettings(body) {
   const s = data.settings || {}, b = s.banner || {}, a = s.announcement || {};
   const t = { ...DEFAULT_TRUST, ...(s.trust || {}) };
+  const promoId = b.productId || (guessProductByTitle(data.products, b.title) || {}).id || '';
   body.innerHTML = `<form id="sform">
     <section class="fsection"><h2>${icon('sparkles')} Barra de anúncio (topo do site)</h2>
       <label class="chip-check"><input type="checkbox" name="annActive" ${a.active ? 'checked' : ''}><span>Exibir barra de anúncio</span></label>
@@ -383,7 +384,7 @@ function renderSettings(body) {
       <div class="field mt-1"><label class="label" for="s-prod">Produto em promoção</label>
         <select class="input" id="s-prod" name="bProduct">
           <option value="">— Nenhum (banner só com texto) —</option>
-          ${data.products.map((p) => `<option value="${esc(p.id)}" ${p.id === b.productId ? 'selected' : ''}>${esc(p.name)} — R$ ${money(finalPrice(p))}${p.promoPrice ? ` (de R$ ${money(p.price)})` : ''}</option>`).join('')}
+          ${data.products.map((p) => `<option value="${esc(p.id)}" ${p.id === promoId ? 'selected' : ''}>${esc(p.name)} — R$ ${money(finalPrice(p))}${p.promoPrice ? ` (de R$ ${money(p.price)})` : ''}</option>`).join('')}
         </select>
         <p class="hint">O banner mostra a foto, o preço “de / por” e o botão de compra direta pelo WhatsApp. O preço “de / por” vem do <strong>preço promocional</strong> do produto. Se o título ficar vazio, aparece o nome do perfume.</p>
       </div>

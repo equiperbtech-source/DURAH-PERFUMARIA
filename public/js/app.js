@@ -2,7 +2,7 @@ import { store } from './store.js';
 import {
   $, $$, esc, money, icon, toast, badges, bottleArt, productImages, finalPrice, discount, isSoldOut, isLastUnits, isArab, isDecant,
   waUrl, msgProduct, msgGeneral, msgHelp, msgList, joinPt, joinOr,
-  variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars,
+  variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
   GENDERS, FAMILIES, LONGEVITY, LONGEVITY_HINT, PROJECTION, PROJECTION_HINT, SEASONS, OCCASIONS,
 } from './ui.js';
 
@@ -207,7 +207,8 @@ function pageHome() {
 // ─── Promoção da semana (produto, preço de/por e compra direta) ───
 function promoBlock(b) {
   if (!b.active) return '';
-  const p = b.productId ? byId(b.productId) : null;
+  // produto escolhido no painel; se não houver, tenta achar pelo título do banner
+  const p = (b.productId && byId(b.productId)) || guessProductByTitle(S.products, b.title);
   if (!p && !b.title) return '';
   const img = b.image || (p ? productImages(p)[0] : '');
   const v = p ? (fullAvailable(p) ? getVariant(p, 'full') : defaultVariant(p)) : null;

@@ -43,6 +43,33 @@ export const isSoldOut = (p) => !variants(p).some((v) => v.available);
 export const isLastUnits = (p) => fullAvailable(p) && Number(p.stock) <= 3;
 export const isDecant = (p) => p.decant || hasDecants(p) || (parseInt(p.volume, 10) > 0 && parseInt(p.volume, 10) <= 10);
 
+// ─── Encontra o produto citado num título (aceita pequenos erros: "Assad" ≈ "Asad") ───
+const normTxt = (t) => String(t || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9 ]+/g, ' ').split(/\s+/).filter((w) => w.length >= 3);
+function nearlyEqual(a, b) {
+  if (a === b) return true;
+  if (Math.abs(a.length - b.length) > 1 || Math.min(a.length, b.length) < 4) return false;
+  let i = 0, j = 0, diff = 0;
+  while (i < a.length && j < b.length) {
+    if (a[i] === b[j]) { i++; j++; continue; }
+    if (++diff > 1) return false;
+    if (a.length > b.length) i++; else if (b.length > a.length) j++; else { i++; j++; }
+  }
+  return diff + (a.length - i) + (b.length - j) <= 1;
+}
+export function guessProductByTitle(products, title) {
+  const words = normTxt(title);
+  if (!words.length) return null;
+  let best = null, bestScore = 0;
+  for (const p of products) {
+    const nameWords = normTxt(p.name);
+    if (!nameWords.length) continue;
+    const hits = nameWords.filter((w) => words.some((t) => nearlyEqual(w, t))).length;
+    const score = hits / nameWords.length;
+    if (hits && score > bestScore) { best = p; bestScore = score; }
+  }
+  return bestScore >= 0.5 ? best : null;
+}
+
 // ─── Confiança (textos editáveis no painel → Banner & loja) ───
 export const DEFAULT_TRUST = {
   authenticity: 'Produtos 100% originais',
