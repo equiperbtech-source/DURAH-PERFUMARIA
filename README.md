@@ -17,7 +17,7 @@ Catálogo e vendas pelo WhatsApp para perfumes importados, árabes e de nicho. O
 npm install
 ADMIN_PASSWORD=sua-senha npm start
 # loja:  http://localhost:3000
-# admin: http://localhost:3000/admin
+# admin: http://localhost:3000/admin  (ou /#/admin)
 ```
 
 Se `ADMIN_PASSWORD` não for definida, a senha padrão é `durah2026`. **Troque antes de publicar.**

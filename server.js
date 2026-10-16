@@ -230,6 +230,8 @@ app.use('/api', (err, req, res, next) => {
 
 if (storage.uploadsDir) app.use('/uploads', express.static(storage.uploadsDir, { maxAge: '365d', immutable: true }));
 
+app.get(['/admin', '/admin/'], (req, res) => res.redirect('/#/admin'));
+
 app.get('/sitemap.xml', (req, res) => {
   const base = `${req.protocol}://${req.get('host')}`;
   res.type('application/xml').send(
@@ -242,7 +244,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, file) => { if (file.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache'); },
 }));
 
-app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', 'index.html')));
+app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'), (err) => err && res.redirect('/')));
 
 // Na Vercel o app é exportado como função; fora dela, sobe um servidor normal.
 if (!process.env.VERCEL) {
