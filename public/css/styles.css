@@ -1011,3 +1011,31 @@ h1, h2, h3, h4 { font-weight: 600; }
 .variant.is-backorder em { color: var(--text-2); }
 .variant.is-backorder small { color: var(--gold-2); }
 .badge--warn { background: #C9822B; border-color: #C9822B; color: #fff; }
+
+/* ═══════════════ LOGO DURAH ═══════════════ */
+.logo--mark { flex-direction: row; align-items: center; gap: 10px; }
+.logo--mark .logo__mono { width: auto; height: 42px; filter: drop-shadow(0 0 10px rgba(212,175,55,.25)); }
+.logo__text { display: flex; flex-direction: column; }
+@media (max-width: 959px) { .logo--mark { gap: 7px; } .logo--mark .logo__mono { height: 34px; } }
+/* carregamento */
+.loader__mono { width: 64px; height: auto; animation: monoPulse 1.4s ease-in-out infinite; }
+@keyframes monoPulse { 50% { opacity: .45; transform: scale(.94); } }
+/* fundo da apresentação */
+.hero__mark { position: absolute; z-index: 0; right: -4%; top: 50%; transform: translateY(-50%); height: 120%; width: auto; opacity: .06; pointer-events: none; user-select: none; }
+@media (max-width: 959px) { .hero__mark { right: -18%; height: 105%; opacity: .07; } }
+/* rodapé e login */
+.footer__logo img { width: 170px; height: auto; }
+.login__logo { width: 190px; height: auto; margin: 0 auto 6px; }
+/* selo na página do produto */
+.seal { display: flex; align-items: center; gap: 14px; margin-top: 18px; padding: 12px 14px; border-top: 1px solid var(--gold-line); border-bottom: 1px solid var(--gold-line); }
+.seal img { width: 38px; height: auto; flex-shrink: 0; }
+.seal strong { display: block; font: 600 13px var(--font-title); letter-spacing: .06em; color: var(--gold); }
+.seal span { display: block; font-size: 12px; color: var(--muted); line-height: 1.4; }
+/* marca d'água nas fotos dos produtos */
+.card__media::before, .gallery__main::before, .promo__media::before {
+  content: ''; position: absolute; z-index: 1; pointer-events: none;
+  left: 50%; top: 50%; width: 42%; aspect-ratio: 276 / 360; transform: translate(-50%, -46%);
+  background: url("../img/brand/monograma.webp") center / contain no-repeat;
+  opacity: .13; mix-blend-mode: screen;
+}
+.gallery__main::before { width: 34%; }

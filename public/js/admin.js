@@ -31,7 +31,7 @@ const demoNote = () => store.mode === 'local'
 function renderLogin() {
   root.innerHTML = `<div class="page container admin">
     <div class="login">
-      <div class="logo logo--lg" style="align-items:center"><span class="logo__name">DURAH</span><span class="logo__sub">área do lojista</span></div>
+      <img class="login__logo" src="img/brand/logo-durah.webp" alt="DURAH Perfumes & Importados" width="593" height="640"><span class="eyebrow">Área do lojista</span>
       <p class="muted">Acesse para gerenciar produtos, banner e informações da loja.</p>
       <form id="loginForm">
         <label class="label" for="pw">Senha</label>

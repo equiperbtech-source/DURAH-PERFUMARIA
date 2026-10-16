@@ -140,7 +140,7 @@ function pageHome() {
   setSeo('DURAH Perfumes e Importados — Perfumes importados, árabes e de nicho');
   app.innerHTML = `<div class="page">
   <section class="hero">
-    <span class="hero__ar" aria-hidden="true">عطور</span>
+    <img class="hero__mark" src="img/brand/monograma.webp" alt="" aria-hidden="true" width="276" height="360">
     <div class="container hero__inner">
       <div>
         <span class="eyebrow">Oud · Âmbar · Almíscar</span>
@@ -474,6 +474,7 @@ function pageProduct(slug) {
             <button class="icon-btn card__fav ${fav ? 'is-on' : ''}" style="position:static;width:46px;height:46px;border:1px solid var(--gold-line)" data-fav="${p.id}" aria-label="Lista de desejos" aria-pressed="${fav}">${icon('heart')}</button>
           </div>
         </div>
+        <div class="seal"><img src="img/brand/monograma.webp" alt="" width="276" height="360" loading="lazy"><p><strong>Vendido e garantido por DURAH</strong><span>Curadoria, procedência e atendimento da nossa equipe do pedido ao drydown.</span></p></div>
         ${trustBar('list')}
 
         ${p.family ? `<div class="mt-2"><div class="family-seal"><span class="family-seal__icon">${icon('drop')}</span><span><small>Família olfativa</small><strong>${esc(p.family)}</strong></span></div></div>` : ''}
