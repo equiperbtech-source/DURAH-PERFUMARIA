@@ -995,3 +995,9 @@ h1, h2, h3, h4 { font-weight: 600; }
   .cats-marquee__track { animation: none !important; }
   .cats-marquee__group[aria-hidden] { display: none; }
 }
+
+/* Celular: sem foto no topo (a promoção logo abaixo já mostra o produto) */
+@media (max-width: 959px) {
+  .hero__art { display: none; }
+  .hero__inner { padding-bottom: 22px; }
+}
