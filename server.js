@@ -112,6 +112,7 @@ function normalizeSettings(s, cur) {
       payment: str(trust.payment, 80) || 'Pix, débito e crédito',
       installments: Math.min(24, Math.max(1, parseInt(trust.installments, 10) || 1)),
       shipping: str(trust.shipping, 80) || 'Postagem em até 1 dia útil',
+      backorder: str(trust.backorder, 40) || '5 dias úteis',
     },
     reviews: reviews.slice(0, 60).map((r) => ({
       id: str(r && r.id, 40) || 'r' + crypto.randomBytes(5).toString('hex'),

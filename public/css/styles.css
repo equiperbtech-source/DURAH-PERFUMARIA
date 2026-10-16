@@ -1001,3 +1001,13 @@ h1, h2, h3, h4 { font-weight: 600; }
   .hero__art { display: none; }
   .hero__inner { padding-bottom: 22px; }
 }
+
+/* ═══════════════ SOB ENCOMENDA ═══════════════ */
+.btn--backorder { background: transparent; color: var(--gold-2); border: 1px solid var(--gold); }
+.btn--backorder:hover { background: rgba(212,175,55,.12); }
+.card.is-soldout .card__media img { filter: brightness(.85); }
+.card__backorder { display: inline-flex; align-items: center; gap: 5px; font-size: 11.5px; color: var(--gold-2); }
+.card__backorder .i { width: 13px; height: 13px; }
+.variant.is-backorder em { color: var(--text-2); }
+.variant.is-backorder small { color: var(--gold-2); }
+.badge--warn { background: #C9822B; border-color: #C9822B; color: #fff; }

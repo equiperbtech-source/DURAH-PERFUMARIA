@@ -412,6 +412,7 @@ function renderSettings(body) {
         <div class="field"><label class="label" for="s-pay">Formas de pagamento</label><input class="input" id="s-pay" name="tPay" value="${esc(t.payment)}" maxlength="80"></div>
         <div class="field"><label class="label" for="s-inst">Parcelas sem juros (máx.)</label><input class="input" id="s-inst" name="tInst" type="number" min="1" max="24" value="${esc(t.installments)}"><p class="hint">Use 1 para não mostrar parcelamento.</p></div>
         <div class="field"><label class="label" for="s-ship">Prazo de envio</label><input class="input" id="s-ship" name="tShip" value="${esc(t.shipping)}" maxlength="80"></div>
+        <div class="field"><label class="label" for="s-back">Prazo “sob encomenda” (produto sem estoque)</label><input class="input" id="s-back" name="tBack" value="${esc(t.backorder)}" maxlength="40" placeholder="5 dias úteis"><p class="hint">Aparece no botão “Sob encomenda (…)” e na mensagem do WhatsApp.</p></div>
       </div>
     </section>
 
@@ -440,7 +441,7 @@ function renderSettings(body) {
       hours: fd.get('hours').trim(), city: fd.get('city').trim(),
       announcement: { active: !!fd.get('annActive'), text: fd.get('annText').trim() },
       banner: { active: !!fd.get('bActive'), productId: fd.get('bProduct') || '', tag: fd.get('bTag').trim(), title: fd.get('bTitle').trim(), text: fd.get('bText').trim(), cta: fd.get('bCta').trim(), link: fd.get('bLink'), image: img.get()[0] || '' },
-      trust: { authenticity: fd.get('tAuth').trim(), payment: fd.get('tPay').trim(), installments: parseInt(fd.get('tInst'), 10) || 1, shipping: fd.get('tShip').trim() },
+      trust: { authenticity: fd.get('tAuth').trim(), payment: fd.get('tPay').trim(), installments: parseInt(fd.get('tInst'), 10) || 1, shipping: fd.get('tShip').trim(), backorder: fd.get('tBack').trim() },
     };
     try { await store.saveSettings(out); await afterChange('Configurações salvas ✓'); } catch (err) { handleError(err); }
   });

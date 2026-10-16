@@ -72,18 +72,23 @@ export function guessProductByTitle(products, title) {
 
 // ─── Confiança (textos editáveis no painel → Banner & loja) ───
 export const DEFAULT_TRUST = {
+  backorder: '5 dias úteis',
   authenticity: 'Produtos 100% originais',
   payment: 'Pix, débito e crédito',
   installments: 10,
   shipping: 'Postagem em até 1 dia útil',
 };
+// prazo de "sob encomenda" (atualizado pela loja ao carregar as configurações)
+export const shop = { backorder: DEFAULT_TRUST.backorder };
+export const backorderLabel = () => `Sob encomenda (${shop.backorder})`;
+
 export const installmentText = (price, n) => (n > 1 && price > 0 ? `${n}x de R$ ${money(price / n)} sem juros` : '');
 export const stars = (n) => '★★★★★'.slice(0, Math.round(n)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(n));
 
 export function badges(p) {
   const b = [];
-  if (isSoldOut(p)) b.push(['Esgotado', 'off']);
-  else if (!fullAvailable(p)) b.push(['Só decants', 'warn']);
+  if (isSoldOut(p)) b.push(['Sob encomenda', 'warn']);
+  else if (!fullAvailable(p)) b.push(['Frasco sob encomenda', 'warn']);
   else if (isLastUnits(p)) b.push(['Últimas unidades', 'warn']);
   if (p.launch) b.push(['Lançamento', 'solid']);
   if (discount(p)) b.push([`-${discount(p)}%`, 'solid']);
@@ -98,6 +103,7 @@ export const waUrl = (num, msg) => `https://wa.me/${String(num || DEFAULT_WA).re
 
 export const msgProduct = (p, key = 'full') => {
   const v = getVariant(p, key);
+  if (!v.available) return msgBackorder(p, v);
   return `Olá, DURAH Perfumes e Importados! 👋✨
 Vim pelo catálogo e fiquei apaixonado(a) por esta fragrância:
 
@@ -109,6 +115,19 @@ Vim pelo catálogo e fiquei apaixonado(a) por esta fragrância:
 Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
 };
 
+// Produto sem estoque: pedido sob encomenda
+export const msgBackorder = (p, v) =>
+`Olá, DURAH Perfumes e Importados! 👋✨
+Vi no catálogo que esta fragrância está sem estoque e tenho interesse em encomendar:
+
+🖤 Perfume: ${p.name}
+🏷️ Marca: ${p.brand}
+📏 Tamanho: ${v.size}
+💰 Valor: R$ ${money(v.price)}
+📦 Sob encomenda (prazo de ${shop.backorder})
+
+Poderia me informar quando chegaria e como funciona o pagamento — é antecipado ou pago na chegada? Obrigado(a)!`;
+
 export const msgGeneral = () => 'Olá, DURAH Perfumes e Importados! 👋 Gostaria de ajuda para escolher o perfume ideal para mim. Pode me atender?';
 
 export const joinPt = (arr) => (arr.length <= 1 ? arr.join('') : arr.slice(0, -1).join(', ') + ' e ' + arr[arr.length - 1]);
@@ -118,11 +137,12 @@ export const msgHelp = (gender, notes, occasion) =>
   `Olá, DURAH! Estou procurando um perfume ${gender}, com notas ${notes}, para usar em ${occasion}. Pode me indicar algumas opções?`;
 
 export function msgList(items, intro = 'montei minha sacola') {
-  let total = 0;
+  let total = 0, hasBackorder = false;
   const lines = items.map(({ p, qty, v }, i) => {
     const vr = getVariant(p, v);
     const sub = vr.price * qty; total += sub;
-    return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${vr.size} · Qtd: ${qty} · 💰 R$ ${money(sub)}`;
+    if (!vr.available) hasBackorder = true;
+    return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${vr.size} · Qtd: ${qty} · 💰 R$ ${money(sub)}${vr.available ? '' : `\n    📦 Sob encomenda (${shop.backorder})`}`;
   });
   return `Olá, DURAH Perfumes e Importados! 👋✨
 Vim pelo catálogo e ${intro}:
@@ -131,7 +151,7 @@ ${lines.join('\n\n')}
 
 🧾 Total: R$ ${money(total)}
 
-Ainda estão disponíveis? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
+${hasBackorder ? 'Sobre os itens sob encomenda: quando chegariam e o pagamento é antecipado ou na chegada?\n' : ''}Ainda estão disponíveis? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
 }
 
 // ─── Toast ───

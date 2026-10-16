@@ -3,6 +3,7 @@ import {
   $, $$, esc, money, icon, toast, badges, bottleArt, productImages, finalPrice, discount, isSoldOut, isLastUnits, isArab, isDecant,
   waUrl, msgProduct, msgGeneral, msgHelp, msgList, joinPt, joinOr,
   variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
+  shop, backorderLabel,
   GENDERS, FAMILIES, LONGEVITY, LONGEVITY_HINT, PROJECTION, PROJECTION_HINT, SEASONS, OCCASIONS,
 } from './ui.js';
 
@@ -83,12 +84,13 @@ function card(p) {
         ${v.key !== 'full' ? `<span class="card__from">${esc(v.label)}</span>` : v.old ? `<span class="price-old">R$ ${money(v.old)}</span>` : ''}
         <span class="price">R$ ${money(v.price)}</span>
       </div>
+      ${sold ? `<span class="card__backorder">${icon('clock', 'i--sm')} Chega em ${esc(shop.backorder)}</span>` : ''}
       ${installmentText(v.price, trust().installments) ? `<span class="card__inst">ou ${installmentText(v.price, trust().installments)}</span>` : ''}
       ${hasDecants(p) && v.key === 'full' ? `<span class="card__decant">${icon('drop', 'i--sm')} Decant a partir de R$ ${money(minDecantPrice(p))}</span>` : ''}
     </div>
     <div class="card__actions">
-      <a class="btn btn--primary" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Consultar' : 'Comprar'}</a>
-      <button class="icon-btn" data-add="${p.id}" data-variant="${v.key}" aria-label="Adicionar à sacola" ${sold ? 'disabled' : ''}>${icon('bag')}</button>
+      <a class="btn ${sold ? 'btn--backorder' : 'btn--primary'}" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Sob encomenda' : 'Comprar'}</a>
+      <button class="icon-btn" data-add="${p.id}" data-variant="${v.key}" aria-label="Adicionar à sacola">${icon('bag')}</button>
     </div>
   </article>`;
 }
@@ -457,9 +459,9 @@ function pageProduct(slug) {
 
         ${hasDecants(p) ? `<fieldset class="variants">
           <legend class="label">Escolha o tamanho</legend>
-          <div class="variants__list">${variants(p).map((v) => `<label class="variant ${v.available ? '' : 'is-off'}">
-            <input type="radio" name="variant" value="${v.key}" ${v.key === sel.key ? 'checked' : ''} ${v.available ? '' : 'disabled'}>
-            <span><strong>${esc(v.label)}</strong><em>R$ ${money(v.price)}</em><small>${!v.available ? 'Esgotado' : v.key === 'full' ? 'Lacrado, original' : 'Fracionado do original'}</small></span>
+          <div class="variants__list">${variants(p).map((v) => `<label class="variant ${v.available ? '' : 'is-backorder'}">
+            <input type="radio" name="variant" value="${v.key}" ${v.key === sel.key ? 'checked' : ''}>
+            <span><strong>${esc(v.label)}</strong><em>R$ ${money(v.price)}</em><small>${!v.available ? 'Sob encomenda' : v.key === 'full' ? 'Lacrado, original' : 'Fracionado do original'}</small></span>
           </label>`).join('')}</div>
         </fieldset>` : ''}
 
@@ -468,7 +470,7 @@ function pageProduct(slug) {
         <div class="pinfo__buy">
           <a class="btn btn--primary btn--lg btn--block btn--wa" id="buyWa" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Comprar pelo WhatsApp</span></a>
           <div class="pinfo__buy-row">
-            <button class="btn btn--outline" id="buyAdd" data-add="${p.id}" data-variant="${sel.key}" ${sold ? 'disabled' : ''}>${icon('bag')} Adicionar à sacola</button>
+            <button class="btn btn--outline" id="buyAdd" data-add="${p.id}" data-variant="${sel.key}">${icon('bag')} Adicionar à sacola</button>
             <button class="icon-btn card__fav ${fav ? 'is-on' : ''}" style="position:static;width:46px;height:46px;border:1px solid var(--gold-line)" data-fav="${p.id}" aria-label="Lista de desejos" aria-pressed="${fav}">${icon('heart')}</button>
           </div>
         </div>
@@ -551,15 +553,18 @@ function pageProduct(slug) {
     $('#pPrice').innerHTML = `${v.old ? `<span class="price-old">R$ ${money(v.old)}</span><span class="price-off">-${Math.round((1 - v.price / v.old) * 100)}%</span>` : ''}
       <span class="price" style="width:100%">R$ ${money(v.price)}</span>`;
     $('#pInst').textContent = [installmentText(v.price, t.installments) && 'ou ' + installmentText(v.price, t.installments), t.payment].filter(Boolean).join(' · ');
-    $('#pStock').innerHTML = !v.available ? '<span class="dot dot--off"></span> Esgotado no momento — consulte reposição'
+    $('#pStock').innerHTML = !v.available ? `<span class="dot dot--warn"></span> Sem estoque · disponível sob encomenda em ${esc(shop.backorder)}`
       : v.key === 'full' && isLastUnits(p) ? '<span class="dot dot--warn"></span> Últimas unidades em estoque'
       : `<span class="dot"></span> Disponível · ${esc(t.shipping)}`;
-    const label = v.available ? (v.key === 'full' ? 'Comprar pelo WhatsApp' : `Comprar ${v.label}`) : 'Consultar pelo WhatsApp';
+    const label = v.available ? (v.key === 'full' ? 'Comprar pelo WhatsApp' : `Comprar ${v.label}`) : backorderLabel();
     $('#buyWa').href = $('#buyWa2').href = wa(msgProduct(p, v.key));
     $('#buyWa span').textContent = label;
-    $('#buyWa2 span').textContent = v.available ? 'Comprar' : 'Consultar';
+    $('#buyWa2 span').textContent = v.available ? 'Comprar' : 'Sob encomenda';
+    $('#buyWa').classList.toggle('btn--backorder', !v.available); $('#buyWa').classList.toggle('btn--primary', v.available);
+    $('#buyWa2').classList.toggle('btn--backorder', !v.available); $('#buyWa2').classList.toggle('btn--primary', v.available);
     $('#bbPrice').textContent = `R$ ${money(v.price)}`;
-    const add = $('#buyAdd'); add.dataset.variant = v.key; add.disabled = !v.available;
+    const add = $('#buyAdd'); add.dataset.variant = v.key; add.disabled = false;
+    add.lastChild.textContent = v.available ? ' Adicionar à sacola' : ' Encomendar na sacola';
   };
   applyVariant(sel.key);
   $$('input[name="variant"]').forEach((r) => r.addEventListener('change', () => applyVariant(r.value)));
@@ -584,7 +589,7 @@ function productLd(p, imgs) {
     description: p.description, image: imgs.filter((i) => !i.startsWith('data:')).map((i) => new URL(i, location.href).href),
     category: 'Perfume', offers: {
       '@type': 'Offer', priceCurrency: 'BRL', price: finalPrice(p).toFixed(2),
-      availability: isSoldOut(p) ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      availability: isSoldOut(p) ? 'https://schema.org/BackOrder' : 'https://schema.org/InStock',
       url: location.href,
     },
   };
@@ -669,11 +674,10 @@ function updateCounts() {
 function addToCart(id, key) {
   const p = byId(id); if (!p) return;
   const v = key ? getVariant(p, key) : defaultVariant(p);
-  if (!v.available) return toast('Este tamanho está esgotado no momento.', true);
   const it = S.cart.find((i) => i.id === id && (i.v || 'full') === v.key);
-  const max = v.key === 'full' ? Math.max(1, p.stock || 99) : 99;
+  const max = v.key === 'full' && v.available ? Math.max(1, p.stock || 99) : 99;
   if (it) it.qty = Math.min(it.qty + 1, max); else S.cart.push({ id, v: v.key, qty: 1 });
-  saveCart(); toast(`${v.key === 'full' ? 'Frasco' : v.label} adicionado à sacola ✓`);
+  saveCart(); toast(v.available ? `${v.key === 'full' ? 'Frasco' : v.label} adicionado à sacola ✓` : `Adicionado sob encomenda (${shop.backorder}) ✓`);
   if ($('#drawer').classList.contains('is-open')) renderDrawer();
 }
 function toggleFav(id) {
@@ -705,7 +709,7 @@ function renderDrawer() {
     const total = items.reduce((a, { p, qty, v }) => a + getVariant(p, v).price * qty, 0);
     body.innerHTML = items.map(({ p, qty, v }, i) => { const vr = getVariant(p, v); return `<div class="line-item">
       <img src="${esc(productImages(p)[0])}" alt="" loading="lazy">
-      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta"><span class="line-item__variant">${esc(vr.label)}</span> · R$ ${money(vr.price)}</div>${!vr.available ? '<span class="badge badge--off mt-1">Esgotado</span>' : ''}</div>
+      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta"><span class="line-item__variant">${esc(vr.label)}</span> · R$ ${money(vr.price)}</div>${!vr.available ? `<span class="badge badge--warn mt-1">Sob encomenda · ${esc(shop.backorder)}</span>` : ''}</div>
       <div class="line-item__right">
         <div class="qty"><button data-qty="${i}" data-d="-1" aria-label="Diminuir">${icon('minus')}</button><span>${qty}</span><button data-qty="${i}" data-d="1" aria-label="Aumentar">${icon('plus')}</button></div>
         <button class="link-btn" data-remove="${i}">Remover</button>
@@ -724,7 +728,7 @@ function renderDrawer() {
       <img src="${esc(productImages(p)[0])}" alt="" loading="lazy">
       <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta">${esc(defaultVariant(p).label)} · R$ ${money(defaultVariant(p).price)}</div></div>
       <div class="line-item__right">
-        <button class="btn btn--outline btn--sm" data-add="${p.id}" ${isSoldOut(p) ? 'disabled' : ''}>${icon('bag', 'i--sm')}</button>
+        <button class="btn btn--outline btn--sm" data-add="${p.id}">${icon('bag', 'i--sm')}</button>
         <button class="link-btn" data-unfav="${p.id}">Remover</button>
       </div>
     </div>`).join('');
@@ -750,6 +754,7 @@ function applySettings() {
   const ann = $('#announce');
   ann.hidden = !(st.announcement && st.announcement.active && st.announcement.text);
   ann.innerHTML = `<span>${esc(st.announcement?.text || '')}</span>`;
+  shop.backorder = (st.trust && st.trust.backorder) || DEFAULT_TRUST.backorder;
   $('#waFloat').href = wa(msgGeneral());
   $('#headerWa').href = wa(msgGeneral());
   $('#footerContact').innerHTML = `
@@ -809,7 +814,7 @@ document.addEventListener('click', (e) => {
   else if (t.dataset.qty !== undefined) {
     const it = S.cart[+t.dataset.qty]; const p = it && byId(it.id);
     if (it && p) {
-      const max = (it.v || 'full') === 'full' ? Math.max(1, p.stock || 99) : 99;
+      const max = (it.v || 'full') === 'full' && getVariant(p, 'full').available ? Math.max(1, p.stock || 99) : 99;
       it.qty = Math.max(1, Math.min(it.qty + +t.dataset.d, max)); saveCart(); renderDrawer();
     }
   } else if (t.dataset.remove !== undefined) { S.cart.splice(+t.dataset.remove, 1); saveCart(); renderDrawer(); }
