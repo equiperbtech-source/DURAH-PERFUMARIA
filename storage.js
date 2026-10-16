@@ -1,5 +1,6 @@
 /**
  * Armazenamento do catálogo e das fotos.
+ *  - "supabase": Supabase (tabela store_data + bucket de fotos) quando SUPABASE_URL e a chave secreta existem.
  *  - "blob": Vercel Blob (quando BLOB_READ_WRITE_TOKEN existe) — persistente, ideal para a Vercel.
  *  - "disk": pasta local DATA_DIR — para VPS, Render, Railway, Docker ou uso local.
  *  - "temp": disco temporário (/tmp) — usado na Vercel sem Blob configurado; as alterações se perdem.
@@ -92,7 +93,59 @@ function blobStorage() {
   };
 }
 
+function supabaseStorage(baseUrl, key) {
+  const base = baseUrl.replace(/\/+$/, '');
+  const bucket = process.env.SUPABASE_BUCKET || 'produtos';
+  const publicPrefix = `${base}/storage/v1/object/public/${bucket}/`;
+  // chaves antigas (JWT "eyJ...") vão também no Authorization; as novas (sb_secret_...) só no apikey
+  const headers = (extra = {}) => ({ apikey: key, ...(key.startsWith('eyJ') ? { Authorization: `Bearer ${key}` } : {}), ...extra });
+  let cache = null, cachedAt = 0;
+
+  async function call(path, opts = {}) {
+    const r = await fetch(base + path, { ...opts, headers: headers(opts.headers) });
+    if (!r.ok) {
+      const body = await r.text().catch(() => '');
+      throw new Error(`Supabase ${opts.method || 'GET'} ${path.split('?')[0]} falhou (${r.status}): ${body.slice(0, 300)}`);
+    }
+    return r;
+  }
+
+  return {
+    kind: 'supabase',
+    async load(fresh = false) {
+      if (!fresh && cache && Date.now() - cachedAt < CACHE_MS) return cache;
+      const rows = await (await call('/rest/v1/store_data?id=eq.main&select=data', { headers: { Accept: 'application/json' } })).json();
+      if (!rows.length || !rows[0].data) { cache = readSeed(); await this.save(cache); return cache; }
+      cache = rows[0].data; cachedAt = Date.now();
+      return cache;
+    },
+    async save(db) {
+      await call('/rest/v1/store_data?on_conflict=id', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify([{ id: 'main', data: db, updated_at: new Date().toISOString() }]),
+      });
+      cache = db; cachedAt = Date.now();
+    },
+    async saveImage(buf, ext, contentType) {
+      const name = `${Date.now().toString(36)}-${crypto.randomBytes(5).toString('hex')}.${ext}`;
+      await call(`/storage/v1/object/${bucket}/${name}`, {
+        method: 'POST', body: buf,
+        headers: { 'Content-Type': contentType, 'Cache-Control': 'max-age=31536000', 'x-upsert': 'false' },
+      });
+      return publicPrefix + name;
+    },
+    async removeImage(url) {
+      if (!url.startsWith(publicPrefix)) return;
+      await call(`/storage/v1/object/${bucket}/${url.slice(publicPrefix.length)}`, { method: 'DELETE' }).catch((e) => console.error(e.message));
+    },
+  };
+}
+
 function createStorage() {
+  const sbUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const sbKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY;
+  if (sbUrl && sbKey) return supabaseStorage(sbUrl, sbKey);
   if (process.env.BLOB_READ_WRITE_TOKEN) {
     try { return blobStorage(); }
     catch (e) { console.error('Falha ao iniciar o Vercel Blob, usando /tmp:', e); return diskStorage('/tmp/durah-data', 'temp'); }

@@ -24,17 +24,36 @@ Se `ADMIN_PASSWORD` não for definida, a senha padrão é `durah2026`. **Troque 
 
 ## Publicar
 
-### Vercel (recomendado)
-Na Vercel o disco do servidor é somente leitura, então o catálogo e as fotos ficam no **Vercel Blob**.
+### Onde ficam produtos e fotos
+
+O app escolhe sozinho, nesta ordem:
+1. **Supabase**, se `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` existirem (recomendado).
+2. **Vercel Blob**, se `BLOB_READ_WRITE_TOKEN` existir.
+3. **Disco** (`DATA_DIR`) fora da Vercel, ou **temporário** na Vercel sem nenhum dos dois.
+
+### Supabase (recomendado)
+1. Crie um projeto em [supabase.com](https://supabase.com).
+2. Abra **SQL Editor → New query**, cole o conteúdo de [`supabase/schema.sql`](supabase/schema.sql) e clique em **Run**. Isso cria a tabela `store_data` (protegida por RLS) e o bucket público `produtos` para as fotos.
+3. Em **Project Settings → API**, copie:
+   - **Project URL** → variável `SUPABASE_URL`
+   - **service_role** (ou a *secret key* `sb_secret_...`) → variável `SUPABASE_SERVICE_ROLE_KEY`
+4. Coloque as duas variáveis na hospedagem (na Vercel: **Settings → Environment Variables**) e faça um novo deploy.
+
+> A chave secreta fica **só no servidor**. Nunca coloque essa chave no código do site nem a compartilhe.
+
+No primeiro acesso, os 6 perfumes de exemplo são gravados no Supabase. O que você alterar no painel fica salvo lá, e as fotos vão para o bucket `produtos`.
+
+### Vercel
+Na Vercel o disco do servidor é somente leitura, então use o **Supabase** (acima) ou o **Vercel Blob** para guardar o catálogo e as fotos.
 
 1. Importe este repositório na Vercel. As configurações já estão no `vercel.json`: o site sai de `public/` e a API roda em `api/index.js`. Não altere o *Framework Preset*.
-2. No projeto, abra **Storage → Create Database → Blob**. Escolha acesso **Public** e conecte o Blob ao projeto. A variável `BLOB_READ_WRITE_TOKEN` é criada automaticamente.
+2. Armazenamento: configure o Supabase (seção acima). Se preferir o Blob, abra **Storage → Create Database → Blob**, escolha acesso **Public** e conecte ao projeto. A variável `BLOB_READ_WRITE_TOKEN` é criada automaticamente.
 3. Em **Settings → Environment Variables**, adicione:
    - `ADMIN_PASSWORD`: a senha do painel
    - `SESSION_SECRET`: um texto longo e aleatório
 4. Em **Deployments**, clique em **Redeploy**.
 
-No primeiro acesso, os 6 perfumes de exemplo são gravados no Blob. Sem o Blob conectado, o site funciona, mas o painel mostra um aviso vermelho e as alterações se perdem.
+Sem Supabase nem Blob, o site funciona, mas o painel mostra um aviso vermelho e as alterações se perdem.
 
 ### Outros serviços
 
@@ -63,7 +82,8 @@ A pasta `public/` também funciona sozinha (GitHub Pages, Netlify etc.) em **mod
 
 ```
 server.js            API (login, produtos, upload, configurações) + arquivos estáticos
-storage.js           armazenamento: Vercel Blob, disco ou temporário
+storage.js           armazenamento: Supabase, Vercel Blob, disco ou temporário
+supabase/schema.sql  tabela e bucket para o Supabase
 public/index.html    página única (SPA) com SEO
 public/css/          estilos
 public/js/app.js     loja (rotas, catálogo, produto, sacola)
