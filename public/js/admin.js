@@ -2,6 +2,7 @@ import { store, optimizeImage } from './store.js';
 import {
   $, $$, esc, money, icon, toast, productImages, finalPrice, isSoldOut, DEFAULT_TRUST, stars, guessProductByTitle,
   PRODUCT_TYPES, VS_KINDS, SCENT_PROFILE, INTENSITY, productType, isPerfume, typeLabel,
+  KIT_VARIANTS, isKit, variants,
   CONCENTRATIONS, GENDERS, FAMILIES, LONGEVITY, PROJECTION, SEASONS, OCCASIONS, VOLUMES, ORIGINS, NICHE_HOUSES, TAG_SUGGESTIONS,
 } from './ui.js';
 
@@ -242,7 +243,8 @@ function renderForm(body, p) {
       <div class="form-grid form-grid--2">
         <div class="field"><label class="label" for="f-type">Tipo de produto</label>
           <select class="input" id="f-type" name="type">${PRODUCT_TYPES.map(([v, l]) => `<option value="${v}" ${productType(p) === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>
-          <p class="hint" data-only="simple">Ficha simples: sem pirâmide, referências ou decants — só “Como é o cheiro”.</p></div>
+          <p class="hint" data-only="simple">Ficha simples: sem pirâmide, referências ou decants — só “Como é o cheiro”.</p>
+          <p class="hint" data-only="kit">Monte o kit na seção “Itens do kit” abaixo e defina o preço do combo.</p></div>
         <div class="field" data-only="vs"><label class="label" for="f-vskind">Linha</label>
           <select class="input" id="f-vskind" name="vsKind">${VS_KINDS.map(([v, l]) => `<option value="${v}" ${(p.vsKind || 'body-splash') === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
       </div>
@@ -255,10 +257,10 @@ function renderForm(body, p) {
         <div class="field"><label class="label" for="f-promo">Preço promocional (R$)</label><input class="input" id="f-promo" name="promoPrice" type="number" step="0.01" min="0" inputmode="decimal" value="${p.promoPrice ?? ''}" placeholder="Opcional"></div>
         <div class="field" data-only="perfume"><label class="label" for="f-d5">Preço decant 5ml (R$)</label><input class="input" id="f-d5" name="decant5Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant5Price ?? ''}" placeholder="Vazio = não vende"></div>
         <div class="field" data-only="perfume"><label class="label" for="f-d10">Preço decant 10ml (R$)</label><input class="input" id="f-d10" name="decant10Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant10Price ?? ''}" placeholder="Vazio = não vende"></div>
-        <div class="field"><label class="label" for="f-vol">Tamanho / volume</label><input class="input" id="f-vol" name="volume" list="dl-vol" value="${esc(p.volume)}" placeholder="Ex.: 100ml"></div>
+        <div class="field" data-hide="kit"><label class="label" for="f-vol">Tamanho / volume</label><input class="input" id="f-vol" name="volume" list="dl-vol" value="${esc(p.volume)}" placeholder="Ex.: 100ml"></div>
         <div class="field" data-only="perfume"><label class="label" for="f-conc">Concentração</label><select class="input" id="f-conc" name="concentration">${opt(CONCENTRATIONS, p.concentration)}</select></div>
         <div class="field"><label class="label" for="f-gender">Gênero</label><select class="input" id="f-gender" name="gender">${opt(GENDERS, p.gender)}</select></div>
-        <div class="field"><label class="label" for="f-origin">Origem</label><input class="input" id="f-origin" name="origin" list="dl-origin" value="${esc(p.origin)}" placeholder="Ex.: França"></div>
+        <div class="field" data-hide="kit"><label class="label" for="f-origin">Origem</label><input class="input" id="f-origin" name="origin" list="dl-origin" value="${esc(p.origin)}" placeholder="Ex.: França"></div>
         <div class="field"><label class="label" for="f-stock">Estoque (quantidade)</label><input class="input" id="f-stock" name="stock" type="number" min="0" step="1" inputmode="numeric" value="${p.stock ?? 0}"></div>
         <div class="field"><label class="label" for="f-status">Status</label><select class="input" id="f-status" name="status"><option value="disponivel" ${p.status !== 'esgotado' ? 'selected' : ''}>Disponível</option><option value="esgotado" ${p.status === 'esgotado' ? 'selected' : ''}>Esgotado</option></select></div>
       </div>
@@ -271,6 +273,16 @@ function renderForm(body, p) {
     <section class="fsection"><h2>${icon('sparkles')} Descrição</h2>
       <div class="field"><label class="label" for="f-desc">Descrição geral (storytelling do perfume)</label>
         <textarea class="input" id="f-desc" name="description" rows="7" placeholder="Conte a história da fragrância: abertura, acorde principal, drydown, sillage…">${esc(p.description)}</textarea></div>
+    </section>
+
+    <section class="fsection" data-only="kit"><h2>${icon('box')} Itens do kit</h2>
+      <div id="f-kit"></div>
+      <div class="kit-actions">
+        <button type="button" class="btn btn--outline btn--sm" id="addKitItem">${icon('plus', 'i--sm')} Adicionar produto do catálogo</button>
+        <button type="button" class="btn btn--ghost btn--sm" id="addKitFree">${icon('plus', 'i--sm')} Item avulso (ex.: necessaire, brinde)</button>
+      </div>
+      <div class="kit-sum" id="kitSum"></div>
+      <p class="hint">Escolha os produtos e o tamanho de cada um (frasco, decant 5ml ou decant 10ml). O site calcula o “valor separado” e mostra ao cliente quanto ele economiza com o preço do kit definido em “Preço (R$)”.</p>
     </section>
 
     <section class="fsection" data-only="simple"><h2>${icon('sparkles')} Como é o cheiro</h2>
@@ -347,10 +359,50 @@ function renderForm(body, p) {
   (p.references && p.references.length ? p.references : [{}]).forEach(addRefRow);
   $('#addRef').addEventListener('click', () => addRefRow());
 
+  // ─── itens do kit ───
+  const kitEl = $('#f-kit');
+  const itemProducts = data.products.filter((x) => !isKit(x) && x.id !== p.id);
+  const unitPrice = (pid, vkey) => { const pr = itemProducts.find((x) => x.id === pid); if (!pr) return 0; const v = variants(pr).find((x) => x.key === vkey); return v ? v.price : 0; };
+  const updateKitSum = () => {
+    let sum = 0;
+    $$('.kit-row', kitEl).forEach((row) => {
+      const pid = $('[data-k=product]', row)?.value, vk = $('[data-k=variant]', row)?.value, q = parseInt($('[data-k=qty]', row).value, 10) || 1;
+      const u = pid ? unitPrice(pid, vk) : 0; sum += u * q;
+      const pr = $('[data-k=price]', row); if (pr) pr.textContent = pid ? (u ? `R$ ${money(u * q)}` : 'tamanho indisponível') : 'incluso';
+    });
+    const kitPrice = parseFloat($('#f-promo').value) || parseFloat($('#f-price').value) || 0;
+    $('#kitSum').innerHTML = sum ? `Valor separado: <strong>R$ ${money(sum)}</strong>${kitPrice ? ` · Preço do kit: <strong>R$ ${money(kitPrice)}</strong> · ${kitPrice < sum ? `<span class="gold">cliente economiza R$ ${money(sum - kitPrice)}</span>` : '<span style="color:var(--danger)">o kit está mais caro que os itens separados</span>'}` : ''}` : '';
+  };
+  const addKitRow = (it = {}) => {
+    const row = document.createElement('div');
+    const free = it.free || (!it.productId && it.name);
+    row.className = 'kit-row' + (free ? ' kit-row--free' : '');
+    row.innerHTML = free
+      ? `<input class="input" data-k="name" placeholder="Ex.: Necessaire DURAH" value="${esc(it.name || '')}">
+         <input class="input" data-k="qty" type="number" min="1" max="20" value="${it.qty || 1}" aria-label="Quantidade">
+         <span class="kit-row__price" data-k="price">incluso</span>
+         <button type="button" class="icon-btn" aria-label="Remover">${icon('trash')}</button>`
+      : `<select class="input" data-k="product"><option value="">Escolha o produto…</option>${itemProducts.map((x) => `<option value="${esc(x.id)}" ${x.id === it.productId ? 'selected' : ''}>${esc(x.name)}${x.brand ? ' — ' + esc(x.brand) : ''}</option>`).join('')}</select>
+         <select class="input" data-k="variant">${KIT_VARIANTS.map(([v, l]) => `<option value="${v}" ${v === (it.variant || 'full') ? 'selected' : ''}>${l}</option>`).join('')}</select>
+         <input class="input" data-k="qty" type="number" min="1" max="20" value="${it.qty || 1}" aria-label="Quantidade">
+         <span class="kit-row__price" data-k="price"></span>
+         <button type="button" class="icon-btn" aria-label="Remover">${icon('trash')}</button>`;
+    $('button', row).addEventListener('click', () => { row.remove(); updateKitSum(); });
+    row.addEventListener('input', updateKitSum); row.addEventListener('change', updateKitSum);
+    kitEl.appendChild(row); updateKitSum();
+  };
+  (p.kitItems || []).forEach(addKitRow);
+  $('#addKitItem').addEventListener('click', () => addKitRow());
+  $('#addKitFree').addEventListener('click', () => addKitRow({ free: true }));
+  $('#f-price').addEventListener('input', updateKitSum); $('#f-promo').addEventListener('input', updateKitSum);
+
   const syncType = () => {
     const t = $('#f-type').value;
     $$('[data-only="perfume"]', body).forEach((el) => { el.hidden = t !== 'perfume'; });
-    $$('[data-only="simple"]', body).forEach((el) => { el.hidden = t === 'perfume'; });
+    $$('[data-only="simple"]', body).forEach((el) => { el.hidden = !['body-spray', 'victorias-secret'].includes(t); });
+    $$('[data-only="kit"]', body).forEach((el) => { el.hidden = t !== 'kit'; });
+    $$('[data-hide="kit"]', body).forEach((el) => { el.hidden = t === 'kit'; });
+    if (t === 'kit' && !$$('.kit-row', kitEl).length) { addKitRow(); addKitRow(); }
     $$('[data-only="vs"]', body).forEach((el) => { el.hidden = t !== 'victorias-secret'; });
     if (t === 'victorias-secret' && !$('#f-brand').value.trim()) $('#f-brand').value = "Victoria's Secret";
   };
@@ -371,7 +423,12 @@ function renderForm(body, p) {
       name: fd.get('name').trim(), brand: fd.get('brand').trim(),
       price: parseFloat(fd.get('price')), promoPrice: promo || null,
       type: fd.get('type'), vsKind: fd.get('type') === 'victorias-secret' ? fd.get('vsKind') : '',
-      scentProfile: fd.get('type') === 'perfume' ? [] : fd.getAll('scentProfile'), intensity: fd.get('type') === 'perfume' ? '' : fd.get('intensity'),
+      scentProfile: ['body-spray', 'victorias-secret'].includes(fd.get('type')) ? fd.getAll('scentProfile') : [],
+      intensity: ['body-spray', 'victorias-secret'].includes(fd.get('type')) ? fd.get('intensity') : '',
+      kitItems: fd.get('type') === 'kit' ? $$('.kit-row', kitEl).map((row) => row.classList.contains('kit-row--free')
+        ? { name: $('[data-k=name]', row).value.trim(), qty: parseInt($('[data-k=qty]', row).value, 10) || 1 }
+        : { productId: $('[data-k=product]', row).value, variant: $('[data-k=variant]', row).value, qty: parseInt($('[data-k=qty]', row).value, 10) || 1 })
+        .filter((i) => i.productId || i.name) : [],
       decant5Price: fd.get('type') === 'perfume' ? (parseFloat(fd.get('decant5Price')) || null) : null,
       decant10Price: fd.get('type') === 'perfume' ? (parseFloat(fd.get('decant10Price')) || null) : null,
       volume: fd.get('volume').trim().replace(/\s+/g, '').replace(/ML$/i, 'ml'),
@@ -389,6 +446,8 @@ function renderForm(body, p) {
       niche: !!fd.get('niche'), launch: !!fd.get('launch'), decant: !!fd.get('decant'),
     };
     if (out.stock <= 0 && out.status === 'disponivel') out.status = 'esgotado';
+    if (out.type === 'kit') { out.volume = ''; out.origin = ''; }
+    if (out.type === 'kit' && !out.kitItems.length) { toast('Adicione pelo menos um item ao kit.', true); return; }
     const btn = f.querySelector('[type=submit]'); btn.disabled = true;
     try {
       await store.saveProduct(out);

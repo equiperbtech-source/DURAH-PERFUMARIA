@@ -28,13 +28,16 @@ export const isArab = (p) => /emirad|árab|arab|dubai|omã|oma\b|catar|kuwait|sa
 
 // ─── Tipos de produto ───
 // Perfume: ficha completa (pirâmide, referências, decants…). Body Spray e Victoria's Secret: ficha simples (só "como é o cheiro").
-export const PRODUCT_TYPES = [['perfume', 'Perfume'], ['body-spray', 'Body Spray'], ['victorias-secret', "Victoria's Secret"]];
+export const PRODUCT_TYPES = [['perfume', 'Perfume'], ['body-spray', 'Body Spray'], ['victorias-secret', "Victoria's Secret"], ['kit', 'Kit / Combo']];
+export const KIT_VARIANTS = [['full', 'Frasco'], ['d5', 'Decant 5ml'], ['d10', 'Decant 10ml']];
 export const VS_KINDS = [['body-splash', 'Body Splash'], ['creme', 'Creme']];
 export const SCENT_PROFILE = [['Doce', '🍬'], ['Frutado', '🍓'], ['Floral', '🌸'], ['Fresco', '🌿'], ['Cítrico', '🍋'], ['Baunilha', '🍦'], ['Gourmand', '🍫'], ['Amadeirado', '🪵'], ['Almiscarado', '🤍'], ['Aquático', '🌊'], ['Especiado', '🌶️']];
 export const INTENSITY = ['Suave', 'Moderado', 'Marcante'];
 export const productType = (p) => p.type || 'perfume';
 export const isPerfume = (p) => productType(p) === 'perfume';
-export const typeLabel = (p) => productType(p) === 'victorias-secret' ? (p.vsKind === 'creme' ? 'Creme' : 'Body Splash') : productType(p) === 'body-spray' ? 'Body Spray' : 'Perfume';
+export const isKit = (p) => productType(p) === 'kit';
+export const isSimple = (p) => ['body-spray', 'victorias-secret'].includes(productType(p));
+export const typeLabel = (p) => isKit(p) ? 'Kit' : productType(p) === 'victorias-secret' ? (p.vsKind === 'creme' ? 'Creme' : 'Body Splash') : productType(p) === 'body-spray' ? 'Body Spray' : 'Perfume';
 const SCENT_ADJ = { Baunilha: 'baunilhado' };
 export const scentAdjective = (name) => SCENT_ADJ[name] || name.toLowerCase();
 export const scentEmoji = (name) => (SCENT_PROFILE.find(([n]) => n === name) || [, '✦'])[1];
@@ -43,7 +46,8 @@ export const scentEmoji = (name) => (SCENT_PROFILE.find(([n]) => n === name) || 
 // O frasco usa preço/estoque/status do produto; os decants existem quando o preço deles está preenchido.
 export const fullAvailable = (p) => p.status !== 'esgotado' && Number(p.stock) > 0;
 export function variants(p) {
-  const list = [{ key: 'full', label: p.volume ? `Frasco ${p.volume}` : 'Frasco completo', size: p.volume || 'Frasco completo', price: finalPrice(p), old: discount(p) ? p.price : null, available: fullAvailable(p) }];
+  const kitN = isKit(p) ? (p.kitItems || []).reduce((a, i) => a + (Number(i.qty) || 1), 0) : 0;
+  const list = [{ key: 'full', label: isKit(p) ? 'Kit completo' : p.volume ? `Frasco ${p.volume}` : 'Frasco completo', size: isKit(p) ? `Kit com ${kitN} ${kitN === 1 ? 'item' : 'itens'}` : p.volume || 'Frasco completo', price: finalPrice(p), old: discount(p) ? p.price : null, available: fullAvailable(p) }];
   if (isPerfume(p) && Number(p.decant5Price) > 0) list.push({ key: 'd5', label: 'Decant 5ml', size: 'Decant 5ml', price: Number(p.decant5Price), old: null, available: true });
   if (isPerfume(p) && Number(p.decant10Price) > 0) list.push({ key: 'd10', label: 'Decant 10ml', size: 'Decant 10ml', price: Number(p.decant10Price), old: null, available: true });
   return list;
@@ -92,7 +96,22 @@ export const DEFAULT_TRUST = {
   shipping: 'Postagem em até 1 dia útil',
 };
 // prazo de "sob encomenda" (atualizado pela loja ao carregar as configurações)
-export const shop = { backorder: DEFAULT_TRUST.backorder };
+export const shop = { backorder: DEFAULT_TRUST.backorder, products: [] };
+
+// ─── Kits: resolve os itens com o catálogo atual ───
+export function kitItems(p) {
+  return (p.kitItems || []).map((it) => {
+    const prod = it.productId ? shop.products.find((x) => x.id === it.productId) : null;
+    const qty = Math.max(1, Number(it.qty) || 1);
+    if (!prod) return { prod: null, qty, label: it.name || 'Item', unit: 0, variantLabel: '' };
+    const v = variants(prod).find((x) => x.key === it.variant) || variants(prod)[0];
+    const variantLabel = v.key === 'full' ? (prod.volume ? `Frasco ${prod.volume}` : typeLabel(prod)) : v.label;
+    return { prod, qty, label: prod.name, variantLabel, unit: v.price };
+  });
+}
+export const kitSeparatePrice = (p) => kitItems(p).reduce((a, i) => a + i.unit * i.qty, 0);
+export const kitSavings = (p) => Math.max(0, Math.round((kitSeparatePrice(p) - finalPrice(p)) * 100) / 100);
+const kitLines = (p) => kitItems(p).map((i) => `• ${i.qty > 1 ? i.qty + 'x ' : ''}${i.label}${i.variantLabel ? ' — ' + i.variantLabel : ''}`).join('\n');
 export const backorderLabel = () => `Sob encomenda (${shop.backorder})`;
 
 export const installmentText = (price, n) => (n > 1 && price > 0 ? `${n}x de R$ ${money(price / n)} sem juros` : '');
@@ -117,6 +136,15 @@ export const waUrl = (num, msg) => `https://wa.me/${String(num || DEFAULT_WA).re
 export const msgProduct = (p, key = 'full') => {
   const v = getVariant(p, key);
   if (!v.available) return msgBackorder(p, v);
+  if (isKit(p)) return `Olá, DURAH Perfumes e Importados! 👋✨
+Vim pelo catálogo e quero este kit:
+
+🎁 Kit: ${p.name}
+📦 Itens:
+${kitLines(p)}
+💰 Valor do kit: R$ ${money(v.price)}${kitSavings(p) ? ` (economia de R$ ${money(kitSavings(p))})` : ''}
+
+Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
   return `Olá, DURAH Perfumes e Importados! 👋✨
 Vim pelo catálogo e fiquei apaixonado(a) por esta fragrância:
 
@@ -133,9 +161,7 @@ export const msgBackorder = (p, v) =>
 `Olá, DURAH Perfumes e Importados! 👋✨
 Vi no catálogo que esta fragrância está sem estoque e tenho interesse em encomendar:
 
-🖤 Perfume: ${p.name}
-🏷️ Marca: ${p.brand}
-📏 Tamanho: ${v.size}
+${isKit(p) ? `🎁 Kit: ${p.name}\n📦 Itens:\n${kitLines(p)}` : `🖤 Perfume: ${p.name}\n🏷️ Marca: ${p.brand}\n📏 Tamanho: ${v.size}`}
 💰 Valor: R$ ${money(v.price)}
 📦 Sob encomenda (prazo de ${shop.backorder})
 
@@ -155,6 +181,7 @@ export function msgList(items, intro = 'montei minha sacola') {
     const vr = getVariant(p, v);
     const sub = vr.price * qty; total += sub;
     if (!vr.available) hasBackorder = true;
+    if (isKit(p)) return `${i + 1}) 🎁 ${p.name} · Qtd: ${qty} · 💰 R$ ${money(sub)}\n${kitLines(p).replace(/^/gm, '    ')}${vr.available ? '' : `\n    📦 Sob encomenda (${shop.backorder})`}`;
     return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${vr.size} · Qtd: ${qty} · 💰 R$ ${money(sub)}${vr.available ? '' : `\n    📦 Sob encomenda (${shop.backorder})`}`;
   });
   return `Olá, DURAH Perfumes e Importados! 👋✨
@@ -237,4 +264,8 @@ ${caps[cap]}
   return uri;
 }
 
-export const productImages = (p) => (p.images && p.images.length ? p.images : [bottleArt(p)]);
+export const productImages = (p) => {
+  if (p.images && p.images.length) return p.images;
+  if (isKit(p)) { const first = kitItems(p).find((i) => i.prod); if (first) return productImages(first.prod); }
+  return [bottleArt(p)];
+};

@@ -4,6 +4,7 @@ import {
   waUrl, msgProduct, msgGeneral, msgHelp, msgList, joinPt, joinOr,
   variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
   productType, isPerfume, typeLabel, scentEmoji, scentAdjective, INTENSITY,
+  isKit, isSimple, kitItems, kitSeparatePrice, kitSavings,
   shop, backorderLabel,
   GENDERS, FAMILIES, LONGEVITY, LONGEVITY_HINT, PROJECTION, PROJECTION_HINT, SEASONS, OCCASIONS,
 } from './ui.js';
@@ -30,6 +31,7 @@ export const CATS = [
   { id: 'nicho', label: 'Nicho', icon: 'gem', desc: 'Perfumaria autoral', test: (p) => p.niche },
   { id: 'decants', label: 'Decants/Miniaturas', icon: 'drop', desc: 'Prove antes do frasco', test: isDecant },
   { id: 'lancamentos', label: 'Lançamentos', icon: 'star', desc: 'Acabaram de chegar', test: (p) => p.launch },
+  { id: 'kits', label: 'Kits', icon: 'box', desc: 'Combos com economia', test: isKit },
   { id: 'body-spray', label: 'Body Spray', icon: 'wind', desc: 'Leves para o dia a dia', test: (p) => productType(p) === 'body-spray' },
   { id: 'victorias-secret', label: "Victoria's Secret", icon: 'heart', desc: 'Body splashs e cremes', test: (p) => productType(p) === 'victorias-secret' },
 ];
@@ -71,6 +73,14 @@ function reviewsSection(list, title = 'Quem comprou, recomenda') {
   </div>`;
 }
 
+function mediaHtml(p, alt, attrs = '') {
+  const items = isKit(p) && !(p.images && p.images.length) ? kitItems(p).filter((i) => i.prod) : [];
+  if (items.length >= 2) {
+    return `<div class="kit-collage kit-collage--${Math.min(items.length, 4)}" role="img" aria-label="${esc(alt)}">${items.slice(0, 4).map((i) => `<img src="${esc(productImages(i.prod)[0])}" alt="" loading="lazy" decoding="async">`).join('')}<span class="kit-collage__tag">${icon('box', 'i--sm')} Kit</span></div>`;
+  }
+  return `<img src="${esc(productImages(p)[0])}" alt="${esc(alt)}" ${attrs}>`;
+}
+
 function card(p) {
   const fav = S.favs.includes(p.id);
   const sold = isSoldOut(p);
@@ -78,14 +88,15 @@ function card(p) {
   const img = productImages(p)[0];
   return `<article class="card ${sold ? 'is-soldout' : ''}">
     <div class="card__media">
-      <img src="${esc(img)}" alt="${esc(p.name)} — ${esc(p.brand)}" loading="lazy" decoding="async" width="400" height="500">
+      ${mediaHtml(p, `${p.name} — ${p.brand}`, 'loading="lazy" decoding="async" width="400" height="500"')}
       <div class="card__badges">${badges(p)}</div>
     </div>
     <button class="icon-btn card__fav ${fav ? 'is-on' : ''}" data-fav="${p.id}" aria-label="${fav ? 'Remover dos' : 'Adicionar aos'} desejos" aria-pressed="${fav}">${icon('heart')}</button>
     <div class="card__body">
       <span class="card__brand">${esc(p.brand)}</span>
       <h3 class="card__name"><a class="card__link" href="#/produto/${esc(p.slug)}">${esc(p.name)}</a></h3>
-      <span class="card__meta">${esc((isPerfume(p) ? [p.volume, p.concentration, p.family] : [typeLabel(p), p.volume, (p.scentProfile || []).slice(0, 2).join(' e ')]).filter(Boolean).join(' · '))}</span>
+      <span class="card__meta">${esc((isKit(p) ? [`Kit com ${kitItems(p).length} ${kitItems(p).length === 1 ? 'item' : 'itens'}`, kitItems(p).filter((i) => i.prod).slice(0, 2).map((i) => i.label).join(' + ')] : isPerfume(p) ? [p.volume, p.concentration, p.family] : [typeLabel(p), p.volume, (p.scentProfile || []).slice(0, 2).join(' e ')]).filter(Boolean).join(' · '))}</span>
+      ${isKit(p) && kitSavings(p) > 0 ? `<span class="card__decant">${icon('box', 'i--sm')} Economize R$ ${money(kitSavings(p))} no kit</span>` : ''}
       <div class="card__price">
         ${v.key !== 'full' ? `<span class="card__from">${esc(v.label)}</span>` : v.old ? `<span class="price-old">R$ ${money(v.old)}</span>` : ''}
         <span class="price">R$ ${money(v.price)}</span>
@@ -282,7 +293,7 @@ function filtered() {
     if (!isNaN(min) && price < min) return false;
     if (!isNaN(max) && price > max) return false;
     if (terms.length) {
-      const hay = norm([p.name, p.brand, p.family, p.gender, p.origin, p.concentration, p.description, ...(p.tags || []), typeLabel(p), ...(p.scentProfile || []),
+      const hay = norm([p.name, p.brand, p.family, p.gender, p.origin, p.concentration, p.description, ...(p.tags || []), typeLabel(p), ...(p.scentProfile || []), ...(isKit(p) ? kitItems(p).map((i) => i.label + ' kit combo') : []),
         ...(p.notes?.top || []), ...(p.notes?.heart || []), ...(p.notes?.base || []),
         ...(p.references || []).map((r) => r.name + ' ' + r.house)].join(' '));
       if (!terms.every((t) => hay.includes(t))) return false;
@@ -400,7 +411,7 @@ function closeFilters() { $('#filters')?.classList.remove('is-open'); hideOverla
 function pageProduct(slug) {
   const p = S.products.find((x) => x.slug === slug || x.id === slug);
   if (!p) return pageNotFound('Perfume não encontrado', 'Este perfume pode ter sido removido do catálogo.');
-  const imgs = productImages(p);
+  const imgs = isKit(p) && !(p.images && p.images.length) ? productImages(p).slice(0, 1) : productImages(p);
   const sold = isSoldOut(p);
   const fav = S.favs.includes(p.id);
   const perf = isPerfume(p);
@@ -445,7 +456,7 @@ function pageProduct(slug) {
     <div class="product">
       <div class="gallery">
         <div class="gallery__main">
-          <img id="mainImg" src="${esc(imgs[0])}" alt="${esc(p.name)} — ${esc(p.brand)}" width="800" height="1000" fetchpriority="high">
+          ${isKit(p) && !(p.images && p.images.length) && kitItems(p).filter((i) => i.prod).length >= 2 ? mediaHtml(p, p.name) : `<img id="mainImg" src="${esc(imgs[0])}" alt="${esc(p.name)} — ${esc(p.brand)}" width="800" height="1000" fetchpriority="high">`}
           <div class="card__badges">${badges(p)}</div>
           ${imgs.length > 1 ? `<button class="icon-btn gallery__nav gallery__nav--prev" data-step="-1" aria-label="Foto anterior">${icon('chevl')}</button><button class="icon-btn gallery__nav gallery__nav--next" data-step="1" aria-label="Próxima foto">${icon('chevr')}</button>` : ''}
         </div>
@@ -456,8 +467,8 @@ function pageProduct(slug) {
         <a class="pinfo__brand" href="#/catalogo?marca=${encodeURIComponent(p.brand)}">${esc(p.brand)}</a>
         <h1 class="pinfo__name">${esc(p.name)}</h1>
         <div class="pinfo__spec">
-          ${!perf ? `<span class="chip chip--solid">${esc(typeLabel(p))}</span>` : ''}
-          ${p.volume ? `<span class="chip ${perf ? 'chip--solid' : ''}">${esc(p.volume)}</span>` : ''}
+          ${!perf ? `<span class="chip chip--solid">${isKit(p) ? icon('box', 'i--sm') + ' ' : ''}${esc(isKit(p) ? 'Kit / Combo' : typeLabel(p))}</span>` : ''}
+          ${p.volume && !isKit(p) ? `<span class="chip ${perf ? 'chip--solid' : ''}">${esc(p.volume)}</span>` : ''}
           ${perf && p.concentration ? `<span class="chip">${esc(p.concentration)}</span>` : ''}
           ${p.gender ? `<span class="chip chip--muted">${esc(p.gender)}</span>` : ''}
           ${p.origin ? `<span class="chip chip--muted">${icon('pin', 'i--sm')} ${esc(p.origin)}</span>` : ''}
@@ -484,7 +495,8 @@ function pageProduct(slug) {
           </div>
         </div>
         <div class="seal"><img src="img/brand/monograma.webp" alt="" width="276" height="360" loading="lazy"><p><strong>Vendido e garantido por DURAH</strong><span>Curadoria, procedência e atendimento da nossa equipe do pedido ao drydown.</span></p></div>
-        ${!perf ? scentBlock(p) : ''}
+        ${isSimple(p) ? scentBlock(p) : ''}
+        ${isKit(p) ? kitBlock(p) : ''}
         ${perf && refs.length ? `<section class="block block--refs"><h2>${icon('star')} Para quem gosta de…</h2>
           <p class="refs-lead">Para quem gosta de ${joinOr(refs.map(fmtRef))}.</p>
           <div class="refs">${refs.map((r) => `<div class="ref"><span class="ref__mono">${esc(mono(r.house || r.name))}</span><div><strong>${esc(r.name || r.house)}</strong>${r.name && r.house ? `<small>${esc(r.house)}</small>` : ''}</div></div>`).join('')}</div>
@@ -496,7 +508,7 @@ function pageProduct(slug) {
         ${perf && p.family ? `<div class="mt-2"><div class="family-seal"><span class="family-seal__icon">${icon('drop')}</span><span><small>Família olfativa</small><strong>${esc(p.family)}</strong></span></div></div>` : ''}
         ${(p.tags || []).length ? `<div class="chips mt-2">${p.tags.map((t) => `<span class="chip chip--muted">#${esc(t)}</span>`).join('')}</div>` : ''}
 
-        ${p.description ? `<section class="block"><h2>${icon('sparkles')} ${perf ? 'Sobre a fragrância' : 'Sobre o produto'}</h2><p class="desc">${esc(p.description)}</p></section>` : ''}
+        ${p.description ? `<section class="block"><h2>${icon('sparkles')} ${perf ? 'Sobre a fragrância' : isKit(p) ? 'Sobre o kit' : 'Sobre o produto'}</h2><p class="desc">${esc(p.description)}</p></section>` : ''}
 
         ${perf && (n.top?.length || n.heart?.length || n.base?.length) ? `<section class="block">
           <h2>${icon('layers')} Pirâmide olfativa</h2>
@@ -535,6 +547,7 @@ function pageProduct(slug) {
         <section class="block"><h2>${icon('tag')} Ficha técnica</h2>
           <dl class="specs">
             ${(perf ? [['drop', 'Concentração', p.concentration], ['box', 'Volume', p.volume], ['user', 'Perfumista', p.perfumer], ['calendar', 'Lançamento', p.year], ['pin', 'Origem', p.origin], ['layers', 'Família', p.family]]
+              : isKit(p) ? [['tag', 'Tipo', 'Kit / Combo'], ['box', 'Itens', kitItems(p).reduce((a, i) => a + i.qty, 0)], ['user', 'Indicado para', p.gender]]
               : [['tag', 'Tipo', typeLabel(p)], ['box', 'Volume', p.volume], ['pin', 'Origem', p.origin], ['user', 'Indicado para', p.gender]])
               .filter(([, , v]) => v).map(([i, k, v]) => `<div><dt>${icon(i)} ${k}</dt><dd>${esc(v)}</dd></div>`).join('')}
           </dl>
@@ -593,6 +606,22 @@ function pageProduct(slug) {
   const gm = $('.gallery__main');
   gm.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
   gm.addEventListener('touchend', (e) => { if (x0 == null || imgs.length < 2) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); x0 = null; });
+}
+
+// "O que vem no kit"
+function kitBlock(p) {
+  const items = kitItems(p);
+  if (!items.length) return '';
+  const sep = kitSeparatePrice(p), save = kitSavings(p);
+  return `<section class="block block--refs block--kit"><h2>${icon('box')} O que vem no kit</h2>
+    <ul class="kit-list">${items.map((i) => `<li class="kit-item">
+      ${i.prod ? `<a class="kit-item__img" href="#/produto/${esc(i.prod.slug)}" aria-label="Ver ${esc(i.label)}"><img src="${esc(productImages(i.prod)[0])}" alt="" loading="lazy"></a>` : `<span class="kit-item__img kit-item__img--free">${icon('sparkles')}</span>`}
+      <div class="kit-item__info"><strong>${i.qty > 1 ? `${i.qty}× ` : ''}${i.prod ? `<a href="#/produto/${esc(i.prod.slug)}">${esc(i.label)}</a>` : esc(i.label)}</strong>
+        <span>${esc([i.variantLabel, i.prod && i.prod.brand].filter(Boolean).join(' · ') || 'Item do kit')}</span></div>
+      <em>${i.unit ? `R$ ${money(i.unit * i.qty)}` : 'Incluso'}</em>
+    </li>`).join('')}</ul>
+    ${sep > 0 ? `<div class="kit-total"><span>Comprando separado: <s>R$ ${money(sep)}</s></span>${save > 0 ? `<strong>Você economiza R$ ${money(save)} (${Math.round((save / sep) * 100)}%)</strong>` : ''}</div>` : ''}
+  </section>`;
 }
 
 // "Como é o cheiro" — Body Spray e Victoria's Secret
@@ -826,6 +855,7 @@ async function route() {
 async function reloadCatalog() {
   const data = await store.catalog();
   S.products = data.products || []; S.settings = data.settings || {};
+  shop.products = S.products;
   applySettings(); updateCounts();
 }
 
