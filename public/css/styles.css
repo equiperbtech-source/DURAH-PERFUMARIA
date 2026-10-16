@@ -1079,3 +1079,26 @@ h1, h2, h3, h4 { font-weight: 600; }
 }
 .kit-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .kit-sum { margin-top: 14px; font-size: 14px; color: var(--text-2); }
+
+/* ═══════════════ MENU: CATEGORIAS ═══════════════ */
+.mnav-cats { border-bottom: 1px solid var(--line); }
+.mnav-cats summary { display: flex; align-items: center; justify-content: space-between; padding: 14px 6px; font: 500 20px var(--font-title); letter-spacing: .08em; cursor: pointer; list-style: none; }
+.mnav-cats summary::-webkit-details-marker { display: none; }
+.mnav-cats summary .i { color: var(--gold); transition: transform .2s; }
+.mnav-cats[open] summary { color: var(--gold); }
+.mnav-cats[open] summary .i { transform: rotate(90deg); }
+.mnav-cats__list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; padding: 2px 0 16px; }
+.mobile-nav .mnav-cats__list a { display: flex; align-items: center; gap: 8px; padding: 11px 12px; border: 1px solid var(--gold-line); border-radius: 4px; background: var(--card); font: 500 12.5px var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: var(--text-2); }
+.mobile-nav .mnav-cats__list a .i { width: 17px; height: 17px; color: var(--gold); }
+.mobile-nav .mnav-cats__list a:hover { color: var(--gold); border-color: var(--gold); }
+.mobile-nav { max-height: calc(100dvh - var(--head-h)); overflow-y: auto; }
+/* computador: lista suspensa */
+.nav__drop { position: relative; }
+.nav__drop-btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 14px; border: 0; background: none; font: 400 12.5px var(--font-body); letter-spacing: .2em; text-transform: uppercase; color: var(--text-2); }
+.nav__drop-btn .i { transform: rotate(90deg); transition: transform .2s; }
+.nav__drop:hover .nav__drop-btn, .nav__drop:focus-within .nav__drop-btn { color: var(--gold); }
+.nav__menu { position: absolute; top: 100%; left: 0; z-index: 60; min-width: 210px; padding: 8px; display: grid; gap: 2px; border: 1px solid var(--gold-line); border-radius: 4px; background: var(--card); box-shadow: 0 20px 40px rgba(0,0,0,.5); opacity: 0; visibility: hidden; transform: translateY(6px); transition: all .18s var(--ease); }
+.nav__drop:hover .nav__menu, .nav__drop:focus-within .nav__menu { opacity: 1; visibility: visible; transform: none; }
+.nav .nav__menu a { padding: 10px 12px !important; letter-spacing: .14em; }
+.nav .nav__menu a:hover { background: var(--gold-soft) !important; }
+.nav .nav__menu a::after { display: none; }

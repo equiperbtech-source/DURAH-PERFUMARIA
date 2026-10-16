@@ -59,6 +59,17 @@
       <nav class="nav" id="nav" aria-label="Menu principal">
         <a href="#/" data-nav="home">Início</a>
         <a href="#/catalogo" data-nav="catalogo">Catálogo</a>
+        <div class="nav__drop">
+          <button type="button" class="nav__drop-btn" aria-haspopup="true">Categorias <svg class="i i--sm"><use href="#i-chevr"/></svg></button>
+          <div class="nav__menu">
+            <a href="#/catalogo?cat=perfumes">Perfumes</a>
+            <a href="#/catalogo?cat=body-splash">Body Splash</a>
+            <a href="#/catalogo?cat=cremes">Cremes</a>
+            <a href="#/catalogo?cat=body-spray">Body Spray</a>
+            <a href="#/catalogo?cat=decants">Decants</a>
+            <a href="#/catalogo?cat=kits">Kits</a>
+          </div>
+        </div>
         <a href="#/marcas" data-nav="marcas">Marcas</a>
         <a href="#/contato" data-nav="contato">Contato</a>
       </nav>
@@ -86,6 +97,17 @@
   <div class="mobile-nav" id="mobileNav" hidden>
     <a href="#/">Início</a>
     <a href="#/catalogo">Catálogo</a>
+    <details class="mnav-cats">
+      <summary>Categorias <svg class="i"><use href="#i-chevr"/></svg></summary>
+      <div class="mnav-cats__list">
+        <a href="#/catalogo?cat=perfumes"><svg class="i"><use href="#i-drop"/></svg>Perfumes</a>
+        <a href="#/catalogo?cat=body-splash"><svg class="i"><use href="#i-sparkles"/></svg>Body Splash</a>
+        <a href="#/catalogo?cat=cremes"><svg class="i"><use href="#i-heart"/></svg>Cremes</a>
+        <a href="#/catalogo?cat=body-spray"><svg class="i"><use href="#i-wind"/></svg>Body Spray</a>
+        <a href="#/catalogo?cat=decants"><svg class="i"><use href="#i-drop"/></svg>Decants</a>
+        <a href="#/catalogo?cat=kits"><svg class="i"><use href="#i-box"/></svg>Kits</a>
+      </div>
+    </details>
     <a href="#/marcas">Marcas</a>
     <a href="#/contato">Contato</a>
     <button class="btn btn--outline btn--block" data-help>Me ajude a escolher</button>

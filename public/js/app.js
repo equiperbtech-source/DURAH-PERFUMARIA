@@ -31,13 +31,16 @@ export const CATS = [
   { id: 'nicho', label: 'Nicho', icon: 'gem', desc: 'Perfumaria autoral', test: (p) => p.niche },
   { id: 'decants', label: 'Decants/Miniaturas', icon: 'drop', desc: 'Prove antes do frasco', test: isDecant },
   { id: 'lancamentos', label: 'Lançamentos', icon: 'star', desc: 'Acabaram de chegar', test: (p) => p.launch },
+  { id: 'perfumes', label: 'Perfumes', icon: 'drop', desc: 'Frascos e decants', test: isPerfume, menuOnly: true },
+  { id: 'body-splash', label: 'Body Splash', icon: 'sparkles', desc: "Victoria's Secret", test: (p) => productType(p) === 'victorias-secret' && p.vsKind !== 'creme', menuOnly: true },
+  { id: 'cremes', label: 'Cremes', icon: 'heart', desc: 'Hidratantes perfumados', test: (p) => productType(p) === 'victorias-secret' && p.vsKind === 'creme', menuOnly: true },
   { id: 'kits', label: 'Kits', icon: 'box', desc: 'Combos com economia', test: isKit },
   { id: 'body-spray', label: 'Body Spray', icon: 'wind', desc: 'Leves para o dia a dia', test: (p) => productType(p) === 'body-spray' },
   { id: 'victorias-secret', label: "Victoria's Secret", icon: 'heart', desc: 'Body splashs e cremes', test: (p) => productType(p) === 'victorias-secret' },
 ];
 
 // categorias que têm ao menos um produto (evita página vazia)
-const activeCats = () => CATS.filter((c) => S.products.some(c.test) || c.id === F.cat);
+const activeCats = () => CATS.filter((c) => (!c.menuOnly && S.products.some(c.test)) || c.id === F.cat);
 
 // ═══════════════ Componentes ═══════════════
 // ─── Confiança e avaliações ───
@@ -114,7 +117,7 @@ function card(p) {
 
 const grid = (list, cls = '') => list.length
   ? `<div class="grid ${cls}">${list.map(card).join('')}</div>`
-  : `<div class="empty">${icon('search')}<p><strong>Nenhum perfume encontrado.</strong></p><p class="mt-1">Tente ajustar os filtros ou fale com a gente — encontramos a fragrância ideal pra você.</p><button class="btn btn--outline mt-2" data-help>Me ajude a escolher</button></div>`;
+  : `<div class="empty">${icon('search')}<p><strong>Nenhum produto encontrado.</strong></p><p class="mt-1">Ainda não temos itens aqui, mas podemos encomendar. Fale com a gente pelo WhatsApp — encontramos o ideal pra você.</p><button class="btn btn--outline mt-2" data-help>Me ajude a escolher</button></div>`;
 
 const sortAvailable = (a, b) => isSoldOut(a) - isSoldOut(b);
 
@@ -886,6 +889,8 @@ $('#cartBtn').addEventListener('click', () => openDrawer('cart'));
 $('#favBtn').addEventListener('click', () => openDrawer('fav'));
 $('#menuBtn').addEventListener('click', () => {
   const nav = $('#mobileNav'); nav.hidden = !nav.hidden;
+  const top = Math.max(0, $('#header').getBoundingClientRect().bottom);
+  nav.style.top = top + 'px'; nav.style.maxHeight = `calc(100dvh - ${top}px)`;
   $('#menuBtn').setAttribute('aria-expanded', String(!nav.hidden));
 });
 $('#searchToggle').addEventListener('click', () => {
