@@ -27,7 +27,7 @@ Se `ADMIN_PASSWORD` não for definida, a senha padrão é `durah2026`. **Troque 
 ### Vercel (recomendado)
 Na Vercel o disco do servidor é somente leitura, então o catálogo e as fotos ficam no **Vercel Blob**.
 
-1. Importe este repositório na Vercel. Ela detecta o Express sozinha.
+1. Importe este repositório na Vercel. As configurações já estão no `vercel.json`: o site sai de `public/` e a API roda em `api/index.js`. Não altere o *Framework Preset*.
 2. No projeto, abra **Storage → Create Database → Blob**. Escolha acesso **Public** e conecte o Blob ao projeto. A variável `BLOB_READ_WRITE_TOKEN` é criada automaticamente.
 3. Em **Settings → Environment Variables**, adicione:
    - `ADMIN_PASSWORD`: a senha do painel
@@ -70,7 +70,10 @@ public/js/app.js     loja (rotas, catálogo, produto, sacola)
 public/js/admin.js   painel administrativo
 public/js/ui.js      utilitários, mensagens do WhatsApp, arte dos frascos
 public/js/store.js   camada de dados (API ou modo demonstração)
-public/data/seed.json  6 perfumes de exemplo (carregados no primeiro start)
+seed.json            6 perfumes de exemplo (gravados no primeiro start)
+public/data/seed.json  cópia usada só no modo demonstração sem servidor
+api/index.js         entrada da função na Vercel
+vercel.json          configuração da Vercel
 data/                banco e fotos (criado automaticamente; fora do git)
 ```
 

@@ -1,5 +1,9 @@
 {
+  "framework": null,
+  "buildCommand": "",
+  "outputDirectory": "public",
   "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index" },
     { "source": "/admin", "destination": "/index.html" },
     { "source": "/admin/", "destination": "/index.html" }
   ]

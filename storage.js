@@ -8,8 +8,9 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 
-// require() garante que o arquivo de exemplos seja incluído no pacote da função na Vercel
-const SEED = require('./public/data/seed.json');
+// Perfumes de exemplo do servidor (fora de public/ para sempre irem junto com a função na Vercel).
+// public/data/seed.json é uma cópia usada só pelo "modo demonstração" sem servidor.
+const SEED = require('./seed.json');
 const readSeed = () => JSON.parse(JSON.stringify(SEED));
 const CACHE_MS = 10 * 1000;
 
@@ -92,7 +93,10 @@ function blobStorage() {
 }
 
 function createStorage() {
-  if (process.env.BLOB_READ_WRITE_TOKEN) return blobStorage();
+  if (process.env.BLOB_READ_WRITE_TOKEN) {
+    try { return blobStorage(); }
+    catch (e) { console.error('Falha ao iniciar o Vercel Blob, usando /tmp:', e); return diskStorage('/tmp/durah-data', 'temp'); }
+  }
   if (process.env.VERCEL) {
     console.warn('⚠️  Vercel sem Blob configurado: usando /tmp (as alterações do painel NÃO são permanentes).');
     return diskStorage('/tmp/durah-data', 'temp');

@@ -251,7 +251,7 @@ app.use(express.static(path.join(__dirname, 'public'), {
   setHeaders: (res, file) => { if (file.endsWith('.html')) res.setHeader('Cache-Control', 'no-cache'); },
 }));
 
-app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'), (err) => err && res.redirect('/')));
+app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'), (err) => err && !res.headersSent && res.type('text').send('Página não encontrada.')));
 
 // Na Vercel o app é exportado como função; fora dela, sobe um servidor normal.
 if (!process.env.VERCEL) {
