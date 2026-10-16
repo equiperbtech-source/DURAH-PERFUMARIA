@@ -1,0 +1,495 @@
+{
+  "settings": {
+    "storeName": "DURAH Perfumes e Importados",
+    "whatsapp": "5548991154821",
+    "instagram": "durah.perfumes",
+    "hours": "Segunda a sábado, das 9h às 20h",
+    "city": "Santa Catarina — enviamos para todo o Brasil",
+    "announcement": {
+      "active": true,
+      "text": "✦ Perfumes importados e de nicho ✦ Enviamos para todo o Brasil ✦ Atendimento personalizado pelo WhatsApp ✦"
+    },
+    "banner": {
+      "active": true,
+      "tag": "Promoção da semana",
+      "title": "Aurum Noir com R$ 100 OFF",
+      "text": "O amadeirado frutado que é elogio garantido. Oferta válida enquanto durar o estoque.",
+      "cta": "Comprar agora",
+      "link": "#/produto/aurum-noir",
+      "image": "",
+      "productId": "p1"
+    },
+    "trust": {
+      "authenticity": "Produtos 100% originais",
+      "payment": "Pix, débito e crédito",
+      "installments": 10,
+      "shipping": "Postagem em até 1 dia útil"
+    },
+    "reviews": []
+  },
+  "products": [
+    {
+      "id": "p1",
+      "slug": "aurum-noir",
+      "name": "Aurum Noir",
+      "brand": "Maison Durand Paris",
+      "images": [],
+      "price": 899.9,
+      "promoPrice": 799.9,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Masculino",
+      "origin": "França",
+      "stock": 8,
+      "status": "disponivel",
+      "description": "Aurum Noir abre com um estalo luminoso de abacaxi defumado e bergamota da Calábria, um acorde frutado que conversa diretamente com os grandes clássicos da perfumaria de nicho. No coração, bétula e patchouli constroem um fundo seco e elegante, enquanto o drydown repousa em almíscar, âmbar cinzento e musgo de carvalho — uma assinatura masculina, confiante e incrivelmente versátil. Projeção marcante nas primeiras horas e um trail sofisticado que deixa rastro por onde você passa.",
+      "notes": {
+        "top": [
+          "Abacaxi",
+          "Bergamota",
+          "Maçã verde",
+          "Groselha negra"
+        ],
+        "heart": [
+          "Bétula defumada",
+          "Patchouli",
+          "Jasmim",
+          "Rosa marroquina"
+        ],
+        "base": [
+          "Almíscar",
+          "Âmbar cinzento",
+          "Musgo de carvalho",
+          "Baunilha"
+        ]
+      },
+      "family": "Amadeirado",
+      "perfumer": "Julien Marceau",
+      "year": 2023,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Encontro",
+        "Noite"
+      ],
+      "references": [
+        {
+          "name": "Aventus",
+          "house": "Creed"
+        },
+        {
+          "name": "Layton",
+          "house": "Parfums de Marly"
+        }
+      ],
+      "tags": [
+        "elogiado",
+        "versátil",
+        "marcante",
+        "assinatura"
+      ],
+      "active": true,
+      "featured": true,
+      "niche": true,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "createdAt": "2026-09-01T12:00:00.000Z",
+      "updatedAt": "2026-09-01T12:00:00.000Z",
+      "decant5Price": 49.9,
+      "decant10Price": 89.9
+    },
+    {
+      "id": "p2",
+      "slug": "sultan-oud-royale",
+      "name": "Sultan Oud Royale",
+      "brand": "Al Qasr Perfumes",
+      "images": [],
+      "price": 459.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Parfum/Extrait",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 12,
+      "status": "disponivel",
+      "description": "Uma homenagem aos palácios de Dubai. Sultan Oud Royale entrega um oud nobre e aveludado, sem a aspereza animálica dos ouds mais crus: a abertura especiada de açafrão e cardamomo aquece a pele, a rosa de Taif traz um coração opulento e o fundo de oud, benjoim e âmbar cria um drydown resinoso, envolvente e quase licoroso. Sillage imponente — daqueles que perfumam o ambiente — e fixação que atravessa o dia e ainda aparece na roupa no dia seguinte.",
+      "notes": {
+        "top": [
+          "Açafrão",
+          "Cardamomo",
+          "Pimenta rosa"
+        ],
+        "heart": [
+          "Rosa de Taif",
+          "Oud",
+          "Gerânio"
+        ],
+        "base": [
+          "Benjoim",
+          "Âmbar",
+          "Sândalo",
+          "Almíscar branco"
+        ]
+      },
+      "family": "Oud",
+      "perfumer": "Rashid Al-Fahim",
+      "year": 2025,
+      "longevity": "Eterna",
+      "projection": "Enorme",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Festa",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Oud Satin Mood",
+          "house": "Maison Francis Kurkdjian"
+        },
+        {
+          "name": "Oud Wood",
+          "house": "Tom Ford Private Blend"
+        },
+        {
+          "name": "Roses Vanille",
+          "house": "Mancera"
+        }
+      ],
+      "tags": [
+        "marcante",
+        "luxuoso",
+        "rastro forte",
+        "árabe"
+      ],
+      "active": true,
+      "featured": true,
+      "niche": false,
+      "launch": true,
+      "imported": true,
+      "decant": false,
+      "createdAt": "2026-10-05T12:00:00.000Z",
+      "updatedAt": "2026-10-05T12:00:00.000Z",
+      "decant5Price": 34.9,
+      "decant10Price": 59.9
+    },
+    {
+      "id": "p3",
+      "slug": "rose-velours",
+      "name": "Rose Velours",
+      "brand": "Atelier Lumière",
+      "images": [],
+      "price": 690,
+      "promoPrice": null,
+      "volume": "50ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Feminino",
+      "origin": "França",
+      "stock": 0,
+      "status": "esgotado",
+      "description": "Rose Velours é a rosa vista à meia-noite: lichia suculenta e framboesa abrem com brilho frutado, enquanto a rosa turca, densa e aveludada, se entrelaça ao incenso e ao patchouli para criar um acorde gótico e romântico. No drydown, almíscar e baunilha deixam a pele macia como veludo. Um floral adulto, sensual e cheio de personalidade — feito para quem quer ser lembrada.",
+      "notes": {
+        "top": [
+          "Lichia",
+          "Framboesa",
+          "Bergamota"
+        ],
+        "heart": [
+          "Rosa turca",
+          "Peônia",
+          "Incenso"
+        ],
+        "base": [
+          "Patchouli",
+          "Almíscar",
+          "Baunilha",
+          "Cashmeran"
+        ]
+      },
+      "family": "Floral",
+      "perfumer": "Camille Varenne",
+      "year": 2022,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Encontro",
+        "Noite",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Portrait of a Lady",
+          "house": "Frederic Malle"
+        },
+        {
+          "name": "Delina",
+          "house": "Parfums de Marly"
+        }
+      ],
+      "tags": [
+        "romântico",
+        "sensual",
+        "elogiado",
+        "rosa"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": true,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "createdAt": "2026-08-15T12:00:00.000Z",
+      "updatedAt": "2026-08-15T12:00:00.000Z",
+      "decant5Price": 44.9,
+      "decant10Price": 79.9
+    },
+    {
+      "id": "p4",
+      "slug": "ambre-sacre",
+      "name": "Ambre Sacré",
+      "brand": "Casa Veneziana",
+      "images": [],
+      "price": 1190,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Parfum/Extrait",
+      "gender": "Unissex",
+      "origin": "Itália",
+      "stock": 2,
+      "status": "disponivel",
+      "description": "Inspirado nas igrejas de Veneza ao entardecer. Ambre Sacré começa com um acorde ambarado e translúcido de açafrão e jasmim, quase cristalino, que logo se aprofunda em resinas douradas: benjoim, labdanum e um toque de incenso. O ambroxan dá aquele efeito radiante que gruda na pele e no ambiente, enquanto a fava tonka e o cedro arredondam o drydown. Um âmbar luminoso, viciante e extremamente elegante, com trail inesquecível.",
+      "notes": {
+        "top": [
+          "Açafrão",
+          "Jasmim",
+          "Laranja amarga"
+        ],
+        "heart": [
+          "Benjoim",
+          "Labdanum",
+          "Incenso"
+        ],
+        "base": [
+          "Ambroxan",
+          "Fava tonka",
+          "Cedro",
+          "Âmbar"
+        ]
+      },
+      "family": "Oriental/Âmbar",
+      "perfumer": "Lorenzo Bellini",
+      "year": 2024,
+      "longevity": "Eterna",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Baccarat Rouge 540",
+          "house": "Maison Francis Kurkdjian"
+        },
+        {
+          "name": "Naxos",
+          "house": "Xerjoff"
+        },
+        {
+          "name": "Hindu Kush",
+          "house": "Mancera"
+        }
+      ],
+      "tags": [
+        "viciante",
+        "luxuoso",
+        "doce",
+        "rastro forte"
+      ],
+      "active": true,
+      "featured": true,
+      "niche": true,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "createdAt": "2026-07-20T12:00:00.000Z",
+      "updatedAt": "2026-07-20T12:00:00.000Z",
+      "decant5Price": 69.9,
+      "decant10Price": 124.9
+    },
+    {
+      "id": "p5",
+      "slug": "bleu-riviera",
+      "name": "Bleu Riviera",
+      "brand": "Maison Durand Paris",
+      "images": [],
+      "price": 549.9,
+      "promoPrice": 489.9,
+      "volume": "100ml",
+      "concentration": "Eau de Toilette",
+      "gender": "Masculino",
+      "origin": "França",
+      "stock": 15,
+      "status": "disponivel",
+      "description": "Um mergulho na Côte d'Azur. Bleu Riviera explode em limão-siciliano, toranja e hortelã gelada, com uma brisa salina que lembra pele bronzeada depois do mar. O coração aromático de lavanda e gengibre mantém o frescor vivo por horas, e o fundo de vetiver, ambroxan e madeiras claras garante um drydown limpo e magnético. O frescor perfeito para o calor brasileiro — elegante no trabalho e irresistível no fim de semana.",
+      "notes": {
+        "top": [
+          "Limão-siciliano",
+          "Toranja",
+          "Hortelã",
+          "Notas marinhas"
+        ],
+        "heart": [
+          "Lavanda",
+          "Gengibre",
+          "Sálvia",
+          "Gerânio"
+        ],
+        "base": [
+          "Vetiver",
+          "Ambroxan",
+          "Cedro",
+          "Almíscar"
+        ]
+      },
+      "family": "Cítrico",
+      "perfumer": "Julien Marceau",
+      "year": 2025,
+      "longevity": "Moderada",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Verão"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho"
+      ],
+      "references": [
+        {
+          "name": "Virgin Island Water",
+          "house": "Creed"
+        },
+        {
+          "name": "Hacivat",
+          "house": "Nishane"
+        },
+        {
+          "name": "Another 13",
+          "house": "Le Labo"
+        }
+      ],
+      "tags": [
+        "fresco",
+        "limpo",
+        "verão",
+        "versátil"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": true,
+      "imported": true,
+      "decant": false,
+      "createdAt": "2026-10-10T12:00:00.000Z",
+      "updatedAt": "2026-10-10T12:00:00.000Z",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "id": "p6",
+      "slug": "vanille-obscure-decant-10ml",
+      "name": "Vanille Obscure — Decant",
+      "brand": "Noir Atelier NYC",
+      "images": [],
+      "price": 129.9,
+      "promoPrice": null,
+      "volume": "10ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "EUA",
+      "stock": 20,
+      "status": "disponivel",
+      "description": "Decant de 10 ml para conhecer (ou levar na bolsa) um dos gourmands mais comentados da casa. Vanille Obscure abre com rum envelhecido e canela, mergulha num coração de folha de tabaco e fava tonka e termina num drydown cremoso de baunilha de Madagascar, cacau e benjoim. Quente, boozy e absurdamente aconchegante: o tipo de perfume que faz as pessoas perguntarem o que você está usando.",
+      "notes": {
+        "top": [
+          "Rum",
+          "Canela",
+          "Ameixa"
+        ],
+        "heart": [
+          "Folha de tabaco",
+          "Fava tonka",
+          "Pralinê"
+        ],
+        "base": [
+          "Baunilha de Madagascar",
+          "Cacau",
+          "Benjoim",
+          "Sândalo"
+        ]
+      },
+      "family": "Gourmand",
+      "perfumer": "Ava Laurent",
+      "year": 2024,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [
+        {
+          "name": "Tobacco Vanille",
+          "house": "Tom Ford Private Blend"
+        },
+        {
+          "name": "Side Effect",
+          "house": "Initio"
+        }
+      ],
+      "tags": [
+        "doce",
+        "viciante",
+        "aconchegante",
+        "decant"
+      ],
+      "active": true,
+      "featured": true,
+      "niche": true,
+      "launch": false,
+      "imported": true,
+      "decant": true,
+      "createdAt": "2026-09-20T12:00:00.000Z",
+      "updatedAt": "2026-09-20T12:00:00.000Z",
+      "decant5Price": null,
+      "decant10Price": null
+    }
+  ]
+}
