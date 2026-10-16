@@ -20,10 +20,10 @@ const byId = (id) => S.products.find((p) => p.id === id);
 const wa = (msg) => waUrl(S.settings.whatsapp, msg);
 
 export const CATS = [
+  { id: 'arabes', label: 'Árabes', icon: 'moon', desc: 'Oud, âmbar e especiarias', test: isArab },
   { id: 'masculinos', label: 'Masculinos', icon: 'user', desc: 'Marcantes e elegantes', test: (p) => p.gender === 'Masculino' },
   { id: 'femininos', label: 'Femininos', icon: 'flower', desc: 'Sofisticados e sensuais', test: (p) => p.gender === 'Feminino' },
   { id: 'unissex', label: 'Unissex', icon: 'sparkles', desc: 'Sem rótulos', test: (p) => p.gender === 'Unissex' },
-  { id: 'arabes', label: 'Árabes', icon: 'moon', desc: 'Oud, âmbar e especiarias', test: isArab },
   { id: 'nicho', label: 'Nicho', icon: 'gem', desc: 'Perfumaria autoral', test: (p) => p.niche },
   { id: 'decants', label: 'Decants/Miniaturas', icon: 'drop', desc: 'Prove antes do frasco', test: isDecant },
   { id: 'lancamentos', label: 'Lançamentos', icon: 'star', desc: 'Acabaram de chegar', test: (p) => p.launch },
@@ -79,7 +79,7 @@ function whyBlock() {
 
 function helpCta() {
   return `<div class="help-cta">
-    <div><h2>Não sabe qual escolher?</h2><p>Diga o que você gosta — amadeirado, doce, fresco, oud… — e indicamos as fragrâncias perfeitas para o seu estilo e ocasião.</p></div>
+    <div><span class="eyebrow">Consultoria olfativa</span><h2 class="mt-1">Não sabe qual <em>escolher?</em></h2><p>Diga o que você gosta — amadeirado, doce, fresco, oud… — e indicamos as fragrâncias perfeitas para o seu estilo e ocasião.</p></div>
     <button class="btn btn--lg" data-help>${icon('sparkles')} Me ajude a escolher</button>
   </div>`;
 }
@@ -101,11 +101,12 @@ function pageHome() {
   setSeo('DURAH Perfumes e Importados — Perfumes importados, árabes e de nicho');
   app.innerHTML = `<div class="page">
   <section class="hero">
+    <span class="hero__ar" aria-hidden="true">عطور</span>
     <div class="container hero__inner">
       <div>
-        <span class="eyebrow">Perfumaria importada &amp; de nicho</span>
+        <span class="eyebrow">Oud · Âmbar · Almíscar</span>
         <h1 class="hero__title">Fragrâncias importadas e de nicho que <em>marcam presença</em>.</h1>
-        <p class="hero__text">Do frescor cítrico ao oud mais profundo: assinaturas olfativas com sillage, fixação e personalidade. Escolha, chame no WhatsApp e receba em todo o Brasil.</p>
+        <p class="hero__text">Da tradição dos perfumistas árabes às grandes casas de nicho: oud nobre, resinas douradas e acordes que deixam rastro. Escolha sua assinatura, chame no WhatsApp e receba em todo o Brasil.</p>
         <div class="hero__ctas">
           <a href="#/catalogo" class="btn btn--primary btn--lg">Ver catálogo ${icon('arrow')}</a>
           <button class="btn btn--outline btn--lg" data-help>Me ajude a escolher</button>
@@ -116,7 +117,7 @@ function pageHome() {
           <div><strong>BR</strong><span>envio nacional</span></div>
         </div>
       </div>
-      ${heroP ? `<a class="hero__art" href="#/produto/${esc(heroP.slug)}" aria-label="Ver ${esc(heroP.name)}"><span class="hero__ring"></span><img src="${esc(productImages(heroP)[0])}" alt="${esc(heroP.name)}" width="400" height="500" fetchpriority="high"></a>` : ''}
+      ${heroP ? `<a class="hero__art" href="#/produto/${esc(heroP.slug)}" aria-label="Ver ${esc(heroP.name)}"><span class="arch"><img src="${esc(productImages(heroP)[0])}" alt="${esc(heroP.name)}" width="400" height="500" fetchpriority="high"></span></a>` : ''}
     </div>
   </section>
 
@@ -401,14 +402,14 @@ function pageProduct(slug) {
           <h2>${icon('layers')} Pirâmide olfativa</h2>
           <div class="pyramid-wrap">
             <div class="pyramid-visual" aria-hidden="true">
-              <svg viewBox="0 0 150 140"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFD60A"/><stop offset="1" stop-color="#FFC400" stop-opacity=".35"/></linearGradient></defs>
-                <path d="M75 6 L144 134 H6 Z" fill="rgba(255,196,0,.06)" stroke="#FFC400" stroke-width="1.5"/>
+              <svg viewBox="0 0 150 140"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F1D68B"/><stop offset="1" stop-color="#D4AF37" stop-opacity=".35"/></linearGradient></defs>
+                <path d="M75 6 L144 134 H6 Z" fill="rgba(255,196,0,.06)" stroke="#D4AF37" stroke-width="1.5"/>
                 <path d="M75 6 L98 48 H52 Z" fill="url(#pg)"/>
-                <path d="M52 48 H98 L121 91 H29 Z" fill="#FFC400" fill-opacity=".45"/>
-                <path d="M29 91 H121 L144 134 H6 Z" fill="#FFC400" fill-opacity=".22"/>
-                <text x="75" y="42" text-anchor="middle" font-size="9" font-weight="800" fill="#000" font-family="Montserrat">TOPO</text>
-                <text x="75" y="76" text-anchor="middle" font-size="9" font-weight="800" fill="#000" font-family="Montserrat">CORAÇÃO</text>
-                <text x="75" y="119" text-anchor="middle" font-size="9" font-weight="800" fill="#FFC400" font-family="Montserrat">FUNDO</text>
+                <path d="M52 48 H98 L121 91 H29 Z" fill="#D4AF37" fill-opacity=".45"/>
+                <path d="M29 91 H121 L144 134 H6 Z" fill="#D4AF37" fill-opacity=".22"/>
+                <text x="75" y="42" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0907" font-family="Cinzel,Georgia,serif">TOPO</text>
+                <text x="75" y="76" text-anchor="middle" font-size="9" font-weight="700" fill="#0B0907" font-family="Cinzel,Georgia,serif">CORAÇÃO</text>
+                <text x="75" y="119" text-anchor="middle" font-size="9" font-weight="800" fill="#D4AF37" font-family="Cinzel,Georgia,serif">FUNDO</text>
               </svg>
             </div>
             <div class="pyramid">

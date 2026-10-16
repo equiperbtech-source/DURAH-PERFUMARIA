@@ -101,9 +101,9 @@ export function bottleArt(p) {
   const key = `${p.id}|${p.name}|${p.brand}|${p.family}`;
   if (artCache.has(key)) return artCache.get(key);
   const h = hash(p.id + p.name);
-  const [c1, c2] = FAMILY_COLORS[p.family] || ['#FFD60A', '#8A6A00'];
+  const [c1, c2] = FAMILY_COLORS[p.family] || ['#E9CC7A', '#7E5E1C'];
   const shape = h % 3, cap = (h >> 3) % 3;
-  const name = xml((p.name || '').toUpperCase().slice(0, 16));
+  const name = xml((p.name || '').toUpperCase().slice(0, 22));
   const brand = xml((p.brand || '').toUpperCase().slice(0, 22));
   const vol = xml(p.volume || '');
   const bodies = [
@@ -113,34 +113,35 @@ export function bottleArt(p) {
   ];
   const caps = [
     '<rect x="166" y="96" width="68" height="70" rx="6" fill="url(#gold)"/><rect x="166" y="96" width="68" height="8" rx="4" fill="#fff" opacity=".35"/>',
-    '<circle cx="200" cy="124" r="40" fill="url(#gold)"/><ellipse cx="186" cy="110" rx="14" ry="9" fill="#fff" opacity=".35"/>',
+    '<path d="M200 84c12 18 40 26 40 52 0 18-18 30-40 30s-40-12-40-30c0-26 28-34 40-52z" fill="url(#gold)"/><path d="M200 70v16" stroke="#D4AF37" stroke-width="3"/><circle cx="200" cy="68" r="4" fill="#F6E3A1"/><ellipse cx="186" cy="124" rx="8" ry="14" fill="#fff" opacity=".25"/>',
     '<path d="M172 166 182 80h36l10 86z" fill="url(#gold)"/><rect x="190" y="84" width="6" height="76" fill="#fff" opacity=".3"/>',
   ];
   const labelY = shape === 1 ? 286 : 272;
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
 <defs>
-<radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#232323"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>
-<radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFC400" stop-opacity=".30"/><stop offset="1" stop-color="#FFC400" stop-opacity="0"/></radialGradient>
+<radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#241C12"/><stop offset="1" stop-color="#0B0907"/></radialGradient>
+<radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#D4AF37" stop-opacity=".26"/><stop offset="1" stop-color="#D4AF37" stop-opacity="0"/></radialGradient>
 <linearGradient id="liq" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>
-<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE680"/><stop offset=".5" stop-color="#FFC400"/><stop offset="1" stop-color="#9A7300"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6E3A1"/><stop offset=".45" stop-color="#D4AF37"/><stop offset="1" stop-color="#7E5E1C"/></linearGradient>
 <linearGradient id="shine" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".0"/><stop offset=".5" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
 <clipPath id="cl">${bodies[shape]}</clipPath>
 </defs>
 <rect width="400" height="500" fill="url(#bg)"/>
 <circle cx="200" cy="290" r="190" fill="url(#glow)"/>
+<g fill="none" stroke="#D4AF37"><path d="M70 470V210a130 130 0 0 1 260 0v260" stroke-opacity=".28"/><path d="M84 470V214a116 116 0 0 1 232 0v256" stroke-opacity=".14"/></g>
+<path d="M200 66l5 5-5 5-5-5z" fill="#D4AF37" fill-opacity=".6"/>
 <ellipse cx="200" cy="430" rx="130" ry="14" fill="#000" opacity=".7"/>
 <g clip-path="url(#cl)">
 <rect x="90" y="170" width="220" height="260" fill="url(#liq)" opacity=".92"/>
 <rect x="90" y="170" width="220" height="40" fill="#fff" opacity=".10"/>
 <rect x="140" y="170" width="38" height="260" fill="url(#shine)"/>
 </g>
-<g fill="none" stroke="#FFC400" stroke-opacity=".55" stroke-width="2">${bodies[shape]}</g>
+<g fill="none" stroke="#D4AF37" stroke-opacity=".6" stroke-width="2">${bodies[shape]}</g>
 <rect x="182" y="160" width="36" height="28" fill="url(#gold)"/>
 ${caps[cap]}
-<rect x="124" y="${labelY}" width="152" height="64" rx="4" fill="#0A0A0A" stroke="#FFC400" stroke-width="1.5"/>
-<text x="200" y="${labelY + 27}" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="${name.length > 13 ? 9.5 : name.length > 10 ? 11 : 13}" fill="#FFC400" text-anchor="middle" letter-spacing="1">${name}</text>
+<rect x="124" y="${labelY}" width="152" height="64" rx="4" fill="#0B0907" stroke="#D4AF37" stroke-width="1.5"/>
+<text x="200" y="${labelY + 27}" font-family="Cinzel,Georgia,serif" font-weight="700" font-size="${name.length > 16 ? 8.5 : name.length > 13 ? 9.5 : name.length > 10 ? 11 : 13}" fill="#E9CC7A" text-anchor="middle" letter-spacing="1">${name}</text>
 <text x="200" y="${labelY + 46}" font-family="Arial,sans-serif" font-size="8" fill="#ddd" text-anchor="middle" letter-spacing="1.5">${vol}</text>
-<text x="200" y="476" font-family="Montserrat,Arial,sans-serif" font-weight="700" font-size="11" fill="#FFC400" fill-opacity=".75" text-anchor="middle" letter-spacing="3">${brand}</text>
 </svg>`;
   const uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
   artCache.set(key, uri);
