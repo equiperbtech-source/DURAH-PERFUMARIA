@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>DURAH Perfumes e Importados — Perfumes importados, árabes e de nicho</title>
+  <meta name="description" content="DURAH Perfumes e Importados: fragrâncias importadas, árabes e de nicho com pirâmide olfativa completa, decants e atendimento personalizado pelo WhatsApp. Enviamos para todo o Brasil.">
+  <meta name="keywords" content="perfumes importados, perfumes de nicho, perfumes árabes, decants, oud, perfumaria, DURAH">
+  <meta name="theme-color" content="#0A0A0A">
+  <meta name="robots" content="index, follow">
+  <link rel="icon" href="img/favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DURAH Perfumes e Importados">
+  <meta property="og:title" content="DURAH Perfumes e Importados">
+  <meta property="og:description" content="Fragrâncias importadas e de nicho que marcam presença. Compre pelo WhatsApp.">
+  <meta property="og:image" content="img/og.svg">
+  <meta property="og:locale" content="pt_BR">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Store",
+    "name": "DURAH Perfumes e Importados",
+    "description": "Perfumes importados, árabes e de nicho.",
+    "telephone": "+55 48 99115-4821",
+    "areaServed": "BR",
+    "openingHours": "Mo-Sa 09:00-20:00"
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#app">Pular para o conteúdo</a>
+
+  <div id="announce" class="announce" hidden></div>
+
+  <header class="header" id="header">
+    <div class="container header__row">
+      <button class="icon-btn header__menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false">
+        <svg class="i"><use href="#i-menu"/></svg>
+      </button>
+
+      <a href="#/" class="logo" aria-label="DURAH Perfumes e Importados — início">
+        <span class="logo__name">DURAH</span>
+        <span class="logo__sub">perfumes e importados</span>
+      </a>
+
+      <nav class="nav" id="nav" aria-label="Menu principal">
+        <a href="#/" data-nav="home">Início</a>
+        <a href="#/catalogo" data-nav="catalogo">Catálogo</a>
+        <a href="#/marcas" data-nav="marcas">Marcas</a>
+        <a href="#/contato" data-nav="contato">Contato</a>
+      </nav>
+
+      <form class="search" id="searchForm" role="search">
+        <svg class="i"><use href="#i-search"/></svg>
+        <input type="search" id="searchInput" placeholder="Buscar perfume, marca ou nota…" aria-label="Buscar" autocomplete="off">
+      </form>
+
+      <div class="header__actions">
+        <button class="icon-btn" id="searchToggle" aria-label="Buscar"><svg class="i"><use href="#i-search"/></svg></button>
+        <button class="icon-btn" id="favBtn" aria-label="Lista de desejos">
+          <svg class="i"><use href="#i-heart"/></svg><span class="count" id="favCount" hidden>0</span>
+        </button>
+        <button class="icon-btn" id="cartBtn" aria-label="Sacola">
+          <svg class="i"><use href="#i-bag"/></svg><span class="count" id="cartCount" hidden>0</span>
+        </button>
+        <a class="icon-btn icon-btn--wa" id="headerWa" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+          <svg class="i i--fill"><use href="#i-whatsapp"/></svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="mobile-nav" id="mobileNav" hidden>
+    <a href="#/">Início</a>
+    <a href="#/catalogo">Catálogo</a>
+    <a href="#/marcas">Marcas</a>
+    <a href="#/contato">Contato</a>
+    <button class="btn btn--outline btn--block" data-help>Me ajude a escolher</button>
+  </div>
+
+  <main id="app" tabindex="-1" aria-live="polite">
+    <div class="loader"><span></span></div>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer__grid">
+      <div>
+        <a href="#/" class="logo logo--lg"><span class="logo__name">DURAH</span><span class="logo__sub">perfumes e importados</span></a>
+        <p class="muted mt-1">Perfumes importados, árabes e de nicho selecionados com curadoria. Atendimento personalizado do primeiro borrifo ao drydown.</p>
+      </div>
+      <div>
+        <h3 class="footer__title">Navegue</h3>
+        <ul class="footer__links">
+          <li><a href="#/catalogo">Catálogo completo</a></li>
+          <li><a href="#/catalogo?cat=lancamentos">Lançamentos</a></li>
+          <li><a href="#/catalogo?cat=decants">Decants e miniaturas</a></li>
+          <li><a href="#/marcas">Marcas</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3 class="footer__title">Atendimento</h3>
+        <ul class="footer__links" id="footerContact"></ul>
+      </div>
+    </div>
+    <div class="container footer__bottom">
+      <span>© <span id="year"></span> DURAH Perfumes e Importados. Todos os direitos reservados.</span>
+      <a href="admin/" class="footer__admin">Área do lojista</a>
+    </div>
+  </footer>
+
+  <a class="wa-float" id="waFloat" href="#" target="_blank" rel="noopener" aria-label="Fale com a DURAH no WhatsApp">
+    <svg class="i i--fill"><use href="#i-whatsapp"/></svg>
+  </a>
+
+  <!-- Gaveta: sacola / desejos -->
+  <div class="overlay" id="overlay" hidden></div>
+  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="Sacola e lista de desejos">
+    <div class="drawer__head">
+      <div class="tabs" role="tablist">
+        <button role="tab" data-tab="cart" class="tab is-active">Sacola</button>
+        <button role="tab" data-tab="fav" class="tab">Desejos</button>
+      </div>
+      <button class="icon-btn" data-close aria-label="Fechar"><svg class="i"><use href="#i-x"/></svg></button>
+    </div>
+    <div class="drawer__body" id="drawerBody"></div>
+    <div class="drawer__foot" id="drawerFoot"></div>
+  </aside>
+
+  <!-- Modal: me ajude a escolher -->
+  <dialog class="modal" id="helpModal">
+    <form method="dialog" class="modal__box" id="helpForm">
+      <button class="icon-btn modal__close" value="cancel" aria-label="Fechar"><svg class="i"><use href="#i-x"/></svg></button>
+      <span class="eyebrow">Consultoria olfativa</span>
+      <h2 class="h2">Me ajude a escolher</h2>
+      <p class="muted">Conte o que você procura e nossa equipe indica as fragrâncias ideais pelo WhatsApp.</p>
+
+      <fieldset class="field">
+        <legend>Para quem é o perfume?</legend>
+        <div class="chips" data-single="gender">
+          <label class="chip-check"><input type="radio" name="hgender" value="masculino" checked><span>Masculino</span></label>
+          <label class="chip-check"><input type="radio" name="hgender" value="feminino"><span>Feminino</span></label>
+          <label class="chip-check"><input type="radio" name="hgender" value="unissex"><span>Unissex</span></label>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Notas que você gosta</legend>
+        <div class="chips">
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="amadeiradas"><span>Amadeiradas</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="cítricas e frescas"><span>Cítricas / frescas</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="doces e baunilhadas"><span>Doces / baunilha</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="florais"><span>Florais</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="de oud"><span>Oud</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="especiadas"><span>Especiadas</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="ambaradas"><span>Âmbar / resinas</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="de couro"><span>Couro</span></label>
+          <label class="chip-check"><input type="checkbox" name="hnotes" value="aquáticas"><span>Aquáticas</span></label>
+        </div>
+        <input class="input mt-1" name="hnotesFree" placeholder="Outras notas ou um perfume que você ama (opcional)">
+      </fieldset>
+      <fieldset class="field">
+        <legend>Para usar em…</legend>
+        <select class="input" name="hocc">
+          <option value="o dia a dia">Dia a dia</option>
+          <option value="o trabalho">Trabalho</option>
+          <option value="a noite">Noite</option>
+          <option value="encontros">Encontros</option>
+          <option value="festas">Festas</option>
+          <option value="eventos formais">Eventos formais</option>
+          <option value="presentear alguém">Presente</option>
+        </select>
+      </fieldset>
+      <button type="submit" value="send" class="btn btn--primary btn--block btn--lg">
+        <svg class="i i--fill"><use href="#i-whatsapp"/></svg> Receber indicações no WhatsApp
+      </button>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- Ícones -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+      <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></symbol>
+      <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+      <symbol id="i-bag" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></symbol>
+      <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+      <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+      <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+      <symbol id="i-truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+      <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+      <symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></symbol>
+      <symbol id="i-chat" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+      <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+      <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></symbol>
+      <symbol id="i-flower" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.5"/><path d="M12 9.5C10 6 10.5 3 12 2c1.5 1 2 4 0 7.5ZM12 14.5c2 3.5 1.5 6.5 0 7.5-1.5-1-2-4 0-7.5ZM9.5 12C6 14 3 13.5 2 12c1-1.5 4-2 7.5 0ZM14.5 12c3.5-2 6.5-1.5 7.5 0-1 1.5-4 2-7.5 0Z"/></symbol>
+      <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+      <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="m9 4 3 3 3-3M9 20l3-3 3 3"/></symbol>
+      <symbol id="i-briefcase" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></symbol>
+      <symbol id="i-moon" viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></symbol>
+      <symbol id="i-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></symbol>
+      <symbol id="i-coffee" viewBox="0 0 24 24"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2M10 2v2M14 2v2"/></symbol>
+      <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+      <symbol id="i-gem" viewBox="0 0 24 24"><path d="M6 3h12l4 6-10 13L2 9Z"/><path d="M11 3 8 9l4 13 4-13-3-6"/><path d="M2 9h20"/></symbol>
+      <symbol id="i-wind" viewBox="0 0 24 24"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></symbol>
+      <symbol id="i-layers" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+      <symbol id="i-filter" viewBox="0 0 24 24"><path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/></symbol>
+      <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+      <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+      <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+      <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+      <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+      <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.53 13.53 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><path d="M2 2l20 20"/></symbol>
+      <symbol id="i-upload" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m17 8-5-5-5 5"/><path d="M12 3v12"/></symbol>
+      <symbol id="i-download" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="m7 10 5 5 5-5"/><path d="M12 15V3"/></symbol>
+      <symbol id="i-logout" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+      <symbol id="i-chevl" viewBox="0 0 24 24"><path d="m15 18-6-6 6-6"/></symbol>
+      <symbol id="i-chevr" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+      <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+      <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+      <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.5 6.5h.01"/></symbol>
+      <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/></symbol>
+      <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+      <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+      <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+      <symbol id="i-tag" viewBox="0 0 24 24"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4Z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+      <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></symbol>
+      <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8 12 3 3 8v8l9 5 9-5Z"/><path d="m3 8 9 5 9-5M12 13v8"/></symbol>
+      <symbol id="i-whatsapp" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0 0 12.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 0 0 5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 0 0-3.48-8.413Z"/></symbol>
+    </defs>
+  </svg>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

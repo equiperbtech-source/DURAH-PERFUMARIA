@@ -1,0 +1,150 @@
+// Utilitários compartilhados entre a loja e o painel admin
+export const $ = (s, el = document) => el.querySelector(s);
+export const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+export const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+export const money = (n) => Number(n || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+export const icon = (n, cls = '') => `<svg class="i ${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+export const DEFAULT_WA = '5548991154821';
+
+// ─── Listas do formulário ───
+export const CONCENTRATIONS = ['Eau de Cologne', 'Eau de Toilette', 'Eau de Parfum', 'Parfum/Extrait'];
+export const GENDERS = ['Masculino', 'Feminino', 'Unissex'];
+export const FAMILIES = ['Amadeirado', 'Oriental/Âmbar', 'Floral', 'Cítrico', 'Fougère', 'Gourmand', 'Aromático', 'Aquático', 'Couro', 'Oud', 'Especiado'];
+export const LONGEVITY = ['Moderada', 'Longa', 'Muito longa', 'Eterna'];
+export const LONGEVITY_HINT = ['4 a 6 horas', '6 a 8 horas', '8 a 12 horas', 'mais de 12 horas'];
+export const PROJECTION = ['Discreta', 'Moderada', 'Forte', 'Enorme'];
+export const PROJECTION_HINT = ['perto da pele', 'até um braço', 'perfuma o ambiente', 'deixa rastro por onde passa'];
+export const SEASONS = [['Primavera', 'flower'], ['Verão', 'sun'], ['Outono', 'leaf'], ['Inverno', 'snow']];
+export const OCCASIONS = [['Dia a dia', 'coffee'], ['Trabalho', 'briefcase'], ['Noite', 'moon'], ['Encontro', 'heart'], ['Festa', 'music'], ['Eventos formais', 'gem']];
+export const VOLUMES = ['2ml', '5ml', '10ml', '30ml', '50ml', '75ml', '90ml', '100ml', '125ml', '200ml'];
+export const ORIGINS = ['França', 'Emirados Árabes', 'Itália', 'EUA', 'Reino Unido', 'Espanha', 'Turquia', 'Omã', 'Arábia Saudita', 'Alemanha', 'Brasil'];
+export const NICHE_HOUSES = ['Creed', 'Parfums de Marly', 'Maison Francis Kurkdjian', 'Xerjoff', 'Initio', 'Nishane', 'Amouage', 'Tom Ford Private Blend', 'Byredo', 'Le Labo', 'Roja Parfums', 'Frederic Malle', 'Mancera', 'Montale'];
+export const TAG_SUGGESTIONS = ['viciante', 'elogiado', 'doce', 'fresco', 'marcante', 'versátil', 'sensual', 'limpo', 'luxuoso', 'rastro forte'];
+
+// ─── Regras de produto ───
+export const finalPrice = (p) => (p.promoPrice && p.promoPrice < p.price ? p.promoPrice : p.price);
+export const discount = (p) => (p.promoPrice && p.promoPrice < p.price ? Math.round((1 - p.promoPrice / p.price) * 100) : 0);
+export const isSoldOut = (p) => p.status === 'esgotado' || Number(p.stock) <= 0;
+export const isLastUnits = (p) => !isSoldOut(p) && Number(p.stock) > 0 && Number(p.stock) <= 3;
+export const isArab = (p) => /emirad|árab|arab|dubai|omã|oma\b|catar|kuwait|saudita/i.test(p.origin || '');
+export const isDecant = (p) => p.decant || (parseInt(p.volume, 10) > 0 && parseInt(p.volume, 10) <= 10);
+
+export function badges(p) {
+  const b = [];
+  if (isSoldOut(p)) b.push(['Esgotado', 'off']);
+  else if (isLastUnits(p)) b.push(['Últimas unidades', 'warn']);
+  if (p.launch) b.push(['Lançamento', 'solid']);
+  if (discount(p)) b.push([`-${discount(p)}%`, 'solid']);
+  if (p.niche) b.push(['Nicho', '']);
+  if (p.imported) b.push(['Importado', '']);
+  return b.map(([t, c]) => `<span class="badge ${c ? 'badge--' + c : ''}">${esc(t)}</span>`).join('');
+}
+
+// ─── WhatsApp ───
+export const waUrl = (num, msg) => `https://wa.me/${String(num || DEFAULT_WA).replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
+
+export const msgProduct = (p) =>
+`Olá, DURAH Perfumes e Importados! 👋✨
+Vim pelo catálogo e fiquei apaixonado(a) por esta fragrância:
+
+🖤 Perfume: ${p.name}
+🏷️ Marca: ${p.brand}
+📏 Tamanho: ${p.volume}
+💰 Valor: R$ ${money(finalPrice(p))}
+
+Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
+
+export const msgGeneral = () => 'Olá, DURAH Perfumes e Importados! 👋 Gostaria de ajuda para escolher o perfume ideal para mim. Pode me atender?';
+
+export const joinPt = (arr) => (arr.length <= 1 ? arr.join('') : arr.slice(0, -1).join(', ') + ' e ' + arr[arr.length - 1]);
+export const joinOr = (arr) => (arr.length <= 1 ? arr.join('') : arr.slice(0, -1).join(', ') + ' ou ' + arr[arr.length - 1]);
+
+export const msgHelp = (gender, notes, occasion) =>
+  `Olá, DURAH! Estou procurando um perfume ${gender}, com notas ${notes}, para usar em ${occasion}. Pode me indicar algumas opções?`;
+
+export function msgList(items, intro = 'montei minha sacola') {
+  let total = 0;
+  const lines = items.map(({ p, qty }, i) => {
+    const sub = finalPrice(p) * qty; total += sub;
+    return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${p.volume} · Qtd: ${qty} · 💰 R$ ${money(sub)}`;
+  });
+  return `Olá, DURAH Perfumes e Importados! 👋✨
+Vim pelo catálogo e ${intro}:
+
+${lines.join('\n\n')}
+
+🧾 Total: R$ ${money(total)}
+
+Ainda estão disponíveis? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
+}
+
+// ─── Toast ───
+let toastTimer;
+export function toast(msg, error = false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.toggle('is-error', error); t.classList.add('is-show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('is-show'), 2600);
+}
+
+// ─── Arte do frasco (usada quando o produto ainda não tem foto) ───
+const FAMILY_COLORS = {
+  'Amadeirado': ['#D9A35B', '#7A4E1E'], 'Oriental/Âmbar': ['#FFB23E', '#9C4A07'], 'Floral': ['#F59AB5', '#8E2F52'],
+  'Cítrico': ['#FFE36A', '#B88A00'], 'Fougère': ['#A8D08D', '#3F6B2A'], 'Gourmand': ['#E0A46A', '#6B3410'],
+  'Aromático': ['#B6D7A8', '#4E7A43'], 'Aquático': ['#7FD3F7', '#145E86'], 'Couro': ['#B07850', '#3E2010'],
+  'Oud': ['#A0522D', '#2E120A'], 'Especiado': ['#F08A4B', '#7A2A0C'],
+};
+const hash = (s) => [...String(s)].reduce((a, c) => (a * 31 + c.charCodeAt(0)) >>> 0, 7);
+const xml = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' }[c]));
+const artCache = new Map();
+
+export function bottleArt(p) {
+  const key = `${p.id}|${p.name}|${p.brand}|${p.family}`;
+  if (artCache.has(key)) return artCache.get(key);
+  const h = hash(p.id + p.name);
+  const [c1, c2] = FAMILY_COLORS[p.family] || ['#FFD60A', '#8A6A00'];
+  const shape = h % 3, cap = (h >> 3) % 3;
+  const name = xml((p.name || '').toUpperCase().slice(0, 16));
+  const brand = xml((p.brand || '').toUpperCase().slice(0, 22));
+  const vol = xml(p.volume || '');
+  const bodies = [
+    '<rect x="128" y="182" width="144" height="232" rx="16"/>',
+    '<rect x="104" y="214" width="192" height="200" rx="28"/>',
+    '<path d="M150 186h100l36 40v148l-36 40H150l-36-40V226z"/>',
+  ];
+  const caps = [
+    '<rect x="166" y="96" width="68" height="70" rx="6" fill="url(#gold)"/><rect x="166" y="96" width="68" height="8" rx="4" fill="#fff" opacity=".35"/>',
+    '<circle cx="200" cy="124" r="40" fill="url(#gold)"/><ellipse cx="186" cy="110" rx="14" ry="9" fill="#fff" opacity=".35"/>',
+    '<path d="M172 166 182 80h36l10 86z" fill="url(#gold)"/><rect x="190" y="84" width="6" height="76" fill="#fff" opacity=".3"/>',
+  ];
+  const labelY = shape === 1 ? 286 : 272;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500">
+<defs>
+<radialGradient id="bg" cx="50%" cy="42%" r="70%"><stop offset="0" stop-color="#232323"/><stop offset="1" stop-color="#0a0a0a"/></radialGradient>
+<radialGradient id="glow" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#FFC400" stop-opacity=".30"/><stop offset="1" stop-color="#FFC400" stop-opacity="0"/></radialGradient>
+<linearGradient id="liq" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFE680"/><stop offset=".5" stop-color="#FFC400"/><stop offset="1" stop-color="#9A7300"/></linearGradient>
+<linearGradient id="shine" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".0"/><stop offset=".5" stop-color="#fff" stop-opacity=".28"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+<clipPath id="cl">${bodies[shape]}</clipPath>
+</defs>
+<rect width="400" height="500" fill="url(#bg)"/>
+<circle cx="200" cy="290" r="190" fill="url(#glow)"/>
+<ellipse cx="200" cy="430" rx="130" ry="14" fill="#000" opacity=".7"/>
+<g clip-path="url(#cl)">
+<rect x="90" y="170" width="220" height="260" fill="url(#liq)" opacity=".92"/>
+<rect x="90" y="170" width="220" height="40" fill="#fff" opacity=".10"/>
+<rect x="140" y="170" width="38" height="260" fill="url(#shine)"/>
+</g>
+<g fill="none" stroke="#FFC400" stroke-opacity=".55" stroke-width="2">${bodies[shape]}</g>
+<rect x="182" y="160" width="36" height="28" fill="url(#gold)"/>
+${caps[cap]}
+<rect x="124" y="${labelY}" width="152" height="64" rx="4" fill="#0A0A0A" stroke="#FFC400" stroke-width="1.5"/>
+<text x="200" y="${labelY + 27}" font-family="Montserrat,Arial,sans-serif" font-weight="800" font-size="${name.length > 13 ? 9.5 : name.length > 10 ? 11 : 13}" fill="#FFC400" text-anchor="middle" letter-spacing="1">${name}</text>
+<text x="200" y="${labelY + 46}" font-family="Arial,sans-serif" font-size="8" fill="#ddd" text-anchor="middle" letter-spacing="1.5">${vol}</text>
+<text x="200" y="476" font-family="Montserrat,Arial,sans-serif" font-weight="700" font-size="11" fill="#FFC400" fill-opacity=".75" text-anchor="middle" letter-spacing="3">${brand}</text>
+</svg>`;
+  const uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  artCache.set(key, uri);
+  return uri;
+}
+
+export const productImages = (p) => (p.images && p.images.length ? p.images : [bottleArt(p)]);
