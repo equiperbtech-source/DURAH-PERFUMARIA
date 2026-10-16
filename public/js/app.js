@@ -475,6 +475,12 @@ function pageProduct(slug) {
           </div>
         </div>
         <div class="seal"><img src="img/brand/monograma.webp" alt="" width="276" height="360" loading="lazy"><p><strong>Vendido e garantido por DURAH</strong><span>Curadoria, procedência e atendimento da nossa equipe do pedido ao drydown.</span></p></div>
+        ${refs.length ? `<section class="block block--refs"><h2>${icon('star')} Para quem gosta de…</h2>
+          <p class="refs-lead">Para quem gosta de ${joinOr(refs.map(fmtRef))}.</p>
+          <div class="refs">${refs.map((r) => `<div class="ref"><span class="ref__mono">${esc(mono(r.house || r.name))}</span><div><strong>${esc(r.name || r.house)}</strong>${r.name && r.house ? `<small>${esc(r.house)}</small>` : ''}</div></div>`).join('')}</div>
+          <p class="hint mt-1">Referências de perfil olfativo semelhante, para orientar sua escolha.</p>
+        </section>` : ''}
+
         ${trustBar('list')}
 
         ${p.family ? `<div class="mt-2"><div class="family-seal"><span class="family-seal__icon">${icon('drop')}</span><span><small>Família olfativa</small><strong>${esc(p.family)}</strong></span></div></div>` : ''}
@@ -515,12 +521,6 @@ function pageProduct(slug) {
           <p class="label mt-2">Ocasiões</p>
           <div class="iconlist iconlist--3">${OCCASIONS.map(([s, i]) => `<div class="iconitem ${(p.occasions || []).includes(s) ? 'on' : ''}">${icon(i)} ${s}</div>`).join('')}</div>
         </section>
-
-        ${refs.length ? `<section class="block"><h2>${icon('star')} Para quem gosta de…</h2>
-          <p class="refs-lead">Para quem gosta de ${joinOr(refs.map(fmtRef))}.</p>
-          <div class="refs">${refs.map((r) => `<div class="ref"><span class="ref__mono">${esc(mono(r.house || r.name))}</span><div><strong>${esc(r.name || r.house)}</strong>${r.name && r.house ? `<small>${esc(r.house)}</small>` : ''}</div></div>`).join('')}</div>
-          <p class="hint mt-1">Referências de perfil olfativo semelhante, para orientar sua escolha.</p>
-        </section>` : ''}
 
         <section class="block"><h2>${icon('tag')} Ficha técnica</h2>
           <dl class="specs">

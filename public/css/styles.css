@@ -1039,3 +1039,4 @@ h1, h2, h3, h4 { font-weight: 600; }
   opacity: .13; mix-blend-mode: screen;
 }
 .gallery__main::before { width: 34%; }
+.block--refs { margin-top: 18px; }
