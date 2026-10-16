@@ -28,6 +28,8 @@ const num = (v) => { const n = Number(v); return Number.isFinite(n) && n >= 0 ? 
 const list = (v, max = 30, len = 80) => (Array.isArray(v) ? v.map((x) => str(x, len)).filter(Boolean).slice(0, max) : []);
 const bool = (v) => v === true || v === 'true' || v === 1 || v === 'on';
 const slugify = (s) => str(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'perfume';
+const IG_RE = /instagram\.com\/(?:[\w.]+\/)?(reels?|p|tv)\/([A-Za-z0-9_-]{5,})/i;
+const igLink = (u) => { const m = IG_RE.exec(typeof u === 'string' ? u : ''); return m ? `https://www.instagram.com/${m[1].toLowerCase().startsWith('reel') ? 'reel' : m[1].toLowerCase()}/${m[2]}/` : ''; };
 const isImg = (u) => typeof u === 'string' && (/^\/uploads\/[a-z0-9-]+\.(webp|jpe?g|png)$/i.test(u) || /^https:\/\/[^\s"'<>]+$/i.test(u));
 
 function uniqueSlug(base, id) {
@@ -43,6 +45,7 @@ function normalizeProduct(input, existing = {}) {
     name: str(p.name, 120),
     brand: str(p.brand, 80),
     images: (Array.isArray(p.images) ? p.images : []).filter(isImg).slice(0, 4),
+    videoUrl: igLink(p.videoUrl),
     price: num(p.price) ?? 0,
     promoPrice: num(p.promoPrice) || null,
     type: ['perfume', 'body-spray', 'victorias-secret', 'kit'].includes(p.type) ? p.type : 'perfume',

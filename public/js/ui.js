@@ -117,6 +117,11 @@ export const backorderLabel = () => `Sob encomenda (${shop.backorder})`;
 export const installmentText = (price, n) => (n > 1 && price > 0 ? `${n}x de R$ ${money(price / n)} sem juros` : '');
 export const stars = (n) => '★★★★★'.slice(0, Math.round(n)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(n));
 
+// ─── Vídeo do Instagram (Reels ou post público) ───
+const IG_RE = /instagram\.com\/(?:[\w.]+\/)?(reels?|p|tv)\/([A-Za-z0-9_-]{5,})/i;
+export const igLink = (url) => { const m = IG_RE.exec(url || ''); return m ? `https://www.instagram.com/${m[1].toLowerCase().startsWith('reel') ? 'reel' : m[1].toLowerCase()}/${m[2]}/` : ''; };
+export const igEmbed = (url) => (igLink(url) ? igLink(url) + 'embed/' : '');
+
 export function badges(p) {
   const b = [];
   if (isSoldOut(p)) b.push(['Sob encomenda', 'warn']);
@@ -125,6 +130,7 @@ export function badges(p) {
   if (p.launch) b.push(['Lançamento', 'solid']);
   if (discount(p)) b.push([`-${discount(p)}%`, 'solid']);
   if (p.niche) b.push(['Nicho', '']);
+  if (igLink(p.videoUrl)) b.push(['▶ Vídeo', '']);
   if (hasDecants(p) && fullAvailable(p)) b.push(['Tem decant', '']);
   if (p.imported) b.push(['Importado', '']);
   return b.map(([t, c]) => `<span class="badge ${c ? 'badge--' + c : ''}">${esc(t)}</span>`).join('');

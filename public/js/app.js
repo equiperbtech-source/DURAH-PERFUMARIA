@@ -4,7 +4,7 @@ import {
   waUrl, msgProduct, msgGeneral, msgHelp, msgList, joinPt, joinOr,
   variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
   productType, isPerfume, typeLabel, scentEmoji, scentAdjective, INTENSITY,
-  isKit, isSimple, kitItems, kitSeparatePrice, kitSavings,
+  isKit, isSimple, kitItems, kitSeparatePrice, kitSavings, igLink, igEmbed,
   shop, backorderLabel,
   GENDERS, FAMILIES, LONGEVITY, LONGEVITY_HINT, PROJECTION, PROJECTION_HINT, SEASONS, OCCASIONS,
 } from './ui.js';
@@ -461,9 +461,15 @@ function pageProduct(slug) {
         <div class="gallery__main">
           ${isKit(p) && !(p.images && p.images.length) && kitItems(p).filter((i) => i.prod).length >= 2 ? mediaHtml(p, p.name) : `<img id="mainImg" src="${esc(imgs[0])}" alt="${esc(p.name)} — ${esc(p.brand)}" width="800" height="1000" fetchpriority="high">`}
           <div class="card__badges">${badges(p)}</div>
+          ${igEmbed(p.videoUrl) ? `<a class="gallery__video-btn" href="#pvideo" data-scrollto="pvideo">${icon('play', 'i--sm')} Ver vídeo</a>` : ''}
           ${imgs.length > 1 ? `<button class="icon-btn gallery__nav gallery__nav--prev" data-step="-1" aria-label="Foto anterior">${icon('chevl')}</button><button class="icon-btn gallery__nav gallery__nav--next" data-step="1" aria-label="Próxima foto">${icon('chevr')}</button>` : ''}
         </div>
         ${imgs.length > 1 ? `<div class="gallery__thumbs">${imgs.map((src, i) => `<button class="${i ? '' : 'is-active'}" data-img="${i}" aria-label="Foto ${i + 1}"><img src="${esc(src)}" alt="" loading="lazy"></button>`).join('')}</div>` : ''}
+        ${igEmbed(p.videoUrl) ? `<section class="pvideo" id="pvideo">
+          <h2 class="pvideo__title">${icon('play', 'i--sm')} Veja em vídeo</h2>
+          <div class="pvideo__frame"><iframe src="${esc(igEmbed(p.videoUrl))}" title="Vídeo de ${esc(p.name)} no Instagram" loading="lazy" allowtransparency="true" allow="encrypted-media; autoplay; clipboard-write; picture-in-picture" scrolling="no"></iframe></div>
+          <a class="pvideo__link" href="${esc(igLink(p.videoUrl))}" target="_blank" rel="noopener">${icon('instagram', 'i--sm')} Abrir no Instagram</a>
+        </section>` : ''}
       </div>
 
       <div class="pinfo">
@@ -866,6 +872,8 @@ async function reloadCatalog() {
 function closeMobileNav() { $('#mobileNav').hidden = true; $('#menuBtn').setAttribute('aria-expanded', 'false'); }
 
 document.addEventListener('click', (e) => {
+  const sc = e.target.closest('[data-scrollto]');
+  if (sc) { e.preventDefault(); const el = document.getElementById(sc.dataset.scrollto); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 90, behavior: 'smooth' }); return; }
   const t = e.target.closest('[data-fav],[data-add],[data-help],[data-close],[data-qty],[data-remove],[data-unfav],#drawer .tab');
   if (!t) return;
   if (t.dataset.fav) { e.preventDefault(); toggleFav(t.dataset.fav); }

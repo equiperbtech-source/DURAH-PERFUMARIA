@@ -2,7 +2,7 @@ import { store, optimizeImage } from './store.js';
 import {
   $, $$, esc, money, icon, toast, productImages, finalPrice, isSoldOut, DEFAULT_TRUST, stars, guessProductByTitle,
   PRODUCT_TYPES, VS_KINDS, SCENT_PROFILE, INTENSITY, productType, isPerfume, typeLabel,
-  KIT_VARIANTS, isKit, variants,
+  KIT_VARIANTS, isKit, variants, igLink,
   CONCENTRATIONS, GENDERS, FAMILIES, LONGEVITY, PROJECTION, SEASONS, OCCASIONS, VOLUMES, ORIGINS, NICHE_HOUSES, TAG_SUGGESTIONS,
 } from './ui.js';
 
@@ -271,7 +271,11 @@ function renderForm(body, p, presetType) {
       <span data-only="perfume"><strong class="gold">Decants:</strong> preencha o preço do decant de 5ml e/ou 10ml para o cliente poder escolher entre frasco completo e decant na página do produto. Deixe vazio para não oferecer. Os decants continuam à venda mesmo com o frasco esgotado.</span></p>
     </section>
 
-    <section class="fsection"><h2>${icon('upload')} Fotos</h2><div id="f-images"></div></section>
+    <section class="fsection"><h2>${icon('upload')} Fotos e vídeo</h2><div id="f-images"></div>
+      <div class="field mt-2"><label class="label" for="f-video">${icon('instagram', 'i--sm')} Vídeo do Instagram (opcional)</label>
+        <input class="input" id="f-video" name="videoUrl" type="url" inputmode="url" value="${esc(p.videoUrl || '')}" placeholder="Cole o link do Reels ou post, ex.: https://www.instagram.com/reel/ABC123/">
+        <p class="hint" id="f-video-hint">No Instagram, abra o Reels → ⋯ (ou o avião de compartilhar) → <strong>Copiar link</strong>. A conta precisa ser pública.</p></div>
+    </section>
 
     <section class="fsection"><h2>${icon('sparkles')} Descrição</h2>
       <div class="field"><label class="label" for="f-desc">Descrição geral (conte a história do produto)</label>
@@ -442,6 +446,7 @@ function renderForm(body, p, presetType) {
     const f = e.target, fd = new FormData(f);
     if (!fd.get('name').trim()) { toast('Informe o nome do perfume.', true); f.name.focus(); return; }
     if (!fd.get('brand').trim()) { toast('Informe a marca.', true); f.brand.focus(); return; }
+    if (fd.get('videoUrl').trim() && !igLink(fd.get('videoUrl'))) { toast('Link do Instagram inválido. Use o link do Reels ou do post (instagram.com/reel/… ou /p/…).', true); $('#f-video').focus(); return; }
     const kitMode = fd.get('type') === 'kit';
     const kitFinal = parseFloat($('#f-kitfinal').value) || 0;
     if (kitMode) {
@@ -470,6 +475,7 @@ function renderForm(body, p, presetType) {
       stock: parseInt(fd.get('stock'), 10) || 0, status: fd.get('status'),
       description: fd.get('description').trim(),
       images: imgs.get(),
+      videoUrl: igLink(fd.get('videoUrl')),
       notes: { top: top.get(), heart: heart.get(), base: base.get() },
       family: fd.get('family'), perfumer: fd.get('perfumer').trim(), year: parseInt(fd.get('year'), 10) || null,
       longevity: fd.get('longevity'), projection: fd.get('projection'),
