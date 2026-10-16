@@ -1,43 +1,26 @@
 /**
  * DURAH Perfumes e Importados — servidor
- * Express + banco em arquivo JSON + upload de imagens (WebP otimizado no navegador).
+ * Express + catálogo em JSON + upload de imagens (WebP otimizado no navegador).
+ * Roda como servidor Node comum (VPS, Render, Railway, Docker) ou como função na Vercel.
  */
 const express = require('express');
 const compression = require('compression');
-const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
+const { createStorage } = require('./storage');
 
 const PORT = process.env.PORT || 3000;
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'durah2026';
 const SECRET = process.env.SESSION_SECRET || crypto.createHash('sha256').update('durah::' + ADMIN_PASSWORD).digest('hex');
-const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
-const UPLOAD_DIR = path.join(DATA_DIR, 'uploads');
-const DB_FILE = path.join(DATA_DIR, 'db.json');
-const SEED_FILE = path.join(__dirname, 'public', 'data', 'seed.json');
 const TOKEN_TTL = 1000 * 60 * 60 * 12; // 12h
 
 if (!process.env.ADMIN_PASSWORD) {
   console.warn('⚠️  ADMIN_PASSWORD não definida — usando a senha padrão "durah2026". Defina-a antes de publicar!');
 }
 
-fs.mkdirSync(UPLOAD_DIR, { recursive: true });
-
-// ───────────── Banco de dados (arquivo JSON) ─────────────
-function saveDb(data) {
-  const tmp = DB_FILE + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2));
-  fs.renameSync(tmp, DB_FILE);
-}
-function loadDb() {
-  if (!fs.existsSync(DB_FILE)) {
-    const seed = JSON.parse(fs.readFileSync(SEED_FILE, 'utf8'));
-    saveDb(seed);
-    return seed;
-  }
-  return JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
-}
-let db = loadDb();
+const storage = createStorage();
+let db; // carregado por requisição (com cache) a partir do armazenamento
+const loadDb = async (fresh = false) => { db = await storage.load(fresh); return db; };
 
 // ───────────── Normalização / validação ─────────────
 const str = (v, max = 300) => (typeof v === 'string' ? v.trim().slice(0, max) : v == null ? '' : String(v).trim().slice(0, max));
@@ -45,7 +28,7 @@ const num = (v) => { const n = Number(v); return Number.isFinite(n) && n >= 0 ? 
 const list = (v, max = 30, len = 80) => (Array.isArray(v) ? v.map((x) => str(x, len)).filter(Boolean).slice(0, max) : []);
 const bool = (v) => v === true || v === 'true' || v === 1 || v === 'on';
 const slugify = (s) => str(s).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'perfume';
-const isImg = (u) => typeof u === 'string' && (/^\/uploads\/[a-z0-9-]+\.(webp|jpe?g|png)$/i.test(u) || /^https:\/\//i.test(u));
+const isImg = (u) => typeof u === 'string' && (/^\/uploads\/[a-z0-9-]+\.(webp|jpe?g|png)$/i.test(u) || /^https:\/\/[^\s"'<>]+$/i.test(u));
 
 function uniqueSlug(base, id) {
   let slug = base, i = 2;
@@ -158,9 +141,10 @@ app.use((req, res, next) => {
 });
 
 const api = express.Router();
-api.get('/health', (req, res) => res.json({ ok: true }));
+api.get('/health', (req, res) => res.json({ ok: true, storage: storage.kind }));
 
-api.get('/catalog', (req, res) => {
+api.get('/catalog', async (req, res) => {
+  await loadDb();
   res.setHeader('Cache-Control', 'no-cache');
   res.json({ settings: db.settings, products: db.products.filter((p) => p.active) });
 });
@@ -174,67 +158,77 @@ api.post('/login', loginLimiter, (req, res) => {
   res.json({ token: makeToken() });
 });
 
-api.get('/admin/catalog', auth, (req, res) => res.json({ settings: db.settings, products: db.products }));
-
-api.post('/products', auth, (req, res) => {
-  const p = normalizeProduct(req.body || {});
-  if (!p.name) return res.status(400).json({ error: 'Informe o nome do perfume.' });
-  db.products.unshift(p); saveDb(db); res.status(201).json(p);
+api.get('/admin/catalog', auth, async (req, res) => {
+  await loadDb(true);
+  res.json({ settings: db.settings, products: db.products, storage: storage.kind });
 });
 
-api.put('/products/:id', auth, (req, res) => {
+api.post('/products', auth, async (req, res) => {
+  await loadDb(true);
+  const p = normalizeProduct(req.body || {});
+  if (!p.name) return res.status(400).json({ error: 'Informe o nome do perfume.' });
+  db.products.unshift(p); await storage.save(db); res.status(201).json(p);
+});
+
+api.put('/products/:id', auth, async (req, res) => {
+  await loadDb(true);
   const i = db.products.findIndex((p) => p.id === req.params.id);
   if (i < 0) return res.status(404).json({ error: 'Produto não encontrado.' });
   const p = normalizeProduct(req.body || {}, db.products[i]);
   if (!p.name) return res.status(400).json({ error: 'Informe o nome do perfume.' });
   const oldImages = db.products[i].images;
-  db.products[i] = p; saveDb(db); cleanupImages(oldImages); res.json(p);
+  db.products[i] = p; await storage.save(db); await cleanupImages(oldImages); res.json(p);
 });
 
-api.delete('/products/:id', auth, (req, res) => {
+api.delete('/products/:id', auth, async (req, res) => {
+  await loadDb(true);
   const i = db.products.findIndex((p) => p.id === req.params.id);
   if (i < 0) return res.status(404).json({ error: 'Produto não encontrado.' });
   const [removed] = db.products.splice(i, 1);
-  saveDb(db); cleanupImages(removed.images); res.json({ ok: true });
+  await storage.save(db); await cleanupImages(removed.images); res.json({ ok: true });
 });
 
-api.put('/settings', auth, (req, res) => {
+api.put('/settings', auth, async (req, res) => {
+  await loadDb(true);
   const old = db.settings.banner && db.settings.banner.image;
   db.settings = normalizeSettings(req.body || {}, db.settings);
-  saveDb(db); if (old) cleanupImages([old]); res.json(db.settings);
+  await storage.save(db); if (old) await cleanupImages([old]); res.json(db.settings);
 });
 
-api.post('/import', auth, (req, res) => {
+api.post('/import', auth, async (req, res) => {
+  await loadDb(true);
   const b = req.body || {};
   if (!Array.isArray(b.products)) return res.status(400).json({ error: 'Arquivo de backup inválido.' });
   db = { settings: normalizeSettings(b.settings || {}, db.settings), products: [] };
   for (const p of b.products) db.products.push(normalizeProduct(p, { id: p.id, createdAt: p.createdAt }));
-  saveDb(db); res.json({ ok: true, count: db.products.length });
+  await storage.save(db); res.json({ ok: true, count: db.products.length });
 });
 
-api.post('/upload', auth, (req, res) => {
+api.post('/upload', auth, async (req, res) => {
   const m = /^data:image\/(webp|jpeg|png);base64,([A-Za-z0-9+/=]+)$/.exec((req.body && req.body.dataUrl) || '');
   if (!m) return res.status(400).json({ error: 'Imagem inválida.' });
   const buf = Buffer.from(m[2], 'base64');
-  if (buf.length > 6 * 1024 * 1024) return res.status(413).json({ error: 'Imagem muito grande (máx. 6 MB).' });
-  const name = `${Date.now().toString(36)}-${crypto.randomBytes(5).toString('hex')}.${m[1] === 'jpeg' ? 'jpg' : m[1]}`;
-  fs.writeFileSync(path.join(UPLOAD_DIR, name), buf);
-  res.status(201).json({ url: `/uploads/${name}` });
+  if (buf.length > 4 * 1024 * 1024) return res.status(413).json({ error: 'Imagem muito grande (máx. 4 MB).' });
+  const url = await storage.saveImage(buf, m[1] === 'jpeg' ? 'jpg' : m[1], 'image/' + m[1]);
+  res.status(201).json({ url });
 });
 
-// Remove do disco imagens enviadas que não são mais usadas por nenhum produto/banner
-function cleanupImages(candidates = []) {
+// Apaga fotos enviadas que não são mais usadas por nenhum produto/banner
+async function cleanupImages(candidates = []) {
   for (const u of candidates) {
-    if (!/^\/uploads\//.test(u)) continue;
     const used = db.products.some((p) => p.images.includes(u)) || db.settings.banner.image === u;
-    if (!used) fs.rm(path.join(UPLOAD_DIR, path.basename(u)), { force: true }, () => {});
+    if (!used) await storage.removeImage(u);
   }
 }
 
 app.use('/api', api);
 app.use('/api', (req, res) => res.status(404).json({ error: 'Rota não encontrada.' }));
+app.use('/api', (err, req, res, next) => {
+  console.error(err);
+  res.status(500).json({ error: 'Erro no servidor. Tente novamente em instantes.' });
+});
 
-app.use('/uploads', express.static(UPLOAD_DIR, { maxAge: '365d', immutable: true }));
+if (storage.uploadsDir) app.use('/uploads', express.static(storage.uploadsDir, { maxAge: '365d', immutable: true }));
 
 app.get('/sitemap.xml', (req, res) => {
   const base = `${req.protocol}://${req.get('host')}`;
@@ -250,4 +244,8 @@ app.use(express.static(path.join(__dirname, 'public'), {
 
 app.use((req, res) => res.status(404).sendFile(path.join(__dirname, 'public', 'index.html')));
 
-app.listen(PORT, () => console.log(`✨ DURAH rodando em http://localhost:${PORT}  ·  admin: http://localhost:${PORT}/admin`));
+// Na Vercel o app é exportado como função; fora dela, sobe um servidor normal.
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => console.log(`✨ DURAH rodando em http://localhost:${PORT}  ·  admin: http://localhost:${PORT}/admin  ·  armazenamento: ${storage.kind}`));
+}
+module.exports = app;

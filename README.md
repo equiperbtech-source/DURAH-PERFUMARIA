@@ -24,9 +24,23 @@ Se `ADMIN_PASSWORD` não for definida, a senha padrão é `durah2026`. **Troque 
 
 ## Publicar
 
-O app precisa do **Node.js 18 ou mais recente** e de uma **pasta persistente**, onde ficam o banco (`db.json`) e as fotos enviadas.
+### Vercel (recomendado)
+Na Vercel o disco do servidor é somente leitura, então o catálogo e as fotos ficam no **Vercel Blob**.
 
-### Render, Railway ou Fly.io
+1. Importe este repositório na Vercel. Ela detecta o Express sozinha.
+2. No projeto, abra **Storage → Create Database → Blob**. Escolha acesso **Public** e conecte o Blob ao projeto. A variável `BLOB_READ_WRITE_TOKEN` é criada automaticamente.
+3. Em **Settings → Environment Variables**, adicione:
+   - `ADMIN_PASSWORD`: a senha do painel
+   - `SESSION_SECRET`: um texto longo e aleatório
+4. Em **Deployments**, clique em **Redeploy**.
+
+No primeiro acesso, os 6 perfumes de exemplo são gravados no Blob. Sem o Blob conectado, o site funciona, mas o painel mostra um aviso vermelho e as alterações se perdem.
+
+### Outros serviços
+
+Fora da Vercel, o app precisa do **Node.js 18 ou mais recente** e de uma **pasta persistente**, onde ficam o banco (`db.json`) e as fotos enviadas.
+
+#### Render, Railway ou Fly.io
 1. Conecte este repositório.
 2. Use o comando de build `npm install` e o comando de start `npm start`.
 3. Configure as variáveis de ambiente (veja `.env.example`):
@@ -36,19 +50,20 @@ O app precisa do **Node.js 18 ou mais recente** e de uma **pasta persistente**, 
 
 > Sem disco persistente, os produtos cadastrados e as fotos se perdem a cada novo deploy.
 
-### Docker / VPS
+#### Docker / VPS
 ```bash
 docker build -t durah .
 docker run -d -p 3000:3000 -e ADMIN_PASSWORD=sua-senha -e SESSION_SECRET=algo-aleatorio -v durah-data:/data durah
 ```
 
-### Hospedagem estática (só para demonstração)
+#### Hospedagem estática (só para demonstração)
 A pasta `public/` também funciona sozinha (GitHub Pages, Netlify etc.) em **modo demonstração**. A loja funciona normalmente, mas as alterações feitas no painel ficam salvas só no navegador de quem editou e os clientes não as veem. Para a loja real, use o servidor Node.
 
 ## Estrutura
 
 ```
 server.js            API (login, produtos, upload, configurações) + arquivos estáticos
+storage.js           armazenamento: Vercel Blob, disco ou temporário
 public/index.html    página única (SPA) com SEO
 public/css/          estilos
 public/js/app.js     loja (rotas, catálogo, produto, sacola)

@@ -22,7 +22,10 @@ function handleError(e) {
 }
 
 const demoNote = () => store.mode === 'local'
-  ? `<div class="mode-note">${icon('sparkles', 'i--sm')} <strong>Modo demonstração:</strong> sem servidor conectado, as alterações ficam salvas apenas neste navegador. Publique com o servidor Node (veja o README) para que todos os clientes vejam suas mudanças.</div>` : '';
+  ? `<div class="mode-note">${icon('sparkles', 'i--sm')} <strong>Modo demonstração:</strong> sem servidor conectado, as alterações ficam salvas apenas neste navegador. Publique com o servidor Node (veja o README) para que todos os clientes vejam suas mudanças.</div>`
+  : data.storage === 'temp'
+    ? `<div class="mode-note" style="border-color:var(--danger)">⚠️ <strong>Armazenamento temporário:</strong> o Vercel Blob ainda não foi conectado a este projeto, então produtos e fotos cadastrados aqui <strong>serão perdidos</strong>. Na Vercel, abra Storage → Create → Blob (acesso público), conecte ao projeto e faça um novo deploy.</div>`
+    : '';
 
 // ═══════════════ Login ═══════════════
 function renderLogin() {
