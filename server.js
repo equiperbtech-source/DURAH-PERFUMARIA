@@ -141,7 +141,22 @@ app.use((req, res, next) => {
 });
 
 const api = express.Router();
-api.get('/health', (req, res) => res.json({ ok: true, storage: storage.kind }));
+// Diagnóstico: /api/health?check=1 também testa a leitura do banco
+api.get('/health', async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  const out = {
+    ok: true,
+    storage: storage.kind,
+    supabase_url: Boolean(process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL),
+    supabase_key: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SECRET_KEY),
+    admin_password_definida: Boolean(process.env.ADMIN_PASSWORD),
+  };
+  if (req.query.check) {
+    try { const d = await storage.load(true); out.banco = `ok — ${d.products.length} produtos`; }
+    catch (e) { out.banco = 'ERRO: ' + e.message; }
+  }
+  res.json(out);
+});
 
 api.get('/catalog', async (req, res) => {
   await loadDb();

@@ -22,9 +22,9 @@ function handleError(e) {
 }
 
 const demoNote = () => store.mode === 'local'
-  ? `<div class="mode-note">${icon('sparkles', 'i--sm')} <strong>Modo demonstração:</strong> sem servidor conectado, as alterações ficam salvas apenas neste navegador. Publique com o servidor Node (veja o README) para que todos os clientes vejam suas mudanças.</div>`
+  ? `<div class="mode-note mode-note--alert">⚠️ <strong>Atenção — o servidor não respondeu (modo demonstração).</strong> As alterações feitas aqui ficam salvas <strong>só neste navegador</strong>: clientes e outros aparelhos NÃO vão ver. Abra <a href="api/health?check=1" target="_blank" rel="noopener"><u>api/health?check=1</u></a> para ver o diagnóstico.</div>`
   : data.storage === 'temp'
-    ? `<div class="mode-note" style="border-color:var(--danger)">⚠️ <strong>Armazenamento temporário:</strong> nenhum banco foi conectado, então produtos e fotos cadastrados aqui <strong>serão perdidos</strong>. Configure o Supabase (variáveis SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY — veja o README) e faça um novo deploy.</div>`
+    ? `<div class="mode-note mode-note--alert">⚠️ <strong>Armazenamento temporário:</strong> nenhum banco foi conectado, então produtos e fotos cadastrados aqui <strong>serão perdidos</strong>. Configure o Supabase (variáveis SUPABASE_URL e SUPABASE_SERVICE_ROLE_KEY — veja o README) e faça um novo deploy.</div>`
     : '';
 
 // ═══════════════ Login ═══════════════
@@ -40,7 +40,7 @@ function renderLogin() {
           <button type="button" class="icon-btn" id="pwToggle" style="position:absolute;right:2px;top:1px" aria-label="Mostrar senha">${icon('eye')}</button>
         </div>
         <button class="btn btn--primary btn--block btn--lg mt-2" type="submit">Entrar</button>
-        ${store.mode === 'local' ? '<p class="hint" style="text-align:center">Modo demonstração — senha: <strong class="gold">durah2026</strong></p>' : ''}
+        ${store.mode === 'local' ? '<p class="hint" style="text-align:center;color:var(--danger)">⚠️ Servidor não encontrado — modo demonstração (alterações ficam só neste navegador). Senha de demonstração: <strong>durah2026</strong></p>' : ''}
       </form>
     </div>
   </div>`;
