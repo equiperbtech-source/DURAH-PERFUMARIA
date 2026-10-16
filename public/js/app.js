@@ -160,14 +160,12 @@ function pageHome() {
 
   <section class="trust-wrap"><div class="container">${trustBar()}</div></section>
 
+  <nav class="cats-strip" aria-label="Categorias"><div class="container">
+    <div class="cats-strip__row">${CATS.map((c) => `<a class="cat-chip" href="#/catalogo?cat=${c.id}">${icon(c.icon)}${c.label}</a>`).join('')}</div>
+  </div></nav>
+
   ${promoBlock(b)}
 
-  <section class="section">
-    <div class="container">
-      <div class="section__head"><div><span class="eyebrow">Navegue por</span><h2 class="h2 mt-1">Categorias</h2></div></div>
-      <div class="cats">${CATS.map((c) => `<a class="cat" href="#/catalogo?cat=${c.id}">${icon(c.icon)}<strong>${c.label}</strong><span>${c.desc}</span></a>`).join('')}</div>
-    </div>
-  </section>
 
   <section class="section" style="padding-top:0">
     <div class="container">

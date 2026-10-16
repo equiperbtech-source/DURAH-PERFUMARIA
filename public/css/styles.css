@@ -970,3 +970,17 @@ h1, h2, h3, h4 { font-weight: 600; }
 .product > * { min-width: 0; }
 .btn--wa { white-space: normal; text-align: center; line-height: 1.25; }
 .catalog > * { min-width: 0; }
+
+/* ═══════════════ CATEGORIAS EM ETIQUETAS ═══════════════ */
+.cats-strip { padding: 12px 0; border-bottom: 1px solid var(--line); }
+.cats-strip__row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+.cats-strip__row::-webkit-scrollbar { display: none; }
+.cat-chip {
+  flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px;
+  border: 1px solid var(--gold-line); background: var(--card); color: var(--text-2);
+  font: 500 11.5px var(--font-body); letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; transition: all .2s;
+}
+.cat-chip .i { width: 15px; height: 15px; color: var(--gold); }
+.cat-chip:hover { color: var(--ink); background: var(--gold-grad); border-color: transparent; }
+.cat-chip:hover .i { color: var(--ink); }
+@media (min-width: 960px) { .cats-strip__row { flex-wrap: wrap; justify-content: center; -webkit-mask-image: none; mask-image: none; } }
