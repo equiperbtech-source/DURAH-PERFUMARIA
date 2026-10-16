@@ -1,6 +1,7 @@
 import { store, optimizeImage } from './store.js';
 import {
   $, $$, esc, money, icon, toast, productImages, finalPrice, isSoldOut, DEFAULT_TRUST, stars, guessProductByTitle,
+  PRODUCT_TYPES, VS_KINDS, SCENT_PROFILE, INTENSITY, productType, isPerfume, typeLabel,
   CONCENTRATIONS, GENDERS, FAMILIES, LONGEVITY, PROJECTION, SEASONS, OCCASIONS, VOLUMES, ORIGINS, NICHE_HOUSES, TAG_SUGGESTIONS,
 } from './ui.js';
 
@@ -120,6 +121,7 @@ function drawRows() {
         <div class="arow__name">${esc(p.name)}</div>
         <div class="arow__meta">${esc(p.brand)} · ${esc(p.volume)} · <span class="gold">R$ ${money(finalPrice(p))}</span> · estoque: ${p.stock}</div>
         <div class="arow__badges">
+          ${!isPerfume(p) ? `<span class="badge">${esc(typeLabel(p))}</span>` : ''}
           ${!p.active ? '<span class="badge badge--off">Oculto</span>' : ''}
           ${isSoldOut(p) ? '<span class="badge badge--off">Esgotado</span>' : ''}
           ${p.featured ? '<span class="badge badge--solid">Destaque</span>' : ''}
@@ -238,23 +240,30 @@ function renderForm(body, p) {
 
     <section class="fsection"><h2>${icon('tag')} Informações principais</h2>
       <div class="form-grid form-grid--2">
-        <div class="field"><label class="label" for="f-name">Nome do perfume *</label><input class="input" id="f-name" name="name" required value="${esc(p.name)}" placeholder="Ex.: Aurum Noir"></div>
+        <div class="field"><label class="label" for="f-type">Tipo de produto</label>
+          <select class="input" id="f-type" name="type">${PRODUCT_TYPES.map(([v, l]) => `<option value="${v}" ${productType(p) === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select>
+          <p class="hint" data-only="simple">Ficha simples: sem pirâmide, referências ou decants — só “Como é o cheiro”.</p></div>
+        <div class="field" data-only="vs"><label class="label" for="f-vskind">Linha</label>
+          <select class="input" id="f-vskind" name="vsKind">${VS_KINDS.map(([v, l]) => `<option value="${v}" ${(p.vsKind || 'body-splash') === v ? 'selected' : ''}>${esc(l)}</option>`).join('')}</select></div>
+      </div>
+      <div class="form-grid form-grid--2">
+        <div class="field"><label class="label" for="f-name">Nome do produto *</label><input class="input" id="f-name" name="name" required value="${esc(p.name)}" placeholder="Ex.: Aurum Noir"></div>
         <div class="field"><label class="label" for="f-brand">Marca / casa de perfumaria *</label><input class="input" id="f-brand" name="brand" list="dl-brands" required value="${esc(p.brand)}" placeholder="Ex.: Maison Durand Paris"></div>
       </div>
       <div class="form-grid form-grid--3">
         <div class="field"><label class="label" for="f-price">Preço (R$) *</label><input class="input" id="f-price" name="price" type="number" step="0.01" min="0" inputmode="decimal" required value="${p.price ?? ''}"></div>
         <div class="field"><label class="label" for="f-promo">Preço promocional (R$)</label><input class="input" id="f-promo" name="promoPrice" type="number" step="0.01" min="0" inputmode="decimal" value="${p.promoPrice ?? ''}" placeholder="Opcional"></div>
-        <div class="field"><label class="label" for="f-d5">Preço decant 5ml (R$)</label><input class="input" id="f-d5" name="decant5Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant5Price ?? ''}" placeholder="Vazio = não vende"></div>
-        <div class="field"><label class="label" for="f-d10">Preço decant 10ml (R$)</label><input class="input" id="f-d10" name="decant10Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant10Price ?? ''}" placeholder="Vazio = não vende"></div>
+        <div class="field" data-only="perfume"><label class="label" for="f-d5">Preço decant 5ml (R$)</label><input class="input" id="f-d5" name="decant5Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant5Price ?? ''}" placeholder="Vazio = não vende"></div>
+        <div class="field" data-only="perfume"><label class="label" for="f-d10">Preço decant 10ml (R$)</label><input class="input" id="f-d10" name="decant10Price" type="number" step="0.01" min="0" inputmode="decimal" value="${p.decant10Price ?? ''}" placeholder="Vazio = não vende"></div>
         <div class="field"><label class="label" for="f-vol">Tamanho / volume</label><input class="input" id="f-vol" name="volume" list="dl-vol" value="${esc(p.volume)}" placeholder="Ex.: 100ml"></div>
-        <div class="field"><label class="label" for="f-conc">Concentração</label><select class="input" id="f-conc" name="concentration">${opt(CONCENTRATIONS, p.concentration)}</select></div>
+        <div class="field" data-only="perfume"><label class="label" for="f-conc">Concentração</label><select class="input" id="f-conc" name="concentration">${opt(CONCENTRATIONS, p.concentration)}</select></div>
         <div class="field"><label class="label" for="f-gender">Gênero</label><select class="input" id="f-gender" name="gender">${opt(GENDERS, p.gender)}</select></div>
         <div class="field"><label class="label" for="f-origin">Origem</label><input class="input" id="f-origin" name="origin" list="dl-origin" value="${esc(p.origin)}" placeholder="Ex.: França"></div>
         <div class="field"><label class="label" for="f-stock">Estoque (quantidade)</label><input class="input" id="f-stock" name="stock" type="number" min="0" step="1" inputmode="numeric" value="${p.stock ?? 0}"></div>
         <div class="field"><label class="label" for="f-status">Status</label><select class="input" id="f-status" name="status"><option value="disponivel" ${p.status !== 'esgotado' ? 'selected' : ''}>Disponível</option><option value="esgotado" ${p.status === 'esgotado' ? 'selected' : ''}>Esgotado</option></select></div>
       </div>
       <p class="hint">Com estoque de 1 a 3 unidades, o selo “Últimas unidades” aparece automaticamente. Com estoque 0, o frasco aparece como esgotado.<br>
-      <strong class="gold">Decants:</strong> preencha o preço do decant de 5ml e/ou 10ml para o cliente poder escolher entre frasco completo e decant na página do produto. Deixe vazio para não oferecer. Os decants continuam à venda mesmo com o frasco esgotado.</p>
+      <span data-only="perfume"><strong class="gold">Decants:</strong> preencha o preço do decant de 5ml e/ou 10ml para o cliente poder escolher entre frasco completo e decant na página do produto. Deixe vazio para não oferecer. Os decants continuam à venda mesmo com o frasco esgotado.</span></p>
     </section>
 
     <section class="fsection"><h2>${icon('upload')} Fotos</h2><div id="f-images"></div></section>
@@ -264,14 +273,22 @@ function renderForm(body, p) {
         <textarea class="input" id="f-desc" name="description" rows="7" placeholder="Conte a história da fragrância: abertura, acorde principal, drydown, sillage…">${esc(p.description)}</textarea></div>
     </section>
 
-    <section class="fsection"><h2>${icon('layers')} Pirâmide olfativa</h2>
+    <section class="fsection" data-only="simple"><h2>${icon('sparkles')} Como é o cheiro</h2>
+      <div class="field"><span class="label">Perfil do aroma (marque quantos quiser)</span>
+        <div class="chips">${SCENT_PROFILE.map(([n, e]) => `<label class="chip-check"><input type="checkbox" name="scentProfile" value="${esc(n)}" ${(p.scentProfile || []).includes(n) ? 'checked' : ''}><span>${e} ${esc(n)}</span></label>`).join('')}</div></div>
+      <div class="field"><label class="label" for="f-int">Intensidade</label>
+        <select class="input" id="f-int" name="intensity" style="max-width:260px"><option value="">Não informar</option>${INTENSITY.map((i) => `<option ${p.intensity === i ? 'selected' : ''}>${i}</option>`).join('')}</select></div>
+      <p class="hint">Aparece na página do produto como “Como é o cheiro”, ex.: “Um aroma doce e frutado”.</p>
+    </section>
+
+    <section class="fsection" data-only="perfume"><h2>${icon('layers')} Pirâmide olfativa</h2>
       <div class="field"><span class="label">Notas de topo / saída</span><div id="f-top"></div></div>
       <div class="field"><span class="label">Notas de coração / corpo</span><div id="f-heart"></div></div>
       <div class="field"><span class="label">Notas de fundo / base</span><div id="f-base"></div></div>
       <p class="hint">Digite cada nota e pressione Enter (ou separe por vírgula).</p>
     </section>
 
-    <section class="fsection"><h2>${icon('drop')} Perfil olfativo</h2>
+    <section class="fsection" data-only="perfume"><h2>${icon('drop')} Perfil olfativo</h2>
       <div class="form-grid form-grid--3">
         <div class="field"><label class="label" for="f-fam">Família olfativa</label><select class="input" id="f-fam" name="family">${opt(FAMILIES, p.family, 'Selecione…')}</select></div>
         <div class="field"><label class="label" for="f-perf">Perfumista / nariz</label><input class="input" id="f-perf" name="perfumer" value="${esc(p.perfumer)}" placeholder="Opcional"></div>
@@ -283,7 +300,7 @@ function renderForm(body, p) {
       <div class="field"><span class="label">Ocasiões</span>${checks('occasions', OCCASIONS, p.occasions)}</div>
     </section>
 
-    <section class="fsection"><h2>${icon('star')} Referências olfativas — “Para quem gosta de…”</h2>
+    <section class="fsection" data-only="perfume"><h2>${icon('star')} Referências olfativas — “Para quem gosta de…”</h2>
       <div id="f-refs"></div>
       <button type="button" class="btn btn--outline btn--sm" id="addRef">${icon('plus', 'i--sm')} Adicionar referência</button>
       <p class="hint">Ex.: Aventus — Creed · Layton — Parfums de Marly. Exibido como “Para quem gosta de Aventus (Creed) ou Layton (Parfums de Marly)”.</p>
@@ -298,7 +315,7 @@ function renderForm(body, p) {
         ${sw('imported', 'Importado', p.imported, 'Selo Importado')}
         ${sw('niche', 'Nicho', p.niche, 'Selo Nicho e categoria Nicho')}
         ${sw('launch', 'Lançamento', p.launch, 'Selo Lançamento e categoria Lançamentos')}
-        ${sw('decant', 'Decant / miniatura', p.decant, 'Categoria Decants/Miniaturas')}
+        <span data-only="perfume">${sw('decant', 'Decant / miniatura', p.decant, 'Categoria Decants/Miniaturas')}</span>
       </div>
     </section>
 
@@ -330,6 +347,16 @@ function renderForm(body, p) {
   (p.references && p.references.length ? p.references : [{}]).forEach(addRefRow);
   $('#addRef').addEventListener('click', () => addRefRow());
 
+  const syncType = () => {
+    const t = $('#f-type').value;
+    $$('[data-only="perfume"]', body).forEach((el) => { el.hidden = t !== 'perfume'; });
+    $$('[data-only="simple"]', body).forEach((el) => { el.hidden = t === 'perfume'; });
+    $$('[data-only="vs"]', body).forEach((el) => { el.hidden = t !== 'victorias-secret'; });
+    if (t === 'victorias-secret' && !$('#f-brand').value.trim()) $('#f-brand').value = "Victoria's Secret";
+  };
+  $('#f-type').addEventListener('change', syncType);
+  syncType();
+
   $('#cancel').addEventListener('click', () => { tab = 'products'; editing = null; render(); });
   $('#pform').addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -343,7 +370,10 @@ function renderForm(body, p) {
       ...p,
       name: fd.get('name').trim(), brand: fd.get('brand').trim(),
       price: parseFloat(fd.get('price')), promoPrice: promo || null,
-      decant5Price: parseFloat(fd.get('decant5Price')) || null, decant10Price: parseFloat(fd.get('decant10Price')) || null,
+      type: fd.get('type'), vsKind: fd.get('type') === 'victorias-secret' ? fd.get('vsKind') : '',
+      scentProfile: fd.get('type') === 'perfume' ? [] : fd.getAll('scentProfile'), intensity: fd.get('type') === 'perfume' ? '' : fd.get('intensity'),
+      decant5Price: fd.get('type') === 'perfume' ? (parseFloat(fd.get('decant5Price')) || null) : null,
+      decant10Price: fd.get('type') === 'perfume' ? (parseFloat(fd.get('decant10Price')) || null) : null,
       volume: fd.get('volume').trim().replace(/\s+/g, '').replace(/ML$/i, 'ml'),
       concentration: fd.get('concentration'), gender: fd.get('gender'), origin: fd.get('origin').trim(),
       stock: parseInt(fd.get('stock'), 10) || 0, status: fd.get('status'),

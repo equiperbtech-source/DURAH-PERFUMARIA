@@ -3,6 +3,7 @@ import {
   $, $$, esc, money, icon, toast, badges, bottleArt, productImages, finalPrice, discount, isSoldOut, isLastUnits, isArab, isDecant,
   waUrl, msgProduct, msgGeneral, msgHelp, msgList, joinPt, joinOr,
   variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
+  productType, isPerfume, typeLabel, scentEmoji, scentAdjective, INTENSITY,
   shop, backorderLabel,
   GENDERS, FAMILIES, LONGEVITY, LONGEVITY_HINT, PROJECTION, PROJECTION_HINT, SEASONS, OCCASIONS,
 } from './ui.js';
@@ -29,7 +30,12 @@ export const CATS = [
   { id: 'nicho', label: 'Nicho', icon: 'gem', desc: 'Perfumaria autoral', test: (p) => p.niche },
   { id: 'decants', label: 'Decants/Miniaturas', icon: 'drop', desc: 'Prove antes do frasco', test: isDecant },
   { id: 'lancamentos', label: 'Lançamentos', icon: 'star', desc: 'Acabaram de chegar', test: (p) => p.launch },
+  { id: 'body-spray', label: 'Body Spray', icon: 'wind', desc: 'Leves para o dia a dia', test: (p) => productType(p) === 'body-spray' },
+  { id: 'victorias-secret', label: "Victoria's Secret", icon: 'heart', desc: 'Body splashs e cremes', test: (p) => productType(p) === 'victorias-secret' },
 ];
+
+// categorias que têm ao menos um produto (evita página vazia)
+const activeCats = () => CATS.filter((c) => S.products.some(c.test) || c.id === F.cat);
 
 // ═══════════════ Componentes ═══════════════
 // ─── Confiança e avaliações ───
@@ -79,7 +85,7 @@ function card(p) {
     <div class="card__body">
       <span class="card__brand">${esc(p.brand)}</span>
       <h3 class="card__name"><a class="card__link" href="#/produto/${esc(p.slug)}">${esc(p.name)}</a></h3>
-      <span class="card__meta">${esc([p.volume, p.concentration, p.family].filter(Boolean).join(' · '))}</span>
+      <span class="card__meta">${esc((isPerfume(p) ? [p.volume, p.concentration, p.family] : [typeLabel(p), p.volume, (p.scentProfile || []).slice(0, 2).join(' e ')]).filter(Boolean).join(' · '))}</span>
       <div class="card__price">
         ${v.key !== 'full' ? `<span class="card__from">${esc(v.label)}</span>` : v.old ? `<span class="price-old">R$ ${money(v.old)}</span>` : ''}
         <span class="price">R$ ${money(v.price)}</span>
@@ -166,7 +172,7 @@ function pageHome() {
     <p class="cats-strip__title" id="catsTitle"><span>Categorias</span> · encontre seu estilo de fragrância</p>
     <div class="cats-marquee">
       <div class="cats-marquee__track">
-        ${[0, 1].map((copy) => `<div class="cats-marquee__group" ${copy ? 'aria-hidden="true"' : ''}>${CATS.map((c) => `<a class="cat-chip" href="#/catalogo?cat=${c.id}" ${copy ? 'tabindex="-1"' : ''}>${icon(c.icon)}${c.label}</a>`).join('')}</div>`).join('')}
+        ${[0, 1].map((copy) => `<div class="cats-marquee__group" ${copy ? 'aria-hidden="true"' : ''}>${activeCats().map((c) => `<a class="cat-chip" href="#/catalogo?cat=${c.id}" ${copy ? 'tabindex="-1"' : ''}>${icon(c.icon)}${c.label}</a>`).join('')}</div>`).join('')}
       </div>
     </div>
   </div></nav>
@@ -276,7 +282,7 @@ function filtered() {
     if (!isNaN(min) && price < min) return false;
     if (!isNaN(max) && price > max) return false;
     if (terms.length) {
-      const hay = norm([p.name, p.brand, p.family, p.gender, p.origin, p.concentration, p.description, ...(p.tags || []),
+      const hay = norm([p.name, p.brand, p.family, p.gender, p.origin, p.concentration, p.description, ...(p.tags || []), typeLabel(p), ...(p.scentProfile || []),
         ...(p.notes?.top || []), ...(p.notes?.heart || []), ...(p.notes?.base || []),
         ...(p.references || []).map((r) => r.name + ' ' + r.house)].join(' '));
       if (!terms.every((t) => hay.includes(t))) return false;
@@ -311,7 +317,7 @@ function pageCatalog(q) {
     <p>${cat ? esc(cat.desc) + ' — ' : ''}Perfumes importados, árabes e de nicho com pirâmide olfativa completa.</p>
     <div class="catbar">
       <button class="pill ${!F.cat ? 'is-active' : ''}" data-cat="">Todos</button>
-      ${CATS.map((c) => `<button class="pill ${F.cat === c.id ? 'is-active' : ''}" data-cat="${c.id}">${c.label}</button>`).join('')}
+      ${activeCats().map((c) => `<button class="pill ${F.cat === c.id ? 'is-active' : ''}" data-cat="${c.id}">${c.label}</button>`).join('')}
     </div>
   </div></section>
 
@@ -384,7 +390,7 @@ function pageCatalog(q) {
 }
 function renderResults() {
   const list = filtered();
-  $('#count').textContent = `${list.length} ${list.length === 1 ? 'fragrância' : 'fragrâncias'}`;
+  $('#count').textContent = `${list.length} ${list.length === 1 ? 'produto' : 'produtos'}`;
   $('#results').innerHTML = grid(list);
 }
 function openFilters() { $('#filters').classList.add('is-open'); showOverlay(closeFilters); }
@@ -397,6 +403,7 @@ function pageProduct(slug) {
   const imgs = productImages(p);
   const sold = isSoldOut(p);
   const fav = S.favs.includes(p.id);
+  const perf = isPerfume(p);
   const sel = defaultVariant(p);
   const prodReviews = reviewsList().filter((r) => !r.productId || r.productId === p.id);
   const lvl = (arr, v) => arr.indexOf(v);
@@ -423,6 +430,7 @@ function pageProduct(slug) {
 
   const related = S.products.filter((x) => x.id !== p.id).map((x) => {
     let s = 0;
+    s += productType(x) === productType(p) ? 6 : -6;
     if (x.family === p.family) s += 3;
     if (x.gender === p.gender || x.gender === 'Unissex') s += 2;
     if (x.brand === p.brand) s += 2;
@@ -448,8 +456,9 @@ function pageProduct(slug) {
         <a class="pinfo__brand" href="#/catalogo?marca=${encodeURIComponent(p.brand)}">${esc(p.brand)}</a>
         <h1 class="pinfo__name">${esc(p.name)}</h1>
         <div class="pinfo__spec">
-          ${p.volume ? `<span class="chip chip--solid">${esc(p.volume)}</span>` : ''}
-          ${p.concentration ? `<span class="chip">${esc(p.concentration)}</span>` : ''}
+          ${!perf ? `<span class="chip chip--solid">${esc(typeLabel(p))}</span>` : ''}
+          ${p.volume ? `<span class="chip ${perf ? 'chip--solid' : ''}">${esc(p.volume)}</span>` : ''}
+          ${perf && p.concentration ? `<span class="chip">${esc(p.concentration)}</span>` : ''}
           ${p.gender ? `<span class="chip chip--muted">${esc(p.gender)}</span>` : ''}
           ${p.origin ? `<span class="chip chip--muted">${icon('pin', 'i--sm')} ${esc(p.origin)}</span>` : ''}
         </div>
@@ -475,7 +484,8 @@ function pageProduct(slug) {
           </div>
         </div>
         <div class="seal"><img src="img/brand/monograma.webp" alt="" width="276" height="360" loading="lazy"><p><strong>Vendido e garantido por DURAH</strong><span>Curadoria, procedência e atendimento da nossa equipe do pedido ao drydown.</span></p></div>
-        ${refs.length ? `<section class="block block--refs"><h2>${icon('star')} Para quem gosta de…</h2>
+        ${!perf ? scentBlock(p) : ''}
+        ${perf && refs.length ? `<section class="block block--refs"><h2>${icon('star')} Para quem gosta de…</h2>
           <p class="refs-lead">Para quem gosta de ${joinOr(refs.map(fmtRef))}.</p>
           <div class="refs">${refs.map((r) => `<div class="ref"><span class="ref__mono">${esc(mono(r.house || r.name))}</span><div><strong>${esc(r.name || r.house)}</strong>${r.name && r.house ? `<small>${esc(r.house)}</small>` : ''}</div></div>`).join('')}</div>
           <p class="hint mt-1">Referências de perfil olfativo semelhante, para orientar sua escolha.</p>
@@ -483,12 +493,12 @@ function pageProduct(slug) {
 
         ${trustBar('list')}
 
-        ${p.family ? `<div class="mt-2"><div class="family-seal"><span class="family-seal__icon">${icon('drop')}</span><span><small>Família olfativa</small><strong>${esc(p.family)}</strong></span></div></div>` : ''}
+        ${perf && p.family ? `<div class="mt-2"><div class="family-seal"><span class="family-seal__icon">${icon('drop')}</span><span><small>Família olfativa</small><strong>${esc(p.family)}</strong></span></div></div>` : ''}
         ${(p.tags || []).length ? `<div class="chips mt-2">${p.tags.map((t) => `<span class="chip chip--muted">#${esc(t)}</span>`).join('')}</div>` : ''}
 
-        ${p.description ? `<section class="block"><h2>${icon('sparkles')} Sobre a fragrância</h2><p class="desc">${esc(p.description)}</p></section>` : ''}
+        ${p.description ? `<section class="block"><h2>${icon('sparkles')} ${perf ? 'Sobre a fragrância' : 'Sobre o produto'}</h2><p class="desc">${esc(p.description)}</p></section>` : ''}
 
-        ${(n.top?.length || n.heart?.length || n.base?.length) ? `<section class="block">
+        ${perf && (n.top?.length || n.heart?.length || n.base?.length) ? `<section class="block">
           <h2>${icon('layers')} Pirâmide olfativa</h2>
           <div class="pyramid-wrap">
             <div class="pyramid-visual" aria-hidden="true">
@@ -510,21 +520,22 @@ function pageProduct(slug) {
           </div>
         </section>` : ''}
 
-        ${(lon >= 0 || pro >= 0) ? `<section class="block"><h2>${icon('clock')} Performance</h2>
+        ${perf && (lon >= 0 || pro >= 0) ? `<section class="block"><h2>${icon('clock')} Performance</h2>
           ${meter('clock', 'Fixação', p.longevity, LONGEVITY, LONGEVITY_HINT, lon)}
           ${meter('wind', 'Projeção / sillage', p.projection, PROJECTION, PROJECTION_HINT, pro)}
         </section>` : ''}
 
-        <section class="block"><h2>${icon('calendar')} Quando usar</h2>
+        ${perf ? `<section class="block"><h2>${icon('calendar')} Quando usar</h2>
           <p class="label">Estações ideais</p>
           <div class="iconlist iconlist--4">${SEASONS.map(([s, i]) => `<div class="iconitem ${(p.seasons || []).includes(s) ? 'on' : ''}">${icon(i)} ${s}</div>`).join('')}</div>
           <p class="label mt-2">Ocasiões</p>
           <div class="iconlist iconlist--3">${OCCASIONS.map(([s, i]) => `<div class="iconitem ${(p.occasions || []).includes(s) ? 'on' : ''}">${icon(i)} ${s}</div>`).join('')}</div>
-        </section>
+        </section>` : ''}
 
         <section class="block"><h2>${icon('tag')} Ficha técnica</h2>
           <dl class="specs">
-            ${[['drop', 'Concentração', p.concentration], ['box', 'Volume', p.volume], ['user', 'Perfumista', p.perfumer], ['calendar', 'Lançamento', p.year], ['pin', 'Origem', p.origin], ['layers', 'Família', p.family]]
+            ${(perf ? [['drop', 'Concentração', p.concentration], ['box', 'Volume', p.volume], ['user', 'Perfumista', p.perfumer], ['calendar', 'Lançamento', p.year], ['pin', 'Origem', p.origin], ['layers', 'Família', p.family]]
+              : [['tag', 'Tipo', typeLabel(p)], ['box', 'Volume', p.volume], ['pin', 'Origem', p.origin], ['user', 'Indicado para', p.gender]])
               .filter(([, , v]) => v).map(([i, k, v]) => `<div><dt>${icon(i)} ${k}</dt><dd>${esc(v)}</dd></div>`).join('')}
           </dl>
         </section>
@@ -582,6 +593,22 @@ function pageProduct(slug) {
   const gm = $('.gallery__main');
   gm.addEventListener('touchstart', (e) => { x0 = e.touches[0].clientX; }, { passive: true });
   gm.addEventListener('touchend', (e) => { if (x0 == null || imgs.length < 2) return; const dx = e.changedTouches[0].clientX - x0; if (Math.abs(dx) > 40) show(cur + (dx < 0 ? 1 : -1)); x0 = null; });
+}
+
+// "Como é o cheiro" — Body Spray e Victoria's Secret
+function scentBlock(p) {
+  const list = p.scentProfile || [];
+  const lvl = INTENSITY.indexOf(p.intensity);
+  if (!list.length && lvl < 0) return '';
+  return `<section class="block block--refs block--scent"><h2>${icon('sparkles')} Como é o cheiro</h2>
+    ${list.length ? `<p class="scent__lead">Um aroma ${esc(joinPt(list.map(scentAdjective)))}.</p>
+    <div class="scent">${list.map((s) => `<span class="scent__chip"><b aria-hidden="true">${scentEmoji(s)}</b>${esc(s)}</span>`).join('')}</div>` : ''}
+    ${lvl >= 0 ? `<div class="meter mt-2">
+      <div class="meter__top"><span>${icon('wind', 'i--sm')} Intensidade</span><strong>${esc(p.intensity)}</strong></div>
+      <div class="meter__bar meter__bar--3">${INTENSITY.map((_, i) => `<i class="${i <= lvl ? 'on' : ''}"></i>`).join('')}</div>
+      <div class="meter__legend meter__legend--3">${INTENSITY.map((a) => `<span>${a}</span>`).join('')}</div>
+    </div>` : ''}
+  </section>`;
 }
 
 function productLd(p, imgs) {

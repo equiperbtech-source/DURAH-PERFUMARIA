@@ -1040,3 +1040,11 @@ h1, h2, h3, h4 { font-weight: 600; }
 }
 .gallery__main::before { width: 34%; }
 .block--refs { margin-top: 18px; }
+
+/* ═══════════════ BODY SPRAY / VICTORIA'S SECRET ═══════════════ */
+.scent__lead { font: italic 400 19px/1.45 var(--font-serif); color: var(--text); margin-bottom: 12px; }
+.scent { display: flex; flex-wrap: wrap; gap: 8px; }
+.scent__chip { display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px; border: 1px solid var(--gold-line); background: var(--gold-soft); font-size: 14px; }
+.scent__chip b { font-size: 16px; line-height: 1; }
+.meter__bar--3, .meter__legend--3 { grid-template-columns: repeat(3, 1fr); }
+.chip-check input:checked + span, .chip-check:hover input:checked + span { color: var(--ink); }

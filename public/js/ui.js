@@ -26,13 +26,26 @@ export const finalPrice = (p) => (p.promoPrice && p.promoPrice < p.price ? p.pro
 export const discount = (p) => (p.promoPrice && p.promoPrice < p.price ? Math.round((1 - p.promoPrice / p.price) * 100) : 0);
 export const isArab = (p) => /emirad|árab|arab|dubai|omã|oma\b|catar|kuwait|saudita/i.test(p.origin || '');
 
+// ─── Tipos de produto ───
+// Perfume: ficha completa (pirâmide, referências, decants…). Body Spray e Victoria's Secret: ficha simples (só "como é o cheiro").
+export const PRODUCT_TYPES = [['perfume', 'Perfume'], ['body-spray', 'Body Spray'], ['victorias-secret', "Victoria's Secret"]];
+export const VS_KINDS = [['body-splash', 'Body Splash'], ['creme', 'Creme']];
+export const SCENT_PROFILE = [['Doce', '🍬'], ['Frutado', '🍓'], ['Floral', '🌸'], ['Fresco', '🌿'], ['Cítrico', '🍋'], ['Baunilha', '🍦'], ['Gourmand', '🍫'], ['Amadeirado', '🪵'], ['Almiscarado', '🤍'], ['Aquático', '🌊'], ['Especiado', '🌶️']];
+export const INTENSITY = ['Suave', 'Moderado', 'Marcante'];
+export const productType = (p) => p.type || 'perfume';
+export const isPerfume = (p) => productType(p) === 'perfume';
+export const typeLabel = (p) => productType(p) === 'victorias-secret' ? (p.vsKind === 'creme' ? 'Creme' : 'Body Splash') : productType(p) === 'body-spray' ? 'Body Spray' : 'Perfume';
+const SCENT_ADJ = { Baunilha: 'baunilhado' };
+export const scentAdjective = (name) => SCENT_ADJ[name] || name.toLowerCase();
+export const scentEmoji = (name) => (SCENT_PROFILE.find(([n]) => n === name) || [, '✦'])[1];
+
 // ─── Variantes: frasco completo, decant 5ml e decant 10ml ───
 // O frasco usa preço/estoque/status do produto; os decants existem quando o preço deles está preenchido.
 export const fullAvailable = (p) => p.status !== 'esgotado' && Number(p.stock) > 0;
 export function variants(p) {
   const list = [{ key: 'full', label: p.volume ? `Frasco ${p.volume}` : 'Frasco completo', size: p.volume || 'Frasco completo', price: finalPrice(p), old: discount(p) ? p.price : null, available: fullAvailable(p) }];
-  if (Number(p.decant5Price) > 0) list.push({ key: 'd5', label: 'Decant 5ml', size: 'Decant 5ml', price: Number(p.decant5Price), old: null, available: true });
-  if (Number(p.decant10Price) > 0) list.push({ key: 'd10', label: 'Decant 10ml', size: 'Decant 10ml', price: Number(p.decant10Price), old: null, available: true });
+  if (isPerfume(p) && Number(p.decant5Price) > 0) list.push({ key: 'd5', label: 'Decant 5ml', size: 'Decant 5ml', price: Number(p.decant5Price), old: null, available: true });
+  if (isPerfume(p) && Number(p.decant10Price) > 0) list.push({ key: 'd10', label: 'Decant 10ml', size: 'Decant 10ml', price: Number(p.decant10Price), old: null, available: true });
   return list;
 }
 export const getVariant = (p, key) => variants(p).find((v) => v.key === key) || variants(p)[0];
