@@ -160,8 +160,13 @@ function pageHome() {
 
   <section class="trust-wrap"><div class="container">${trustBar()}</div></section>
 
-  <nav class="cats-strip" aria-label="Categorias"><div class="container">
-    <div class="cats-strip__row">${CATS.map((c) => `<a class="cat-chip" href="#/catalogo?cat=${c.id}">${icon(c.icon)}${c.label}</a>`).join('')}</div>
+  <nav class="cats-strip" aria-labelledby="catsTitle"><div class="container">
+    <p class="cats-strip__title" id="catsTitle"><span>Categorias</span> · encontre seu estilo de fragrância</p>
+    <div class="cats-marquee">
+      <div class="cats-marquee__track">
+        ${[0, 1].map((copy) => `<div class="cats-marquee__group" ${copy ? 'aria-hidden="true"' : ''}>${CATS.map((c) => `<a class="cat-chip" href="#/catalogo?cat=${c.id}" ${copy ? 'tabindex="-1"' : ''}>${icon(c.icon)}${c.label}</a>`).join('')}</div>`).join('')}
+      </div>
+    </div>
   </div></nav>
 
   ${promoBlock(b)}

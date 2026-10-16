@@ -973,8 +973,6 @@ h1, h2, h3, h4 { font-weight: 600; }
 
 /* ═══════════════ CATEGORIAS EM ETIQUETAS ═══════════════ */
 .cats-strip { padding: 12px 0; border-bottom: 1px solid var(--line); }
-.cats-strip__row { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
-.cats-strip__row::-webkit-scrollbar { display: none; }
 .cat-chip {
   flex-shrink: 0; display: inline-flex; align-items: center; gap: 7px; padding: 8px 14px; border-radius: 999px;
   border: 1px solid var(--gold-line); background: var(--card); color: var(--text-2);
@@ -983,4 +981,17 @@ h1, h2, h3, h4 { font-weight: 600; }
 .cat-chip .i { width: 15px; height: 15px; color: var(--gold); }
 .cat-chip:hover { color: var(--ink); background: var(--gold-grad); border-color: transparent; }
 .cat-chip:hover .i { color: var(--ink); }
-@media (min-width: 960px) { .cats-strip__row { flex-wrap: wrap; justify-content: center; -webkit-mask-image: none; mask-image: none; } }
+
+.cats-strip__title { margin: 0 0 10px; text-align: center; font-size: 11.5px; color: var(--muted); letter-spacing: .04em; }
+.cats-strip__title span { font: 500 10.5px var(--font-body); letter-spacing: .3em; text-transform: uppercase; color: var(--gold); }
+/* faixa rolando sozinha da direita para a esquerda (duas cópias = loop contínuo) */
+.cats-marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent); }
+.cats-marquee__track { display: flex; width: max-content; animation: catsScroll 30s linear infinite; }
+.cats-marquee__group { display: flex; gap: 8px; padding-right: 8px; }
+.cats-marquee:hover .cats-marquee__track, .cats-marquee:focus-within .cats-marquee__track, .cats-marquee:active .cats-marquee__track { animation-play-state: paused; }
+@keyframes catsScroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .cats-marquee { overflow-x: auto; scrollbar-width: none; }
+  .cats-marquee__track { animation: none !important; }
+  .cats-marquee__group[aria-hidden] { display: none; }
+}
