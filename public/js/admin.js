@@ -69,6 +69,7 @@ function render() {
       <button data-tab="new" class="${tab === 'new' ? 'is-active' : ''}">${icon('plus')} Novo produto</button>
       <button data-tab="settings" class="${tab === 'settings' ? 'is-active' : ''}">${icon('sliders')} Banner &amp; loja</button>
       <button data-tab="reviews" class="${tab === 'reviews' ? 'is-active' : ''}">${icon('star')} Avaliações</button>
+      <button data-tab="import" class="${tab === 'import' ? 'is-active' : ''}">${icon('upload')} Importar perfumes</button>
       <button data-tab="backup" class="${tab === 'backup' ? 'is-active' : ''}">${icon('download')} Backup</button>
     </nav>
     <div id="adminBody"></div>
@@ -82,6 +83,7 @@ function render() {
   else if (tab === 'edit') renderForm(body, editing);
   else if (tab === 'settings') renderSettings(body);
   else if (tab === 'reviews') renderReviews(body);
+  else if (tab === 'import') renderImport(body);
   else renderBackup(body);
 }
 
@@ -100,8 +102,9 @@ function renderList(body) {
       <input class="input" id="aq" type="search" placeholder="Buscar por nome ou marca" value="${esc(listFilter.q)}" style="flex:1;min-width:180px">
       <select class="input" id="ast" style="width:auto">
         <option value="all">Todos</option><option value="active">Visíveis</option><option value="inactive">Ocultos</option>
-        <option value="soldout">Esgotados</option><option value="featured">Destaques</option>
+        <option value="soldout">Esgotados</option><option value="featured">Destaques</option><option value="noprice">Sem preço</option>
       </select>
+      ${data.products.some((x) => !(Number(x.price) > 0)) ? `<button class="btn btn--ghost" id="noPriceBtn">${icon('tag')} Sem preço (${data.products.filter((x) => !(Number(x.price) > 0)).length})</button>` : ''}
       <button class="btn btn--outline" id="newKitBtn">${icon('box')} Novo kit</button>
       <button class="btn btn--primary" id="newBtn">${icon('plus')} Novo produto</button>
     </div>
@@ -111,12 +114,13 @@ function renderList(body) {
   $('#ast').addEventListener('change', (e) => { listFilter.status = e.target.value; drawRows(); });
   $('#newBtn').addEventListener('click', () => { tab = 'new'; render(); });
   $('#newKitBtn').addEventListener('click', () => { tab = 'newkit'; render(); });
+  $('#noPriceBtn')?.addEventListener('click', () => { listFilter.status = 'noprice'; $('#ast').value = 'noprice'; drawRows(); toast('Mostrando produtos sem preço. Clique em Editar para definir.'); });
   drawRows();
 }
 
 function drawRows() {
   const q = listFilter.q.toLowerCase();
-  const f = { all: () => true, active: (p) => p.active, inactive: (p) => !p.active, soldout: isSoldOut, featured: (p) => p.featured }[listFilter.status];
+  const f = { noprice: (p) => !(Number(p.price) > 0), all: () => true, active: (p) => p.active, inactive: (p) => !p.active, soldout: isSoldOut, featured: (p) => p.featured }[listFilter.status];
   const list = data.products.filter((p) => f(p) && (!q || (p.name + ' ' + p.brand).toLowerCase().includes(q)));
   const tgl = (id, key, on, label) => `<button class="toggle ${on ? 'is-on' : ''}" data-toggle="${key}" data-id="${id}" aria-pressed="${on}">${label}</button>`;
   $('#alist').innerHTML = list.length ? list.map((p) => `<div class="arow ${p.active ? '' : 'is-inactive'}">
@@ -126,6 +130,7 @@ function drawRows() {
         <div class="arow__meta">${esc(p.brand)} · ${esc(p.volume)} · <span class="gold">R$ ${money(finalPrice(p))}</span> · estoque: ${p.stock}</div>
         <div class="arow__badges">
           ${!isPerfume(p) ? `<span class="badge">${esc(typeLabel(p))}</span>` : ''}
+          ${!(Number(p.price) > 0) ? '<span class="badge badge--warn">Sem preço</span>' : ''}
           ${!p.active ? '<span class="badge badge--off">Oculto</span>' : ''}
           ${isSoldOut(p) ? '<span class="badge badge--off">Esgotado</span>' : ''}
           ${p.featured ? '<span class="badge badge--solid">Destaque</span>' : ''}
@@ -614,6 +619,62 @@ function renderReviews(body) {
     if (!confirm('Excluir esta avaliação?')) return;
     save(list.filter((_, i) => i !== +b.dataset.rdel), 'Avaliação excluída.');
   }));
+}
+
+// ─── Importar perfumes prontos (adiciona sem apagar os atuais) ───
+const LOTES = ['data/lotes/arabes-lote-1.json'];
+const keyOf = (p) => `${p.brand || ''} ${p.name || ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+
+async function addProducts(list, btn) {
+  const existing = new Set(data.products.map(keyOf));
+  const novos = list.filter((p) => p && p.name && !existing.has(keyOf(p)));
+  if (!novos.length) { toast('Todos esses perfumes já estão na loja.'); return; }
+  if (!confirm(`Adicionar ${novos.length} perfume(s) à loja? ${list.length - novos.length ? `(${list.length - novos.length} já existem e serão ignorados) ` : ''}Eles entram com preço zerado (“Sob consulta”).`)) return;
+  if (btn) btn.disabled = true;
+  let ok = 0;
+  for (const p of novos) {
+    const { id, slug, createdAt, updatedAt, ...clean } = p;
+    try { await store.saveProduct(clean); ok++; if (btn) btn.textContent = `Adicionando… ${ok}/${novos.length}`; }
+    catch (e) { handleError(e); break; }
+  }
+  tab = 'products'; listFilter.status = 'noprice';
+  await afterChange(`${ok} perfume(s) adicionado(s) ✓ Agora defina os preços.`);
+}
+
+async function renderImport(body) {
+  body.innerHTML = `<section class="fsection"><h2>${icon('box')} Perfumes prontos para adicionar</h2>
+      <p class="muted">Perfumes com ficha completa (notas de topo, coração e fundo, família, fixação, projeção, estações, ocasiões, referências e descrição). Entram <strong class="gold">com preço zerado</strong> — a loja mostra “Sob consulta” até você definir o preço. Os que já existem na loja com o mesmo nome são ignorados.</p>
+      <div id="lotes" class="mt-2"><div class="loader" style="min-height:80px"><span></span></div></div>
+    </section>
+    <section class="fsection"><h2>${icon('upload')} Adicionar de um arquivo</h2>
+      <p class="muted">Adiciona os produtos de um arquivo .json (no formato do backup ou de um lote) <strong>sem apagar</strong> os atuais.</p>
+      <label class="btn btn--outline mt-2">${icon('upload')} Escolher arquivo<input type="file" id="addFile" accept="application/json,.json" hidden></label>
+    </section>`;
+  const box = $('#lotes');
+  const existing = new Set(data.products.map(keyOf));
+  const cards = [];
+  for (const url of LOTES) {
+    try {
+      const lote = await (await fetch(url, { cache: 'no-store' })).json();
+      const list = lote.produtos || lote.products || [];
+      const falta = list.filter((p) => !existing.has(keyOf(p))).length;
+      cards.push(`<div class="lote">
+        <div><strong>${esc(lote.nome || url)}</strong>
+          <p class="muted">${list.map((p) => esc(`${p.brand} ${p.name}`)).join(' · ')}</p></div>
+        <button class="btn btn--primary" data-lote="${esc(url)}" ${falta ? '' : 'disabled'}>${falta ? `${icon('plus')} Adicionar ${falta} perfume${falta === 1 ? '' : 's'}` : `${icon('check')} Já adicionados`}</button>
+      </div>`);
+    } catch { cards.push(`<p class="muted">Não foi possível carregar ${esc(url)}.</p>`); }
+  }
+  box.innerHTML = cards.join('');
+  $$('[data-lote]', box).forEach((b) => b.addEventListener('click', async () => {
+    const lote = await (await fetch(b.dataset.lote, { cache: 'no-store' })).json();
+    addProducts(lote.produtos || lote.products || [], b);
+  }));
+  $('#addFile').addEventListener('change', async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    try { const j = JSON.parse(await file.text()); addProducts(Array.isArray(j) ? j : j.produtos || j.products || []); }
+    catch { toast('Arquivo inválido.', true); }
+  });
 }
 
 // ─── Backup ───

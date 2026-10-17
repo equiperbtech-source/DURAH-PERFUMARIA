@@ -1,0 +1,850 @@
+{
+  "nome": "Perfumes árabes — lote 1 (13 perfumes, preço a definir)",
+  "produtos": [
+    {
+      "name": "Club de Nuit Intense Man",
+      "brand": "Armaf",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "105ml",
+      "concentration": "Eau de Toilette",
+      "gender": "Masculino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Um dos árabes mais famosos do mundo. Club de Nuit Intense Man abre com uma explosão cítrica e frutada de limão, abacaxi, groselha negra e maçã, que logo encontra o coração defumado de bétula, suavizado por jasmim e rosa. No drydown, almíscar, âmbar cinzento, patchouli e um toque de baunilha deixam um rastro amadeirado, masculino e confiante. Projeção forte e fixação que atravessa o dia.",
+      "notes": {
+        "top": [
+          "Limão",
+          "Abacaxi",
+          "Bergamota",
+          "Groselha negra",
+          "Maçã"
+        ],
+        "heart": [
+          "Bétula",
+          "Jasmim",
+          "Rosa"
+        ],
+        "base": [
+          "Almíscar",
+          "Âmbar cinzento",
+          "Patchouli",
+          "Baunilha"
+        ]
+      },
+      "family": "Amadeirado",
+      "perfumer": "",
+      "year": 2015,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Noite",
+        "Encontro"
+      ],
+      "references": [
+        {
+          "name": "Aventus",
+          "house": "Creed"
+        }
+      ],
+      "tags": [
+        "elogiado",
+        "marcante",
+        "versátil",
+        "defumado"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Club de Nuit Untold",
+      "brand": "Armaf",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "105ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Untold é o âmbar luminoso da Armaf: o açafrão de abertura, levemente couro, se une ao jasmim para criar um acorde quase açucarado e cristalino. O coração de amberwood e âmbar cinzento traz o efeito radiante e levemente salgado que gruda na pele e no ambiente, enquanto a resina de abeto e o cedro dão profundidade balsâmica ao drydown. Sillage marcante, daqueles que fazem as pessoas perguntarem o que você está usando.",
+      "notes": {
+        "top": [
+          "Açafrão",
+          "Jasmim"
+        ],
+        "heart": [
+          "Amberwood",
+          "Âmbar cinzento"
+        ],
+        "base": [
+          "Resina de abeto",
+          "Cedro"
+        ]
+      },
+      "family": "Oriental/Âmbar",
+      "perfumer": "",
+      "year": 2022,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno",
+        "Primavera"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Baccarat Rouge 540",
+          "house": "Maison Francis Kurkdjian"
+        }
+      ],
+      "tags": [
+        "viciante",
+        "luxuoso",
+        "doce",
+        "rastro forte"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Detour Noir",
+      "brand": "Al Haramain",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Masculino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Detour Noir é conhecido como a “torta de maçã especiada” da Al Haramain: maçã verde, bergamota e tangerina abrem com frescor, temperados por lavanda e pimenta. No coração, cardamomo, violeta, jasmim e gerânio aquecem a composição, e o fundo de patchouli, sândalo, guaiaco, baunilha e almíscar deixa um drydown amadeirado, adocicado e envolvente. Ideal para noites frias.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Lavanda",
+          "Maçã verde",
+          "Tangerina",
+          "Pimenta"
+        ],
+        "heart": [
+          "Violeta",
+          "Jasmim",
+          "Gerânio",
+          "Cardamomo"
+        ],
+        "base": [
+          "Patchouli",
+          "Sândalo",
+          "Madeira de guaiaco",
+          "Baunilha",
+          "Almíscar"
+        ]
+      },
+      "family": "Especiado",
+      "perfumer": "",
+      "year": 2021,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "especiado",
+        "doce",
+        "marcante",
+        "noturno"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Emir Voux Elegante",
+      "brand": "Paris Corner",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Voux Elegante, da linha Emir da Paris Corner, é um aromático especiado de alto nível: lavanda, bergamota e limão abrem com elegância, e logo o coração de mel, canela e jasmim sambac traz calor e doçura. O fundo de tabaco, baunilha e fava tonka cria um drydown licoroso, aconchegante e muito sofisticado — perfeito para quem ama a combinação mel e tabaco.",
+      "notes": {
+        "top": [
+          "Lavanda",
+          "Bergamota",
+          "Limão"
+        ],
+        "heart": [
+          "Mel",
+          "Jasmim sambac",
+          "Canela",
+          "Cashmeran"
+        ],
+        "base": [
+          "Tabaco",
+          "Baunilha",
+          "Fava tonka"
+        ]
+      },
+      "family": "Especiado",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Naxos",
+          "house": "Xerjoff"
+        }
+      ],
+      "tags": [
+        "mel",
+        "tabaco",
+        "sofisticado",
+        "aconchegante"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Amber Oud Gold Edition",
+      "brand": "Al Haramain",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "120ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Amber Oud Gold Edition é um âmbar frutado radiante e generoso: bergamota e notas verdes abrem com frescor, seguidas por um coração suculento de melão e abacaxi envolvido em âmbar e um acorde gourmand. O fundo de madeiras, baunilha e almíscar deixa um rastro dourado, doce e muito marcante. Fixação e projeção impressionantes — poucas borrifadas bastam.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Notas verdes"
+        ],
+        "heart": [
+          "Melão",
+          "Abacaxi",
+          "Âmbar",
+          "Acorde gourmand"
+        ],
+        "base": [
+          "Madeiras",
+          "Baunilha",
+          "Almíscar"
+        ]
+      },
+      "family": "Oriental/Âmbar",
+      "perfumer": "",
+      "year": 2018,
+      "longevity": "Muito longa",
+      "projection": "Enorme",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Festa",
+        "Encontro",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Erba Pura",
+          "house": "Xerjoff"
+        }
+      ],
+      "tags": [
+        "frutado",
+        "doce",
+        "rastro forte",
+        "luxuoso"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Delilah",
+      "brand": "Maison Alhambra",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Feminino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Delilah é a rosa moderna e romântica da Maison Alhambra: lichia suculenta, ruibarbo e bergamota abrem com brilho frutado e levemente ácido. O coração de rosa turca, peônia e lírio é delicado e feminino, e o fundo de baunilha, almíscar branco e cashmeran deixa a pele macia e elegante. Um floral frutado sofisticado para usar do dia a dia aos encontros.",
+      "notes": {
+        "top": [
+          "Ruibarbo",
+          "Lichia",
+          "Bergamota"
+        ],
+        "heart": [
+          "Rosa turca",
+          "Peônia",
+          "Lírio"
+        ],
+        "base": [
+          "Baunilha",
+          "Almíscar branco",
+          "Cashmeran"
+        ]
+      },
+      "family": "Floral",
+      "perfumer": "",
+      "year": 2023,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Verão",
+        "Outono"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Encontro"
+      ],
+      "references": [
+        {
+          "name": "Delina",
+          "house": "Parfums de Marly"
+        }
+      ],
+      "tags": [
+        "rosa",
+        "romântico",
+        "frutado",
+        "elegante"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Kismet Magic",
+      "brand": "Maison Alhambra",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Kismet Magic (antigo Kismet Angel) é um gourmand licoroso e aconchegante: abre com conhaque, mergulha num coração de canela, fava tonka e carvalho e termina num drydown cremoso de pralinê, baunilha e sândalo. Doce, quente e “boozy”, é o tipo de perfume que lembra sobremesa servida perto da lareira.",
+      "notes": {
+        "top": [
+          "Conhaque"
+        ],
+        "heart": [
+          "Canela",
+          "Fava tonka",
+          "Carvalho"
+        ],
+        "base": [
+          "Pralinê",
+          "Baunilha",
+          "Sândalo"
+        ]
+      },
+      "family": "Gourmand",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Moderada",
+      "projection": "Moderada",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [
+        {
+          "name": "Angels' Share",
+          "house": "By Kilian"
+        }
+      ],
+      "tags": [
+        "boozy",
+        "doce",
+        "canela",
+        "aconchegante"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Bade'e Al Oud — Oud for Glory",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Oud for Glory é um dos ouds mais celebrados da Lattafa: açafrão, lavanda e noz-moscada abrem quentes e especiados, preparando o caminho para um coração intenso de oud e patchouli. O fundo de almíscar, oud e patchouli deixa um rastro escuro, amadeirado e imponente. Para quem quer presença e uma assinatura árabe autêntica.",
+      "notes": {
+        "top": [
+          "Açafrão",
+          "Lavanda",
+          "Noz-moscada"
+        ],
+        "heart": [
+          "Oud",
+          "Patchouli"
+        ],
+        "base": [
+          "Almíscar",
+          "Oud",
+          "Patchouli"
+        ]
+      },
+      "family": "Oud",
+      "perfumer": "",
+      "year": 2020,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Festa",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Oud for Greatness",
+          "house": "Initio"
+        }
+      ],
+      "tags": [
+        "oud",
+        "marcante",
+        "especiado",
+        "árabe"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Emir Rich Santal",
+      "brand": "Paris Corner",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Rich Santal, da linha Emir Factory Edition da Paris Corner, é um amadeirado cremoso e moderno: cardamomo, violeta e papiro abrem secos e elegantes, a íris e o âmbar suavizam o coração, e o fundo de couro, sândalo e cedro deixa um drydown aveludado e levemente couro. Sofisticado e muito usável, do trabalho à noite.",
+      "notes": {
+        "top": [
+          "Cardamomo",
+          "Violeta",
+          "Papiro"
+        ],
+        "heart": [
+          "Íris",
+          "Âmbar"
+        ],
+        "base": [
+          "Couro",
+          "Sândalo",
+          "Cedro"
+        ]
+      },
+      "family": "Amadeirado",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Noite"
+      ],
+      "references": [
+        {
+          "name": "Santal 33",
+          "house": "Le Labo"
+        }
+      ],
+      "tags": [
+        "amadeirado",
+        "couro",
+        "cremoso",
+        "elegante"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Decadent Dream",
+      "brand": "Maison Alhambra",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Decadent Dream é um oriental floral rico e resinoso: pera suculenta e avelã encontram o incenso logo na abertura. O coração de osmanthus, rosa, açafrão e jasmim sambac traz um floral quente e especiado, e o fundo de sândalo, baunilha, âmbar cinzento e labdanum deixa um drydown profundo, doce e levemente animálico. Luxuoso, para noites especiais.",
+      "notes": {
+        "top": [
+          "Pera",
+          "Avelã",
+          "Olíbano"
+        ],
+        "heart": [
+          "Osmanthus",
+          "Rosa",
+          "Açafrão",
+          "Jasmim sambac"
+        ],
+        "base": [
+          "Sândalo",
+          "Baunilha",
+          "Âmbar cinzento",
+          "Labdanum"
+        ]
+      },
+      "family": "Oriental/Âmbar",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "resinoso",
+        "doce",
+        "floral",
+        "marcante"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Eclaire",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Feminino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Eclaire é pura sobremesa: abre com caramelo, açúcar e leite, um acorde cremoso e irresistível. O coração de mel e flores brancas deixa a doçura mais luminosa, e o fundo de baunilha, pralinê e almíscar garante um rastro gourmand, aconchegante e muito elogiado. Para quem ama perfumes doces e marcantes.",
+      "notes": {
+        "top": [
+          "Caramelo",
+          "Açúcar",
+          "Leite"
+        ],
+        "heart": [
+          "Mel",
+          "Flores brancas"
+        ],
+        "base": [
+          "Baunilha",
+          "Pralinê",
+          "Almíscar"
+        ]
+      },
+      "family": "Gourmand",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno",
+        "Primavera"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "doce",
+        "viciante",
+        "gourmand",
+        "elogiado"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Karus Secret Musk",
+      "brand": "Khadlaj",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Karus Secret Musk é um doce-especiado sensual da Khadlaj: açafrão e frutas vermelhas abrem vibrantes, o coração une fava tonka, chocolate e rosa num acorde aveludado, e o fundo de amberwood, almíscar, notas doces e musgo deixa um rastro quente e envolvente. Perfeito para noites e encontros.",
+      "notes": {
+        "top": [
+          "Açafrão",
+          "Frutas vermelhas"
+        ],
+        "heart": [
+          "Fava tonka",
+          "Chocolate",
+          "Rosa"
+        ],
+        "base": [
+          "Amberwood",
+          "Almíscar",
+          "Notas doces",
+          "Musgo"
+        ]
+      },
+      "family": "Gourmand",
+      "perfumer": "",
+      "year": 2024,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "doce",
+        "especiado",
+        "chocolate",
+        "sensual"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Pride Art of Arabia I",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Art of Arabia I, da linha Lattafa Pride, é um aromático especiado elegante: bergamota e hortelã abrem com frescor, o coração de chá preto, gengibre e lavanda traz um toque refinado e levemente picante, e o fundo de ambroxan, olíbano e canela deixa um drydown resinoso, limpo e sofisticado. Muito versátil, do trabalho à noite.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Hortelã"
+        ],
+        "heart": [
+          "Chá preto",
+          "Gengibre",
+          "Lavanda"
+        ],
+        "base": [
+          "Ambroxan",
+          "Olíbano",
+          "Canela"
+        ]
+      },
+      "family": "Aromático",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Noite"
+      ],
+      "references": [],
+      "tags": [
+        "chá",
+        "aromático",
+        "elegante",
+        "versátil"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    }
+  ]
+}

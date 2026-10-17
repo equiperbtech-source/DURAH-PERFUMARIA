@@ -5,7 +5,7 @@ import {
   variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
   productType, isPerfume, typeLabel, scentEmoji, scentAdjective, INTENSITY,
   isKit, isSimple, kitItems, kitSeparatePrice, kitSavings, igLink, igEmbed,
-  shop, backorderLabel,
+  shop, backorderLabel, priceLabel,
   GENDERS, FAMILIES, LONGEVITY, LONGEVITY_HINT, PROJECTION, PROJECTION_HINT, SEASONS, OCCASIONS,
 } from './ui.js';
 
@@ -102,7 +102,7 @@ function card(p) {
       ${isKit(p) && kitSavings(p) > 0 ? `<span class="card__decant">${icon('box', 'i--sm')} Economize R$ ${money(kitSavings(p))} no kit</span>` : ''}
       <div class="card__price">
         ${v.key !== 'full' ? `<span class="card__from">${esc(v.label)}</span>` : v.old ? `<span class="price-old">R$ ${money(v.old)}</span>` : ''}
-        <span class="price">R$ ${money(v.price)}</span>
+        <span class="price ${v.price > 0 ? '' : 'price--ask'}">${priceLabel(v.price)}</span>
       </div>
       ${sold ? `<span class="card__backorder">${icon('clock', 'i--sm')} Chega em ${esc(shop.backorder)}</span>` : ''}
       ${installmentText(v.price, trust().installments) ? `<span class="card__inst">ou ${installmentText(v.price, trust().installments)}</span>` : ''}
@@ -246,7 +246,7 @@ function promoBlock(b) {
         ${b.text ? `<p>${esc(b.text)}</p>` : ''}
         ${v ? `<div class="promo__prices">
             ${v.old ? `<span class="promo__old">De <s>R$ ${money(v.old)}</s></span>` : ''}
-            <span class="promo__now"><small>${v.old ? 'Por' : v.key === 'full' ? '' : esc(v.label)}</small> R$ ${money(v.price)}</span>
+            <span class="promo__now"><small>${v.old ? 'Por' : v.key === 'full' ? '' : esc(v.label)}</small> ${priceLabel(v.price)}</span>
             ${v.old ? `<span class="price-off">-${Math.round((1 - v.price / v.old) * 100)}% OFF</span>` : ''}
           </div>
           ${installmentText(v.price, t.installments) ? `<p class="promo__inst">ou ${installmentText(v.price, t.installments)} · ${esc(t.payment)}</p>` : ''}` : ''}
@@ -490,7 +490,7 @@ function pageProduct(slug) {
           <legend class="label">Escolha o tamanho</legend>
           <div class="variants__list">${variants(p).map((v) => `<label class="variant ${v.available ? '' : 'is-backorder'}">
             <input type="radio" name="variant" value="${v.key}" ${v.key === sel.key ? 'checked' : ''}>
-            <span><strong>${esc(v.label)}</strong><em>R$ ${money(v.price)}</em><small>${!v.available ? 'Sob encomenda' : v.key === 'full' ? 'Lacrado, original' : 'Fracionado do original'}</small></span>
+            <span><strong>${esc(v.label)}</strong><em>${priceLabel(v.price)}</em><small>${!v.available ? 'Sob encomenda' : v.key === 'full' ? 'Lacrado, original' : 'Fracionado do original'}</small></span>
           </label>`).join('')}</div>
         </fieldset>` : ''}
 
@@ -585,7 +585,7 @@ function pageProduct(slug) {
   const applyVariant = (key) => {
     const v = getVariant(p, key);
     $('#pPrice').innerHTML = `${v.old ? `<span class="price-old">R$ ${money(v.old)}</span><span class="price-off">-${Math.round((1 - v.price / v.old) * 100)}%</span>` : ''}
-      <span class="price" style="width:100%">R$ ${money(v.price)}</span>`;
+      <span class="price ${v.price > 0 ? '' : 'price--ask'}" style="width:100%">${priceLabel(v.price)}</span>`;
     $('#pInst').textContent = [installmentText(v.price, t.installments) && 'ou ' + installmentText(v.price, t.installments), t.payment].filter(Boolean).join(' · ');
     $('#pStock').innerHTML = !v.available ? `<span class="dot dot--warn"></span> Sem estoque · disponível sob encomenda em ${esc(shop.backorder)}`
       : v.key === 'full' && isLastUnits(p) ? '<span class="dot dot--warn"></span> Últimas unidades em estoque'
@@ -596,7 +596,7 @@ function pageProduct(slug) {
     $('#buyWa2 span').textContent = v.available ? 'Comprar' : 'Sob encomenda';
     $('#buyWa').classList.toggle('btn--backorder', !v.available); $('#buyWa').classList.toggle('btn--primary', v.available);
     $('#buyWa2').classList.toggle('btn--backorder', !v.available); $('#buyWa2').classList.toggle('btn--primary', v.available);
-    $('#bbPrice').textContent = `R$ ${money(v.price)}`;
+    $('#bbPrice').textContent = priceLabel(v.price);
     const add = $('#buyAdd'); add.dataset.variant = v.key; add.disabled = false;
     add.lastChild.textContent = v.available ? ' Adicionar à sacola' : ' Encomendar na sacola';
   };
@@ -775,13 +775,13 @@ function renderDrawer() {
     const total = items.reduce((a, { p, qty, v }) => a + getVariant(p, v).price * qty, 0);
     body.innerHTML = items.map(({ p, qty, v }, i) => { const vr = getVariant(p, v); return `<div class="line-item">
       <img src="${esc(productImages(p)[0])}" alt="" loading="lazy">
-      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta"><span class="line-item__variant">${esc(vr.label)}</span> · R$ ${money(vr.price)}</div>${!vr.available ? `<span class="badge badge--warn mt-1">Sob encomenda · ${esc(shop.backorder)}</span>` : ''}</div>
+      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta"><span class="line-item__variant">${esc(vr.label)}</span> · ${priceLabel(vr.price)}</div>${!vr.available ? `<span class="badge badge--warn mt-1">Sob encomenda · ${esc(shop.backorder)}</span>` : ''}</div>
       <div class="line-item__right">
         <div class="qty"><button data-qty="${i}" data-d="-1" aria-label="Diminuir">${icon('minus')}</button><span>${qty}</span><button data-qty="${i}" data-d="1" aria-label="Aumentar">${icon('plus')}</button></div>
         <button class="link-btn" data-remove="${i}">Remover</button>
       </div>
     </div>`; }).join('');
-    foot.innerHTML = `<div class="drawer__total"><span>Total estimado</span><strong>R$ ${money(total)}</strong></div>
+    foot.innerHTML = `<div class="drawer__total"><span>Total estimado</span><strong>R$ ${money(total)}</strong></div>${items.some(({ p, v }) => !(getVariant(p, v).price > 0)) ? '<p class="hint" style="margin:-8px 0 12px">+ itens com preço sob consulta</p>' : ''}
       <a class="btn btn--primary btn--block btn--lg" href="${wa(msgList(items))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} Finalizar pelo WhatsApp</a>
       <p class="hint" style="text-align:center">Você confirma disponibilidade, frete e pagamento direto com a loja.</p>`;
   } else {
@@ -792,7 +792,7 @@ function renderDrawer() {
     }
     body.innerHTML = items.map((p) => `<div class="line-item">
       <img src="${esc(productImages(p)[0])}" alt="" loading="lazy">
-      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta">${esc(defaultVariant(p).label)} · R$ ${money(defaultVariant(p).price)}</div></div>
+      <div><div class="line-item__brand">${esc(p.brand)}</div><a class="line-item__name" href="#/produto/${esc(p.slug)}" data-close>${esc(p.name)}</a><div class="line-item__meta">${esc(defaultVariant(p).label)} · ${priceLabel(defaultVariant(p).price)}</div></div>
       <div class="line-item__right">
         <button class="btn btn--outline btn--sm" data-add="${p.id}">${icon('bag', 'i--sm')}</button>
         <button class="link-btn" data-unfav="${p.id}">Remover</button>

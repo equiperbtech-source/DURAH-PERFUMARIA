@@ -114,6 +114,8 @@ export const kitSavings = (p) => Math.max(0, Math.round((kitSeparatePrice(p) - f
 const kitLines = (p) => kitItems(p).map((i) => `• ${i.qty > 1 ? i.qty + 'x ' : ''}${i.label}${i.variantLabel ? ' — ' + i.variantLabel : ''}`).join('\n');
 export const backorderLabel = () => `Sob encomenda (${shop.backorder})`;
 
+// preço zerado = ainda não definido pela loja → "Sob consulta"
+export const priceLabel = (n) => (Number(n) > 0 ? `R$ ${money(n)}` : 'Sob consulta');
 export const installmentText = (price, n) => (n > 1 && price > 0 ? `${n}x de R$ ${money(price / n)} sem juros` : '');
 export const stars = (n) => '★★★★★'.slice(0, Math.round(n)) + '☆☆☆☆☆'.slice(0, 5 - Math.round(n));
 
@@ -148,7 +150,7 @@ Vim pelo catálogo e quero este kit:
 🎁 Kit: ${p.name}
 📦 Itens:
 ${kitLines(p)}
-💰 Valor do kit: R$ ${money(v.price)}${kitSavings(p) ? ` (economia de R$ ${money(kitSavings(p))})` : ''}
+💰 Valor do kit: ${v.price > 0 ? `R$ ${money(v.price)}` : 'a consultar'}${kitSavings(p) ? ` (economia de R$ ${money(kitSavings(p))})` : ''}
 
 Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
   return `Olá, DURAH Perfumes e Importados! 👋✨
@@ -157,7 +159,7 @@ Vim pelo catálogo e fiquei apaixonado(a) por esta fragrância:
 🖤 Perfume: ${p.name}
 🏷️ Marca: ${p.brand}
 📏 Tamanho: ${v.size}
-💰 Valor: R$ ${money(v.price)}
+💰 Valor: ${v.price > 0 ? `R$ ${money(v.price)}` : 'a consultar'}
 
 Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
 };
@@ -168,7 +170,7 @@ export const msgBackorder = (p, v) =>
 Vi no catálogo que esta fragrância está sem estoque e tenho interesse em encomendar:
 
 ${isKit(p) ? `🎁 Kit: ${p.name}\n📦 Itens:\n${kitLines(p)}` : `🖤 Perfume: ${p.name}\n🏷️ Marca: ${p.brand}\n📏 Tamanho: ${v.size}`}
-💰 Valor: R$ ${money(v.price)}
+💰 Valor: ${v.price > 0 ? `R$ ${money(v.price)}` : 'a consultar'}
 📦 Sob encomenda (prazo de ${shop.backorder})
 
 Poderia me informar quando chegaria e como funciona o pagamento — é antecipado ou pago na chegada? Obrigado(a)!`;
@@ -187,15 +189,15 @@ export function msgList(items, intro = 'montei minha sacola') {
     const vr = getVariant(p, v);
     const sub = vr.price * qty; total += sub;
     if (!vr.available) hasBackorder = true;
-    if (isKit(p)) return `${i + 1}) 🎁 ${p.name} · Qtd: ${qty} · 💰 R$ ${money(sub)}\n${kitLines(p).replace(/^/gm, '    ')}${vr.available ? '' : `\n    📦 Sob encomenda (${shop.backorder})`}`;
-    return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${vr.size} · Qtd: ${qty} · 💰 R$ ${money(sub)}${vr.available ? '' : `\n    📦 Sob encomenda (${shop.backorder})`}`;
+    if (isKit(p)) return `${i + 1}) 🎁 ${p.name} · Qtd: ${qty} · 💰 ${sub > 0 ? `R$ ${money(sub)}` : 'a consultar'}\n${kitLines(p).replace(/^/gm, '    ')}${vr.available ? '' : `\n    📦 Sob encomenda (${shop.backorder})`}`;
+    return `${i + 1}) 🖤 ${p.name} — ${p.brand}\n    📏 ${vr.size} · Qtd: ${qty} · 💰 ${sub > 0 ? `R$ ${money(sub)}` : 'a consultar'}${vr.available ? '' : `\n    📦 Sob encomenda (${shop.backorder})`}`;
   });
   return `Olá, DURAH Perfumes e Importados! 👋✨
 Vim pelo catálogo e ${intro}:
 
 ${lines.join('\n\n')}
 
-🧾 Total: R$ ${money(total)}
+🧾 Total: R$ ${money(total)}${items.some(({ p, v }) => !(getVariant(p, v).price > 0)) ? ' + itens a consultar' : ''}
 
 ${hasBackorder ? 'Sobre os itens sob encomenda: quando chegariam e o pagamento é antecipado ou na chegada?\n' : ''}Ainda estão disponíveis? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;
 }

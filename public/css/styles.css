@@ -1123,3 +1123,8 @@ h1, h2, h3, h4 { font-weight: 600; }
 .pvideo__frame iframe { display: block; width: 100%; height: 640px; border: 0; }
 @media (max-width: 420px) { .pvideo__frame iframe { height: 560px; } }
 .pvideo__link { display: inline-flex; align-items: center; gap: 6px; margin-top: 10px; font-size: 13px; color: var(--gold); }
+.price--ask { font-size: .82em; letter-spacing: .04em; }
+.lote { display: grid; gap: 14px; padding: 14px; border: 1px solid var(--gold-line); border-radius: 4px; background: var(--card-2); }
+.lote strong { font: 600 15px var(--font-title); color: var(--gold); }
+.lote p { font-size: 12.5px; margin-top: 6px; line-height: 1.6; }
+@media (min-width: 800px) { .lote { grid-template-columns: 1fr auto; align-items: center; } }
