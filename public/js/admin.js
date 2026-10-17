@@ -215,7 +215,20 @@ function uploader(el, images, max = 4) {
           <div class="uslot__actions">${i ? `<button type="button" data-main="${i}" title="Usar como capa">${icon('star')}</button>` : ''}<button type="button" data-rmimg="${i}" title="Remover">${icon('trash')}</button></div>
           ${i === 0 ? '<span class="badge badge--solid uslot__main">Capa</span>' : ''}</div>`
       : `<div class="uslot" data-slot="${i}"><label>${icon('upload')}<span>${i === imgs.length ? 'Adicionar foto' : 'Vazio'}</span><input type="file" accept="image/*" ${max > 1 ? 'multiple' : ''}></label></div>`).join('')}</div>
-      <p class="hint">Até ${max} ${max > 1 ? 'imagens' : 'imagem'}. Elas são otimizadas automaticamente (WebP, até 1400px). A primeira é a capa.</p>`;
+      ${imgs.length < max ? `<div class="url-add">
+        <input class="input" type="url" inputmode="url" placeholder="Ou cole o link da foto ou da página do produto (https://…)" data-urlin>
+        <button type="button" class="btn btn--outline btn--sm" data-urladd>${icon('download', 'i--sm')} Adicionar por link</button>
+      </div>` : ''}
+      <p class="hint">Até ${max} ${max > 1 ? 'imagens' : 'imagem'}. Elas são otimizadas automaticamente (WebP, até 1400px). A primeira é a capa.
+      Por link: cole o endereço da foto ou da página do produto no site oficial da marca ou do seu fornecedor — o servidor baixa e guarda a foto na sua loja. Use fotos que você tem direito de usar (oficiais da marca, do fornecedor ou suas).</p>`;
+    const urlBtn = $('[data-urladd]', el);
+    if (urlBtn) urlBtn.addEventListener('click', async () => {
+      const inp = $('[data-urlin]', el); const u = inp.value.trim();
+      if (!/^https?:\/\//i.test(u)) { toast('Cole um link começando com https://', true); inp.focus(); return; }
+      urlBtn.disabled = true; urlBtn.textContent = 'Baixando…';
+      try { imgs.push(await store.uploadImageFromUrl(u)); draw(); toast('Foto adicionada ✓'); }
+      catch (e) { handleError(e); urlBtn.disabled = false; urlBtn.textContent = 'Adicionar por link'; }
+    });
     $$('[data-rmimg]', el).forEach((b) => b.addEventListener('click', () => { imgs.splice(+b.dataset.rmimg, 1); draw(); }));
     $$('[data-main]', el).forEach((b) => b.addEventListener('click', () => { const [m] = imgs.splice(+b.dataset.main, 1); imgs.unshift(m); draw(); }));
     $$('input[type=file]', el).forEach((inp) => inp.addEventListener('change', async () => {

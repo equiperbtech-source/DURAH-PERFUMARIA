@@ -1128,3 +1128,5 @@ h1, h2, h3, h4 { font-weight: 600; }
 .lote strong { font: 600 15px var(--font-title); color: var(--gold); }
 .lote p { font-size: 12.5px; margin-top: 6px; line-height: 1.6; }
 @media (min-width: 800px) { .lote { grid-template-columns: 1fr auto; align-items: center; } }
+.url-add { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; }
+@media (max-width: 600px) { .url-add { grid-template-columns: 1fr; } }

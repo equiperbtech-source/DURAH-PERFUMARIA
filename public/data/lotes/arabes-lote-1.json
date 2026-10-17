@@ -186,7 +186,12 @@
         "Encontro",
         "Festa"
       ],
-      "references": [],
+      "references": [
+        {
+          "name": "Layton",
+          "house": "Parfums de Marly"
+        }
+      ],
       "tags": [
         "especiado",
         "doce",
@@ -302,7 +307,7 @@
       },
       "family": "Oriental/Âmbar",
       "perfumer": "",
-      "year": 2018,
+      "year": null,
       "longevity": "Muito longa",
       "projection": "Enorme",
       "seasons": [

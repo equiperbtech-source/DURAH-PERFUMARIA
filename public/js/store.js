@@ -122,6 +122,10 @@ export const store = {
     if (mode === 'api') return api('reset-demo', { method: 'POST' });
     safeLS.del(LS_DB);
   },
+  async uploadImageFromUrl(url) {
+    if (mode !== 'api') throw new Error('A foto por link funciona só com o servidor da loja (no site publicado).');
+    return (await api('upload-url', { method: 'POST', body: { url } })).url;
+  },
   async uploadImage(dataUrl) {
     if (mode === 'api') return (await api('upload', { method: 'POST', body: { dataUrl } })).url;
     return dataUrl; // modo demonstração: guarda a imagem no próprio navegador

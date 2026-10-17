@@ -261,6 +261,46 @@ api.post('/reset-demo', auth, async (req, res) => {
   await storage.save(db); res.json({ ok: true, count: db.products.length });
 });
 
+// Foto por link: baixa a imagem no servidor e guarda no armazenamento da loja.
+// Aceita o link direto da imagem ou o link da página do produto (usa a imagem og:image da página).
+const BROWSER_HEADERS = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36', Accept: 'image/avif,image/webp,image/*,text/html;q=0.8,*/*;q=0.5' };
+async function fetchWithTimeout(url, ms = 8000) {
+  const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), ms);
+  try { return await fetch(url, { headers: { ...BROWSER_HEADERS, Referer: new URL(url).origin + '/' }, redirect: 'follow', signal: ctrl.signal }); }
+  finally { clearTimeout(t); }
+}
+function pageImage(html, base) {
+  const metas = [/<meta[^>]+(?:property|name)=["'](?:og:image(?::secure_url)?|twitter:image)["'][^>]*content=["']([^"']+)["']/i,
+                 /<meta[^>]+content=["']([^"']+)["'][^>]*(?:property|name)=["'](?:og:image(?::secure_url)?|twitter:image)["']/i];
+  for (const re of metas) { const m = re.exec(html); if (m) { try { return new URL(m[1].replace(/&amp;/g, '&'), base).href; } catch {} } }
+  return '';
+}
+api.post('/upload-url', auth, async (req, res) => {
+  let url = str(req.body && req.body.url, 1000);
+  if (!/^https?:\/\//i.test(url)) return res.status(400).json({ error: 'Cole um link começando com https://' });
+  const host = (() => { try { return new URL(url).hostname.toLowerCase(); } catch { return ''; } })();
+  const privado = !host || host === 'localhost' || host.endsWith('.local') || host.endsWith('.internal') || /^(127\.|10\.|0\.|169\.254\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|\[?::1\]?$|\[?f[cd])/.test(host);
+  if (privado && !process.env.ALLOW_PRIVATE_URLS) return res.status(400).json({ error: 'Endereço não permitido.' });
+  try {
+    let r = await fetchWithTimeout(url);
+    let type = (r.headers.get('content-type') || '').split(';')[0].trim();
+    if (r.ok && type.includes('html')) {
+      const img = pageImage(await r.text(), r.url || url);
+      if (!img) return res.status(422).json({ error: 'Não encontrei uma foto nessa página. Abra a foto, toque e segure → “Copiar endereço da imagem” e cole aqui.' });
+      url = img; r = await fetchWithTimeout(url); type = (r.headers.get('content-type') || '').split(';')[0].trim();
+    }
+    if (!r.ok) return res.status(422).json({ error: `O site recusou o download da foto (${r.status}). Tente salvar a foto e enviar pelo botão de foto.` });
+    const ext = { 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' }[type];
+    if (!ext) return res.status(415).json({ error: 'Esse link não é de uma foto em JPG, PNG ou WebP.' });
+    const buf = Buffer.from(await r.arrayBuffer());
+    if (buf.length > 6 * 1024 * 1024) return res.status(413).json({ error: 'Foto muito grande (máx. 6 MB).' });
+    if (buf.length < 2000) return res.status(422).json({ error: 'A imagem baixada é pequena demais — confira o link.' });
+    res.status(201).json({ url: await storage.saveImage(buf, ext, ext === 'jpg' ? 'image/jpeg' : 'image/' + ext) });
+  } catch (e) {
+    res.status(502).json({ error: e.name === 'AbortError' ? 'O site demorou demais para responder.' : 'Não foi possível baixar a foto desse link.' });
+  }
+});
+
 api.post('/upload', auth, async (req, res) => {
   const m = /^data:image\/(webp|jpeg|png);base64,([A-Za-z0-9+/=]+)$/.exec((req.body && req.body.dataUrl) || '');
   if (!m) return res.status(400).json({ error: 'Imagem inválida.' });
