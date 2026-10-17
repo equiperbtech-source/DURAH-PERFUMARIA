@@ -671,10 +671,14 @@ async function renderImport(body) {
       const lote = await (await fetch(url, { cache: 'no-store' })).json();
       const list = lote.produtos || lote.products || [];
       const falta = list.filter((p) => !existing.has(keyOf(p))).length;
+      const semFoto = list.filter((p) => (p.images || []).length && data.products.some((x) => keyOf(x) === keyOf(p) && !(x.images || []).length)).length;
       cards.push(`<div class="lote">
         <div><strong>${esc(lote.nome || url)}</strong>
           <p class="muted">${list.map((p) => esc(`${p.brand} ${p.name}`)).join(' · ')}</p></div>
-        <button class="btn btn--primary" data-lote="${esc(url)}" ${falta ? '' : 'disabled'}>${falta ? `${icon('plus')} Adicionar ${falta} perfume${falta === 1 ? '' : 's'}` : `${icon('check')} Já adicionados`}</button>
+        <div class="lote__actions">
+          <button class="btn btn--primary" data-lote="${esc(url)}" ${falta ? '' : 'disabled'}>${falta ? `${icon('plus')} Adicionar ${falta} perfume${falta === 1 ? '' : 's'}` : `${icon('check')} Já adicionados`}</button>
+          ${semFoto ? `<button class="btn btn--outline" data-lotefotos="${esc(url)}">${icon('upload')} Colocar fotos em ${semFoto} perfume${semFoto === 1 ? '' : 's'} já adicionado${semFoto === 1 ? '' : 's'}</button>` : ''}
+        </div>
       </div>`);
     } catch { cards.push(`<p class="muted">Não foi possível carregar ${esc(url)}.</p>`); }
   }
@@ -682,6 +686,19 @@ async function renderImport(body) {
   $$('[data-lote]', box).forEach((b) => b.addEventListener('click', async () => {
     const lote = await (await fetch(b.dataset.lote, { cache: 'no-store' })).json();
     addProducts(lote.produtos || lote.products || [], b);
+  }));
+  $$('[data-lotefotos]', box).forEach((b) => b.addEventListener('click', async () => {
+    const lote = await (await fetch(b.dataset.lotefotos, { cache: 'no-store' })).json();
+    const comFoto = (lote.produtos || lote.products || []).filter((p) => (p.images || []).length);
+    b.disabled = true; let ok = 0;
+    for (const lp of comFoto) {
+      const prod = data.products.find((x) => keyOf(x) === keyOf(lp) && !(x.images || []).length);
+      if (!prod) continue;
+      try { await store.saveProduct({ ...prod, images: lp.images }); ok++; b.textContent = `Colocando fotos… ${ok}`; }
+      catch (e) { handleError(e); break; }
+    }
+    tab = 'products';
+    await afterChange(`Fotos colocadas em ${ok} perfume(s) ✓`);
   }));
   $('#addFile').addEventListener('change', async (e) => {
     const file = e.target.files[0]; if (!file) return;

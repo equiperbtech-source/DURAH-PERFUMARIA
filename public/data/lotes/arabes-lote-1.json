@@ -4,7 +4,9 @@
     {
       "name": "Club de Nuit Intense Man",
       "brand": "Armaf",
-      "images": [],
+      "images": [
+        "/img/produtos/armaf-club-de-nuit-intense-man.webp"
+      ],
       "price": 0,
       "promoPrice": null,
       "volume": "105ml",
@@ -477,7 +479,9 @@
     {
       "name": "Bade'e Al Oud — Oud for Glory",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-badee-al-oud-oud-for-glory.webp"
+      ],
       "price": 0,
       "promoPrice": null,
       "volume": "100ml",
@@ -671,7 +675,9 @@
     {
       "name": "Eclaire",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-eclaire.webp"
+      ],
       "price": 0,
       "promoPrice": null,
       "volume": "100ml",

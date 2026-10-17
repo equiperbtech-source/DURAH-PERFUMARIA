@@ -1130,3 +1130,4 @@ h1, h2, h3, h4 { font-weight: 600; }
 @media (min-width: 800px) { .lote { grid-template-columns: 1fr auto; align-items: center; } }
 .url-add { display: grid; grid-template-columns: 1fr auto; gap: 8px; margin-top: 12px; }
 @media (max-width: 600px) { .url-add { grid-template-columns: 1fr; } }
+.lote__actions { display: flex; flex-wrap: wrap; gap: 8px; }
