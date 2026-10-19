@@ -283,8 +283,11 @@ api.post('/track', trackLimiter, async (req, res) => {
   const ev = list.filter((e) => e && ids.has(e.id) && (e.type === 'view' || e.type === 'interest'));
   if (!ev.length) return res.status(204).end();
   // grava em fila para não perder cliques que chegam juntos (e só responde depois de gravar: na Vercel a função congela após responder)
-  statsQueue = statsQueue.then(async () => {
+  // .catch antes do .then: uma falha anterior (ex.: ao zerar) nunca trava a fila
+  statsQueue = statsQueue.catch(() => {}).then(async () => {
     const s = (await storage.loadStats()) || emptyStats();
+    if (!s.products) s.products = {};
+    s.lastAt = new Date().toISOString();
     const d = today(), cutoff = new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10);
     for (const e of ev) {
       const p = s.products[e.id] || (s.products[e.id] = { v: 0, i: 0, days: {} });
@@ -299,12 +302,13 @@ api.post('/track', trackLimiter, async (req, res) => {
 });
 api.get('/admin/stats', auth, async (req, res) => {
   res.setHeader('Cache-Control', 'no-store');
-  await statsQueue;
+  await statsQueue.catch(() => {});
   res.json({ ...((await storage.loadStats()) || emptyStats()), today: today() });
 });
 api.delete('/admin/stats', auth, async (req, res) => {
-  statsQueue = statsQueue.then(() => storage.saveStats(emptyStats()));
-  await statsQueue; res.json({ ok: true });
+  const done = statsQueue.catch(() => {}).then(() => storage.saveStats(emptyStats()));
+  statsQueue = done.catch((e) => console.error('reset stats:', e.message));
+  await done; res.json({ ok: true });
 });
 
 // Foto por link: baixa a imagem no servidor e guarda no armazenamento da loja.

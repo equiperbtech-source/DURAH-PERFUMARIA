@@ -757,6 +757,7 @@ async function renderStats(body) {
       <div class="stat"><strong>${pct(ti, tv)}</strong><span>das visitas viram interesse</span></div>
       <div class="stat"><strong>${rows.length}</strong><span>produtos com cliques</span></div>
     </div>
+    <div class="mode-note">${icon('eye', 'i--sm')} <strong>Este aparelho não entra na contagem</strong> porque está logado no painel — assim seus testes não inflam os números. Para testar, abra o site numa <strong>aba anônima</strong> (ou em outro celular) e depois toque em Atualizar.${st.lastAt ? ` <br>Último clique registrado: <strong>${esc(new Date(st.lastAt).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }))}</strong>.` : ''}</div>
     <p class="muted" style="font-size:13px;margin:6px 0 14px"><strong>Visualizações</strong> = vezes que a página do produto foi aberta. <strong>Interesse</strong> = cliques nos botões que levam ao WhatsApp (“Tenho interesse”, “Quero este”, promoção e sacola). Cada pessoa conta uma vez por produto em cada visita; seus próprios cliques com o painel logado não contam. Contando desde ${esc(since)}.</p>
     ${rows.length ? `<div class="ctable">
       <div class="ctable__head"><span>Produto</span><span>Visualizações</span><span>Interesse</span><span>Taxa</span></div>
