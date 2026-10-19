@@ -1181,3 +1181,5 @@ h1, h2, h3, h4 { font-weight: 600; }
   .hero .hero__art { display: none; }
   .hero__ar { display: none; }
 }
+.hero__tag { margin-top: 14px; font: italic 500 clamp(20px, 2.4vw, 26px)/1.2 var(--font-serif); letter-spacing: .01em; color: var(--gold-2); }
+@media (max-width: 959px) { .hero__tag { margin-top: 6px; font-size: 19px; } }

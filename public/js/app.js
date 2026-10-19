@@ -165,7 +165,8 @@ function pageHome() {
     <div class="container hero__inner">
       <div>
         <span class="eyebrow">Oud · Âmbar · Almíscar</span>
-        <h1 class="hero__title">Seu perfume chega <em>antes de você</em>.</h1>
+        <h1 class="hero__title">Não é só perfume. <em style="white-space:nowrap">É presença.</em></h1>
+        <p class="hero__tag">Deixe sua marca.</p>
         <p class="hero__text">Oud, âmbar e especiarias raras que arrancam elogios e deixam um rastro impossível de esquecer.<span class="hero__more"> Escolha a sua assinatura — e sinta todos os olhares quando você passar.</span></p>
         <div class="hero__ctas">
           <a href="#/catalogo" class="btn btn--primary btn--lg">Ver catálogo ${icon('arrow')}</a>
