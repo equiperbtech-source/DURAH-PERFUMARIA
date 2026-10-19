@@ -635,14 +635,15 @@ function renderReviews(body) {
 }
 
 // ─── Importar perfumes prontos (adiciona sem apagar os atuais) ───
-const LOTES = ['data/lotes/arabes-lote-1.json'];
+const LOTES = ['data/lotes/arabes-lote-2.json', 'data/lotes/arabes-lote-1.json'];
 const keyOf = (p) => `${p.brand || ''} ${p.name || ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
 async function addProducts(list, btn) {
   const existing = new Set(data.products.map(keyOf));
   const novos = list.filter((p) => p && p.name && !existing.has(keyOf(p)));
   if (!novos.length) { toast('Todos esses perfumes já estão na loja.'); return; }
-  if (!confirm(`Adicionar ${novos.length} perfume(s) à loja? ${list.length - novos.length ? `(${list.length - novos.length} já existem e serão ignorados) ` : ''}Eles entram com preço zerado (“Sob consulta”).`)) return;
+  const semPreco = novos.filter((p) => !(Number(p.price) > 0)).length;
+  if (!confirm(`Adicionar ${novos.length} perfume(s) à loja? ${list.length - novos.length ? `(${list.length - novos.length} já existem e serão ignorados) ` : ''}${semPreco ? `${semPreco} entram sem preço (“Sob consulta”).` : 'Todos já vêm com preço sugerido — você pode ajustar depois.'}`)) return;
   if (btn) btn.disabled = true;
   let ok = 0;
   for (const p of novos) {
@@ -650,13 +651,13 @@ async function addProducts(list, btn) {
     try { await store.saveProduct(clean); ok++; if (btn) btn.textContent = `Adicionando… ${ok}/${novos.length}`; }
     catch (e) { handleError(e); break; }
   }
-  tab = 'products'; listFilter.status = 'noprice';
-  await afterChange(`${ok} perfume(s) adicionado(s) ✓ Agora defina os preços.`);
+  tab = 'products'; listFilter.status = semPreco ? 'noprice' : 'all';
+  await afterChange(`${ok} perfume(s) adicionado(s) ✓${semPreco ? ' Agora defina os preços.' : ''}`);
 }
 
 async function renderImport(body) {
   body.innerHTML = `<section class="fsection"><h2>${icon('box')} Perfumes prontos para adicionar</h2>
-      <p class="muted">Perfumes com ficha completa (notas de topo, coração e fundo, família, fixação, projeção, estações, ocasiões, referências e descrição). Entram <strong class="gold">com preço zerado</strong> — a loja mostra “Sob consulta” até você definir o preço. Os que já existem na loja com o mesmo nome são ignorados.</p>
+      <p class="muted">Perfumes com ficha completa (notas de topo, coração e fundo, família, fixação, projeção, estações, ocasiões, referências e descrição). Os que já existem na loja com o mesmo nome são ignorados. Itens sem preço aparecem como “Sob consulta” até você definir o valor.</p>
       <div id="lotes" class="mt-2"><div class="loader" style="min-height:80px"><span></span></div></div>
     </section>
     <section class="fsection"><h2>${icon('upload')} Adicionar de um arquivo</h2>

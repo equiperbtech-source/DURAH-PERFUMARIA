@@ -1,0 +1,643 @@
+{
+  "nome": "Perfumes árabes — lote 2 (10 itens, com preço sugerido)",
+  "produtos": [
+    {
+      "name": "Pride Pisa",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 289.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Masculino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Pisa, da linha Lattafa Pride, é um amadeirado cítrico limpo e elegante: bergamota, tangerina e limão abrem com frescor luminoso, o coração de cedro traz uma estrutura seca e sofisticada, e o fundo de sândalo e âmbar deixa um drydown cremoso e aconchegante. Um perfume versátil, que vai bem do escritório ao jantar.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Tangerina",
+          "Limão"
+        ],
+        "heart": [
+          "Cedro"
+        ],
+        "base": [
+          "Sândalo",
+          "Âmbar"
+        ]
+      },
+      "family": "Amadeirado",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Verão",
+        "Outono"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Encontro"
+      ],
+      "references": [],
+      "tags": [
+        "amadeirado",
+        "cítrico",
+        "elegante",
+        "versátil"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Fakhar Gold Extrait",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 299.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Parfum/Extrait",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Fakhar Gold Extrait é a versão mais intensa e dourada da linha Fakhar: toranja, cardamomo e pimenta rosa abrem vibrantes e especiados, a tuberosa com notas solares cria um coração radiante, e o fundo de âmbar, cashmeran, labdanum e couro deixa um rastro quente, luxuoso e envolvente. Concentração extrait: fixação e presença de sobra.",
+      "notes": {
+        "top": [
+          "Toranja",
+          "Cardamomo",
+          "Pimenta rosa"
+        ],
+        "heart": [
+          "Tuberosa",
+          "Notas solares",
+          "Artemísia"
+        ],
+        "base": [
+          "Âmbar",
+          "Cashmeran",
+          "Labdanum",
+          "Couro"
+        ]
+      },
+      "family": "Oriental/Âmbar",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Festa",
+        "Encontro",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "1 Million Parfum",
+          "house": "Paco Rabanne"
+        }
+      ],
+      "tags": [
+        "dourado",
+        "marcante",
+        "luxuoso",
+        "rastro forte"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Fakhar Silver",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 249.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Masculino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Fakhar Silver (Pride of Lattafa) é um aromático fresco e moderno: maçã, bergamota e gengibre abrem com energia, o coração de lavanda, sálvia, zimbro e gerânio traz o lado herbal e masculino, e o fundo de fava tonka, cedro, vetiver e amberwood garante um drydown amadeirado e levemente adocicado. Um curinga elogiado para o dia a dia.",
+      "notes": {
+        "top": [
+          "Maçã",
+          "Bergamota",
+          "Gengibre"
+        ],
+        "heart": [
+          "Lavanda",
+          "Sálvia",
+          "Zimbro",
+          "Gerânio"
+        ],
+        "base": [
+          "Fava tonka",
+          "Cedro",
+          "Vetiver",
+          "Amberwood"
+        ]
+      },
+      "family": "Aromático",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Primavera",
+        "Verão",
+        "Outono"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Noite",
+        "Encontro"
+      ],
+      "references": [
+        {
+          "name": "Y Eau de Parfum",
+          "house": "Yves Saint Laurent"
+        }
+      ],
+      "tags": [
+        "fresco",
+        "elogiado",
+        "versátil",
+        "moderno"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Silver Scent Intense",
+      "brand": "Jacques Bogart",
+      "images": [],
+      "price": 219.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Toilette",
+      "gender": "Masculino",
+      "origin": "França",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Silver Scent Intense é a versão mais intensa do clássico da Jacques Bogart: flor de laranjeira, laranja amarga e limão abrem com luminosidade, o coração de lavanda, gerânio, alecrim e especiarias (cardamomo, noz-moscada e coentro) aquece a composição, e o fundo de fava tonka, vetiver, teca e oud deixa um rastro adocicado, amadeirado e muito marcante.",
+      "notes": {
+        "top": [
+          "Flor de laranjeira",
+          "Laranja amarga",
+          "Limão"
+        ],
+        "heart": [
+          "Lavanda",
+          "Gerânio",
+          "Alecrim",
+          "Cardamomo",
+          "Noz-moscada",
+          "Coentro"
+        ],
+        "base": [
+          "Fava tonka",
+          "Vetiver",
+          "Madeira de teca",
+          "Oud"
+        ]
+      },
+      "family": "Especiado",
+      "perfumer": "",
+      "year": 2009,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "especiado",
+        "marcante",
+        "clássico",
+        "doce"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Kit Haya — 3 peças",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 349.9,
+      "promoPrice": null,
+      "volume": "100ml+12ml+50ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Feminino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "O kit presente do Haya traz a fragrância completa em três formatos: Eau de Parfum 100 ml, Eau de Parfum 12 ml para levar na bolsa e perfume para cabelo (hair mist) 50 ml. Haya é um floral frutado festivo: champanhe, morango, rosa, tangerina e laranja sanguínea abrem efervescentes, o coração de gardênia, jasmim e orquídea de baunilha é feminino e delicado, e o fundo de âmbar, sândalo e castanha deixa um rastro cremoso e aconchegante. Ótima opção de presente.",
+      "notes": {
+        "top": [
+          "Champanhe",
+          "Morango",
+          "Rosa",
+          "Tangerina",
+          "Laranja sanguínea"
+        ],
+        "heart": [
+          "Gardênia",
+          "Jasmim",
+          "Orquídea de baunilha"
+        ],
+        "base": [
+          "Âmbar",
+          "Sândalo",
+          "Castanha"
+        ]
+      },
+      "family": "Floral",
+      "perfumer": "",
+      "year": 2022,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Verão",
+        "Outono"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "kit presente",
+        "frutado",
+        "floral",
+        "feminino"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Musamam",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 279.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Musamam é um couro amadeirado e defumado com alma árabe: açafrão, lavanda e tangerina italiana abrem especiados e aromáticos, o coração de gerânio egípcio, cedro da Virgínia e amberwood traz estrutura, e o fundo de olíbano somali, akigalawood e cistus deixa um drydown resinoso, escuro e sofisticado. Presença forte e fixação longa.",
+      "notes": {
+        "top": [
+          "Açafrão",
+          "Lavanda",
+          "Tangerina italiana"
+        ],
+        "heart": [
+          "Gerânio egípcio",
+          "Cedro da Virgínia",
+          "Amberwood"
+        ],
+        "base": [
+          "Olíbano somali",
+          "Akigalawood",
+          "Cistus"
+        ]
+      },
+      "family": "Couro",
+      "perfumer": "",
+      "year": 2022,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Festa",
+        "Eventos formais"
+      ],
+      "references": [],
+      "tags": [
+        "couro",
+        "resinoso",
+        "marcante",
+        "árabe"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Asad Bourbon",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 259.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Masculino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Asad Bourbon é a versão mais doce e aconchegante da família Asad: pimenta rosa, lavanda e ameixa mirabelle abrem frutadas e especiadas, o coração de cacau, davana e noz-moscada traz um toque licoroso, e o fundo de baunilha bourbon, âmbar e vetiver deixa um rastro quente, cremoso e marcante. Perfeito para noites frias e encontros.",
+      "notes": {
+        "top": [
+          "Pimenta rosa",
+          "Lavanda",
+          "Ameixa mirabelle"
+        ],
+        "heart": [
+          "Cacau",
+          "Davana",
+          "Noz-moscada"
+        ],
+        "base": [
+          "Baunilha bourbon",
+          "Âmbar",
+          "Vetiver"
+        ]
+      },
+      "family": "Oriental/Âmbar",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "baunilha",
+        "doce",
+        "especiado",
+        "aconchegante"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Odyssey Mandarin Sky",
+      "brand": "Armaf",
+      "images": [],
+      "price": 239.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Masculino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Odyssey Mandarin Sky é um doce-cítrico viciante da Armaf: tangerina, laranja, sálvia e açafrão abrem vibrantes, o coração de caramelo, fava tonka e tagetes traz a doçura envolvente, e o fundo de vetiver, cedro e ambroxan equilibra com um drydown amadeirado e limpo. Muito elogiado em noites e encontros.",
+      "notes": {
+        "top": [
+          "Sálvia",
+          "Tangerina",
+          "Laranja",
+          "Açafrão"
+        ],
+        "heart": [
+          "Caramelo",
+          "Fava tonka",
+          "Tagetes"
+        ],
+        "base": [
+          "Vetiver",
+          "Cedro",
+          "Ambroxan"
+        ]
+      },
+      "family": "Gourmand",
+      "perfumer": "",
+      "year": 2023,
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno",
+        "Primavera"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [
+        {
+          "name": "Scandal Pour Homme",
+          "house": "Jean Paul Gaultier"
+        }
+      ],
+      "tags": [
+        "doce",
+        "caramelo",
+        "elogiado",
+        "noturno"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Yara",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 199.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Feminino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Yara, o clássico rosa da Lattafa, é um dos árabes femininos mais amados: tangerina, heliotrópio e orquídea abrem delicados e atalcados, o coração de frutas tropicais com um acorde gourmand traz doçura, e o fundo de baunilha, almíscar e sândalo deixa um rastro cremoso, macio e viciante. Perfeito para o dia a dia e para presentear.",
+      "notes": {
+        "top": [
+          "Tangerina",
+          "Heliotrópio",
+          "Orquídea"
+        ],
+        "heart": [
+          "Frutas tropicais",
+          "Acorde gourmand"
+        ],
+        "base": [
+          "Baunilha",
+          "Almíscar",
+          "Sândalo"
+        ]
+      },
+      "family": "Gourmand",
+      "perfumer": "",
+      "year": 2020,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "doce",
+        "cremoso",
+        "viciante",
+        "feminino"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    },
+    {
+      "name": "Dalal",
+      "brand": "Lattafa",
+      "images": [],
+      "price": 359.9,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Feminino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Dalal é um floral frutado gourmand elegante da Lattafa: maçã dourada e tangerina abrem suculentas, o coração de ylang-ylang, jasmim e flor de laranjeira é luminoso e feminino, e o fundo de baunilha, almíscar e musgo de carvalho deixa um drydown cremoso e reconfortante. Sofisticado e fácil de usar.",
+      "notes": {
+        "top": [
+          "Maçã",
+          "Tangerina"
+        ],
+        "heart": [
+          "Ylang-ylang",
+          "Jasmim",
+          "Flor de laranjeira"
+        ],
+        "base": [
+          "Baunilha",
+          "Almíscar",
+          "Musgo de carvalho"
+        ]
+      },
+      "family": "Gourmand",
+      "perfumer": "",
+      "year": null,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Encontro",
+        "Eventos formais"
+      ],
+      "references": [],
+      "tags": [
+        "doce",
+        "floral",
+        "cremoso",
+        "elegante"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    }
+  ]
+}

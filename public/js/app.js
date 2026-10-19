@@ -34,7 +34,7 @@ export const CATS = [
   { id: 'perfumes', label: 'Perfumes', icon: 'drop', desc: 'Frascos e decants', test: isPerfume, menuOnly: true },
   { id: 'body-splash', label: 'Body Splash', icon: 'sparkles', desc: "Victoria's Secret", test: (p) => productType(p) === 'victorias-secret' && p.vsKind !== 'creme', menuOnly: true },
   { id: 'cremes', label: 'Cremes', icon: 'heart', desc: 'Hidratantes perfumados', test: (p) => productType(p) === 'victorias-secret' && p.vsKind === 'creme', menuOnly: true },
-  { id: 'kits', label: 'Kits', icon: 'box', desc: 'Combos com economia', test: isKit },
+  { id: 'kits', label: 'Kits', icon: 'box', desc: 'Combos com economia', test: (p) => isKit(p) || /^kit\b/i.test(p.name || '') },
   { id: 'body-spray', label: 'Body Spray', icon: 'wind', desc: 'Leves para o dia a dia', test: (p) => productType(p) === 'body-spray' },
   { id: 'victorias-secret', label: "Victoria's Secret", icon: 'heart', desc: 'Body splashs e cremes', test: (p) => productType(p) === 'victorias-secret' },
 ];
