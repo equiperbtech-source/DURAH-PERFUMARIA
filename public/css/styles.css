@@ -1172,6 +1172,7 @@ h1, h2, h3, h4 { font-weight: 600; }
   .hero__bg { width: 78%; object-position: 70% 40%; opacity: .34; -webkit-mask-image: linear-gradient(to right, transparent, #000 55%); mask-image: linear-gradient(to right, transparent, #000 55%); }
   .hero__inner { text-shadow: 0 2px 14px rgba(0,0,0,.85); }
   .hero__inner .btn { text-shadow: none; }
+  .hero__more { display: none; }
 }
 @media (min-width: 960px) {
   .hero__bg { width: 58%; opacity: .62; object-position: 60% 45%;

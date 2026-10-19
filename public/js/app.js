@@ -165,8 +165,8 @@ function pageHome() {
     <div class="container hero__inner">
       <div>
         <span class="eyebrow">Oud · Âmbar · Almíscar</span>
-        <h1 class="hero__title">Fragrâncias importadas e de nicho que <em>marcam presença</em>.</h1>
-        <p class="hero__text">Da tradição dos perfumistas árabes às grandes casas de nicho: oud nobre, resinas douradas e acordes que deixam rastro. Escolha sua assinatura, chame no WhatsApp e receba em todo o Brasil.</p>
+        <h1 class="hero__title">Seu perfume chega <em>antes de você</em>.</h1>
+        <p class="hero__text">Oud, âmbar e especiarias raras que arrancam elogios e deixam um rastro impossível de esquecer.<span class="hero__more"> Escolha a sua assinatura — e sinta todos os olhares quando você passar.</span></p>
         <div class="hero__ctas">
           <a href="#/catalogo" class="btn btn--primary btn--lg">Ver catálogo ${icon('arrow')}</a>
           <button class="btn btn--outline btn--lg" data-help>Me ajude a escolher</button>
