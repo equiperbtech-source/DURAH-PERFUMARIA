@@ -725,7 +725,7 @@ h1, h2, h3, h4 { font-weight: 600; }
   content: ''; display: block; width: 160px; height: 14px; margin: 14px auto 0; background: var(--ornament) center / contain no-repeat;
 }
 /* divisões das seções: frascos dourados borrifando de cada lado do ornamento */
-.section__head .h2::after { width: 280px; max-width: 86vw; height: 46px; margin-top: 6px; background-image: url("../img/brand/divisor-borrifo.svg"); }
+.section__head .h2::after { width: 280px; max-width: 86vw; height: 51px; margin-top: 6px; background-image: url("../img/brand/divisor-borrifo.svg"); }
 @media (prefers-reduced-motion: reduce) { .section__head .h2::after { width: 160px; height: 14px; margin-top: 14px; background-image: var(--ornament); } }
 .page-head { text-align: center; }
 .page-head .crumbs { justify-content: center; }
