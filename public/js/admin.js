@@ -67,6 +67,7 @@ function render() {
     <nav class="admin__tabs" role="tablist">
       <button data-tab="products" class="${tab === 'products' ? 'is-active' : ''}">${icon('box')} Produtos</button>
       <button data-tab="new" class="${tab === 'new' ? 'is-active' : ''}">${icon('plus')} Novo produto</button>
+      <button data-tab="stats" class="${tab === 'stats' ? 'is-active' : ''}">${icon('chart')} Cliques</button>
       <button data-tab="settings" class="${tab === 'settings' ? 'is-active' : ''}">${icon('sliders')} Banner &amp; loja</button>
       <button data-tab="reviews" class="${tab === 'reviews' ? 'is-active' : ''}">${icon('star')} Avaliações</button>
       <button data-tab="import" class="${tab === 'import' ? 'is-active' : ''}">${icon('upload')} Importar perfumes</button>
@@ -84,6 +85,7 @@ function render() {
   else if (tab === 'settings') renderSettings(body);
   else if (tab === 'reviews') renderReviews(body);
   else if (tab === 'import') renderImport(body);
+  else if (tab === 'stats') renderStats(body);
   else renderBackup(body);
 }
 
@@ -718,6 +720,59 @@ async function renderImport(body) {
     const file = e.target.files[0]; if (!file) return;
     try { const j = JSON.parse(await file.text()); addProducts(Array.isArray(j) ? j : j.produtos || j.products || []); }
     catch { toast('Arquivo inválido.', true); }
+  });
+}
+
+// ─── Cliques: quantas pessoas abriram cada produto e clicaram em “Tenho interesse” ───
+let statsPeriod = 30;
+async function renderStats(body) {
+  body.innerHTML = '<div class="loader" style="min-height:120px"><span></span></div>';
+  let st;
+  try { st = await store.adminStats(); } catch (e) { handleError(e); return; }
+  if (!st) { body.innerHTML = '<p class="muted">Os cliques só são contados no site publicado (com o servidor da loja).</p>'; return; }
+  // soma por período: últimos N dias (pelos registros diários) ou desde o início
+  const from = statsPeriod ? new Date(new Date(st.today + 'T12:00:00Z') - (statsPeriod - 1) * 864e5).toISOString().slice(0, 10) : '';
+  const sum = (s) => {
+    if (!s) return [0, 0];
+    if (!statsPeriod) return [s.v, s.i];
+    return Object.entries(s.days || {}).reduce((a, [d, [v, i]]) => (d >= from ? [a[0] + v, a[1] + i] : a), [0, 0]);
+  };
+  const rows = data.products.map((p) => { const [v, i] = sum(st.products[p.id]); return { p, v, i }; })
+    .filter((r) => r.v || r.i)
+    .sort((a, b) => b.i - a.i || b.v - a.v);
+  const tv = rows.reduce((a, r) => a + r.v, 0), ti = rows.reduce((a, r) => a + r.i, 0);
+  const max = Math.max(1, ...rows.map((r) => Math.max(r.v, r.i)));
+  const pct = (i, v) => (v ? Math.round((i / v) * 100) + '%' : '—');
+  const since = new Date(st.since).toLocaleDateString('pt-BR');
+  body.innerHTML = `
+    <div class="toolbar">
+      <div class="seg" role="group" aria-label="Período">
+        ${[[7, '7 dias'], [30, '30 dias'], [0, 'Desde o início']].map(([n, l]) => `<button class="seg__btn ${statsPeriod === n ? 'is-on' : ''}" data-period="${n}">${l}</button>`).join('')}
+      </div>
+      <button class="btn btn--ghost btn--sm" id="statsReload">${icon('chart', 'i--sm')} Atualizar</button>
+    </div>
+    <div class="stats">
+      <div class="stat"><strong>${tv}</strong><span>visualizações de produtos</span></div>
+      <div class="stat"><strong>${ti}</strong><span>cliques em “Tenho interesse”</span></div>
+      <div class="stat"><strong>${pct(ti, tv)}</strong><span>das visitas viram interesse</span></div>
+      <div class="stat"><strong>${rows.length}</strong><span>produtos com cliques</span></div>
+    </div>
+    <p class="muted" style="font-size:13px;margin:6px 0 14px"><strong>Visualizações</strong> = vezes que a página do produto foi aberta. <strong>Interesse</strong> = cliques nos botões que levam ao WhatsApp (“Tenho interesse”, “Quero este”, promoção e sacola). Cada pessoa conta uma vez por produto em cada visita; seus próprios cliques com o painel logado não contam. Contando desde ${esc(since)}.</p>
+    ${rows.length ? `<div class="ctable">
+      <div class="ctable__head"><span>Produto</span><span>Visualizações</span><span>Interesse</span><span>Taxa</span></div>
+      ${rows.map(({ p, v, i }) => `<div class="ctable__row">
+        <div class="ctable__prod"><img src="${esc(productImages(p)[0])}" alt="" loading="lazy"><div><strong>${esc(p.name)}</strong><small>${esc(p.brand)}</small></div></div>
+        <div class="ctable__num" data-label="Visualizações"><b>${v}</b><i class="cbar"><i style="width:${(v / max) * 100}%"></i></i></div>
+        <div class="ctable__num" data-label="Interesse"><b class="gold">${i}</b><i class="cbar cbar--gold"><i style="width:${(i / max) * 100}%"></i></i></div>
+        <div class="ctable__num" data-label="Taxa"><b>${pct(i, v)}</b></div>
+      </div>`).join('')}
+    </div>` : `<div class="empty"><p class="muted">Ainda não há cliques ${statsPeriod ? `nos últimos ${statsPeriod} dias` : ''}. Assim que clientes abrirem produtos, os números aparecem aqui.</p></div>`}
+    <div class="mt-3"><button class="btn btn--danger btn--sm" id="statsReset">${icon('trash', 'i--sm')} Zerar contagem</button></div>`;
+  $$('[data-period]', body).forEach((b) => b.addEventListener('click', () => { statsPeriod = Number(b.dataset.period); renderStats(body); }));
+  $('#statsReload').addEventListener('click', () => renderStats(body));
+  $('#statsReset').addEventListener('click', async () => {
+    if (!confirm('Zerar todos os cliques e visualizações? Isso não pode ser desfeito.')) return;
+    try { await store.resetStats(); toast('Contagem zerada ✓'); renderStats(body); } catch (e) { handleError(e); }
   });
 }
 

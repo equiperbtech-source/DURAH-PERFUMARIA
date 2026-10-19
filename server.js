@@ -262,6 +262,51 @@ api.post('/reset-demo', auth, async (req, res) => {
   await storage.save(db); res.json({ ok: true, count: db.products.length });
 });
 
+// ─── Cliques: visualizações da página do produto e cliques em “Tenho interesse” ───
+// stats = { since, products: { [id]: { v, i, days: { 'AAAA-MM-DD': [v, i] } } } }
+const emptyStats = () => ({ since: new Date().toISOString(), products: {} });
+let statsQueue = Promise.resolve();
+const trackHits = new Map();
+function trackLimiter(req, res, next) {
+  const ip = req.ip, now = Date.now();
+  const a = (trackHits.get(ip) || []).filter((t) => now - t < 60 * 1000);
+  if (a.length >= 40) return res.status(204).end();
+  a.push(now); trackHits.set(ip, a);
+  if (trackHits.size > 5000) trackHits.clear();
+  next();
+}
+const today = () => new Date(Date.now() - 3 * 3600 * 1000).toISOString().slice(0, 10); // dia no horário de Brasília
+api.post('/track', trackLimiter, async (req, res) => {
+  const list = (Array.isArray(req.body && req.body.events) ? req.body.events : [req.body || {}]).slice(0, 20);
+  await loadDb();
+  const ids = new Set(db.products.map((p) => p.id));
+  const ev = list.filter((e) => e && ids.has(e.id) && (e.type === 'view' || e.type === 'interest'));
+  if (!ev.length) return res.status(204).end();
+  // grava em fila para não perder cliques que chegam juntos (e só responde depois de gravar: na Vercel a função congela após responder)
+  statsQueue = statsQueue.then(async () => {
+    const s = (await storage.loadStats()) || emptyStats();
+    const d = today(), cutoff = new Date(Date.now() - 120 * 864e5).toISOString().slice(0, 10);
+    for (const e of ev) {
+      const p = s.products[e.id] || (s.products[e.id] = { v: 0, i: 0, days: {} });
+      const k = e.type === 'view' ? 0 : 1;
+      if (k) p.i++; else p.v++;
+      const day = p.days[d] || (p.days[d] = [0, 0]); day[k]++;
+      for (const x of Object.keys(p.days)) if (x < cutoff) delete p.days[x];
+    }
+    await storage.saveStats(s);
+  }).catch((e) => console.error('track:', e.message));
+  await statsQueue; res.status(204).end();
+});
+api.get('/admin/stats', auth, async (req, res) => {
+  res.setHeader('Cache-Control', 'no-store');
+  await statsQueue;
+  res.json({ ...((await storage.loadStats()) || emptyStats()), today: today() });
+});
+api.delete('/admin/stats', auth, async (req, res) => {
+  statsQueue = statsQueue.then(() => storage.saveStats(emptyStats()));
+  await statsQueue; res.json({ ok: true });
+});
+
 // Foto por link: baixa a imagem no servidor e guarda no armazenamento da loja.
 // Aceita o link direto da imagem ou o link da página do produto (usa a imagem og:image da página).
 const BROWSER_HEADERS = { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124 Safari/537.36', Accept: 'image/avif,image/webp,image/*,text/html;q=0.8,*/*;q=0.5' };

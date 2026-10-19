@@ -109,7 +109,7 @@ function card(p) {
       ${hasDecants(p) && v.key === 'full' ? `<span class="card__decant">${icon('drop', 'i--sm')} Decant a partir de R$ ${money(minDecantPrice(p))}</span>` : ''}
     </div>
     <div class="card__actions">
-      <a class="btn ${sold ? 'btn--backorder' : 'btn--primary'}" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Sob encomenda' : 'Quero este'}</a>
+      <a class="btn ${sold ? 'btn--backorder' : 'btn--primary'}" href="${wa(msgProduct(p, v.key))}" data-track="${p.id}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Sob encomenda' : 'Quero este'}</a>
       <button class="icon-btn" data-add="${p.id}" data-variant="${v.key}" aria-label="Adicionar à sacola">${icon('bag')}</button>
     </div>
   </article>`;
@@ -251,7 +251,7 @@ function promoBlock(b) {
           </div>
           ${installmentText(v.price, t.installments) ? `<p class="promo__inst">ou ${installmentText(v.price, t.installments)} · ${esc(t.payment)}</p>` : ''}` : ''}
         <div class="promo__ctas">
-          ${p ? `<a class="btn btn--primary btn--lg" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${esc(ctaText(b.cta))}</a>
+          ${p ? `<a class="btn btn--primary btn--lg" href="${wa(msgProduct(p, v.key))}" data-track="${p.id}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${esc(ctaText(b.cta))}</a>
                  <a class="btn btn--outline" href="${esc(href)}">Ver detalhes</a>`
               : b.cta ? `<a class="btn btn--primary btn--lg" href="${esc(href)}" ${/^https?:/.test(b.link) ? 'target="_blank" rel="noopener"' : ''}>${esc(b.cta)} ${icon('arrow')}</a>` : ''}
         </div>
@@ -429,6 +429,7 @@ function pageProduct(slug) {
 
   setSeo(`${p.name} — ${p.brand} | DURAH Perfumes e Importados`, `${p.name} (${p.brand}) ${p.concentration} ${p.volume}. ${String(p.description || '').slice(0, 140)}…`, productLd(p, imgs));
   document.body.classList.add('is-product');
+  track(p.id, 'view');
 
   const tier = (ic, label, sub, notes) => notes && notes.length ? `<div class="tier">
       <div class="tier__icon">${icon(ic)}</div>
@@ -491,7 +492,7 @@ function pageProduct(slug) {
         <div class="pinfo__stock" id="pStock"></div>
 
         <div class="pinfo__buy">
-          <a class="btn btn--primary btn--lg btn--block btn--wa" id="buyWa" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Tenho interesse</span></a>
+          <a class="btn btn--primary btn--lg btn--block btn--wa" id="buyWa" href="#" data-track="${p.id}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Tenho interesse</span></a>
           <div class="pinfo__buy-row">
             <button class="btn btn--outline" id="buyAdd" data-add="${p.id}" data-variant="${sel.key}">${icon('bag')} Adicionar à sacola</button>
             <button class="icon-btn card__fav ${fav ? 'is-on' : ''}" style="position:static;width:46px;height:46px;border:1px solid var(--gold-line)" data-fav="${p.id}" aria-label="Lista de desejos" aria-pressed="${fav}">${icon('heart')}</button>
@@ -570,7 +571,7 @@ function pageProduct(slug) {
   </div>
   <div class="buybar">
     <div><span class="price" id="bbPrice"></span></div>
-    <a class="btn btn--primary" id="buyWa2" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Tenho interesse</span></a>
+    <a class="btn btn--primary" id="buyWa2" href="#" data-track="${p.id}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Tenho interesse</span></a>
   </div>
   </div>`;
 
@@ -776,7 +777,7 @@ function renderDrawer() {
       </div>
     </div>`; }).join('');
     foot.innerHTML = `<div class="drawer__total"><span>Total estimado</span><strong>R$ ${money(total)}</strong></div>${items.some(({ p, v }) => !(getVariant(p, v).price > 0)) ? '<p class="hint" style="margin:-8px 0 12px">+ itens com preço sob consulta</p>' : ''}
-      <a class="btn btn--primary btn--block btn--lg" href="${wa(msgList(items))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} Finalizar pelo WhatsApp</a>
+      <a class="btn btn--primary btn--block btn--lg" href="${wa(msgList(items))}" data-track="${items.map((i) => i.p.id).join(',')}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} Finalizar pelo WhatsApp</a>
       <p class="hint" style="text-align:center">Você confirma disponibilidade, frete e pagamento direto com a loja.</p>`;
   } else {
     const items = S.favs.map(byId).filter(Boolean);
@@ -869,7 +870,24 @@ async function reloadCatalog() {
 // ═══════════════ Eventos globais ═══════════════
 function closeMobileNav() { $('#mobileNav').hidden = true; $('#menuBtn').setAttribute('aria-expanded', 'false'); }
 
+// ─── Cliques (painel → Cliques): visualização da página e clique em “Tenho interesse” ───
+// conta uma vez por sessão por produto; visitas do próprio admin (logado) não contam
+function track(ids, type) {
+  if (store.mode !== 'api' || store.isLogged()) return;
+  const events = String(ids).split(',').filter(Boolean).filter((id) => {
+    const k = `durah_t_${type}_${id}`;
+    try { if (sessionStorage.getItem(k)) return false; sessionStorage.setItem(k, '1'); } catch {}
+    return true;
+  }).map((id) => ({ id, type }));
+  if (!events.length) return;
+  const body = JSON.stringify({ events });
+  try { if (navigator.sendBeacon && navigator.sendBeacon('api/track', new Blob([body], { type: 'application/json' }))) return; } catch {}
+  fetch('api/track', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true }).catch(() => {});
+}
+
 document.addEventListener('click', (e) => {
+  const tr = e.target.closest('[data-track]');
+  if (tr) track(tr.dataset.track, 'interest');
   const sc = e.target.closest('[data-scrollto]');
   if (sc) { e.preventDefault(); const el = document.getElementById(sc.dataset.scrollto); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + scrollY - 90, behavior: 'smooth' }); return; }
   const t = e.target.closest('[data-fav],[data-add],[data-help],[data-close],[data-qty],[data-remove],[data-unfav],#drawer .tab');

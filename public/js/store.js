@@ -122,6 +122,11 @@ export const store = {
     if (mode === 'api') return api('reset-demo', { method: 'POST' });
     safeLS.del(LS_DB);
   },
+  async adminStats() {
+    if (mode !== 'api') return null;
+    return api('admin/stats');
+  },
+  async resetStats() { if (mode === 'api') return api('admin/stats', { method: 'DELETE' }); },
   async uploadImageFromUrl(url) {
     if (mode !== 'api') throw new Error('A foto por link funciona só com o servidor da loja (no site publicado).');
     return (await api('upload-url', { method: 'POST', body: { url } })).url;

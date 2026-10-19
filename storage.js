@@ -18,6 +18,7 @@ const CACHE_MS = 10 * 1000;
 function diskStorage(dir, kind) {
   const uploads = path.join(dir, 'uploads');
   const file = path.join(dir, 'db.json');
+  const statsFile = path.join(dir, 'stats.json');
   let cache = null;
   fs.mkdirSync(uploads, { recursive: true });
   return {
@@ -35,6 +36,8 @@ function diskStorage(dir, kind) {
       fs.renameSync(tmp, file);
       cache = db;
     },
+    async loadStats() { return fs.existsSync(statsFile) ? JSON.parse(fs.readFileSync(statsFile, 'utf8')) : null; },
+    async saveStats(s) { fs.writeFileSync(statsFile + '.tmp', JSON.stringify(s)); fs.renameSync(statsFile + '.tmp', statsFile); },
     async saveImage(buf, ext) {
       const name = `${Date.now().toString(36)}-${crypto.randomBytes(5).toString('hex')}.${ext}`;
       fs.writeFileSync(path.join(uploads, name), buf);
@@ -51,10 +54,10 @@ function blobStorage() {
   let cache = null, cachedAt = 0;
 
   // Cada gravação cria uma nova versão "db/<data>.json" (URL única, sem cache velho de CDN).
-  async function versions() {
+  async function versions(prefix = 'db/') {
     const out = []; let cursor;
     do {
-      const r = await list({ prefix: 'db/', cursor, limit: 1000 });
+      const r = await list({ prefix, cursor, limit: 1000 });
       out.push(...r.blobs); cursor = r.hasMore ? r.cursor : undefined;
     } while (cursor);
     return out.sort((a, b) => new Date(b.uploadedAt) - new Date(a.uploadedAt));
@@ -79,6 +82,19 @@ function blobStorage() {
       cache = db; cachedAt = Date.now();
       // mantém só as 5 versões mais recentes (as anteriores servem de histórico curto)
       const old = (await versions()).slice(5).map((b) => b.url);
+      if (old.length) await del(old).catch(() => {});
+    },
+    async loadStats() {
+      const [latest] = await versions('stats/');
+      if (!latest) return null;
+      const r = await fetch(latest.url, { cache: 'no-store' });
+      return r.ok ? r.json() : null;
+    },
+    async saveStats(s) {
+      await put(`stats/${new Date().toISOString().replace(/[:.]/g, '-')}.json`, JSON.stringify(s), {
+        access: 'public', contentType: 'application/json', addRandomSuffix: true, cacheControlMaxAge: 60,
+      });
+      const old = (await versions('stats/')).slice(3).map((b) => b.url);
       if (old.length) await del(old).catch(() => {});
     },
     async saveImage(buf, ext, contentType) {
@@ -126,6 +142,18 @@ function supabaseStorage(baseUrl, key) {
         body: JSON.stringify([{ id: 'main', data: db, updated_at: new Date().toISOString() }]),
       });
       cache = db; cachedAt = Date.now();
+    },
+    // cliques ficam numa linha separada (id "stats") da mesma tabela: nunca interferem no catálogo
+    async loadStats() {
+      const rows = await (await call('/rest/v1/store_data?id=eq.stats&select=data', { headers: { Accept: 'application/json' } })).json();
+      return rows.length ? rows[0].data : null;
+    },
+    async saveStats(s) {
+      await call('/rest/v1/store_data?on_conflict=id', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Prefer: 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify([{ id: 'stats', data: s, updated_at: new Date().toISOString() }]),
+      });
     },
     async saveImage(buf, ext, contentType) {
       const name = `${Date.now().toString(36)}-${crypto.randomBytes(5).toString('hex')}.${ext}`;
