@@ -109,7 +109,7 @@ function card(p) {
       ${hasDecants(p) && v.key === 'full' ? `<span class="card__decant">${icon('drop', 'i--sm')} Decant a partir de R$ ${money(minDecantPrice(p))}</span>` : ''}
     </div>
     <div class="card__actions">
-      <a class="btn ${sold ? 'btn--backorder' : 'btn--primary'}" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Sob encomenda' : 'Comprar'}</a>
+      <a class="btn ${sold ? 'btn--backorder' : 'btn--primary'}" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${sold ? 'Sob encomenda' : 'Quero este'}</a>
       <button class="icon-btn" data-add="${p.id}" data-variant="${v.key}" aria-label="Adicionar à sacola">${icon('bag')}</button>
     </div>
   </article>`;
@@ -130,7 +130,7 @@ function whyBlock() {
   ];
   return `<section class="section section--alt">
     <div class="container">
-      <div class="section__head"><div><span class="eyebrow">Confiança</span><h2 class="h2 mt-1">Por que comprar na DURAH</h2></div></div>
+      <div class="section__head"><div><span class="eyebrow">Confiança</span><h2 class="h2 mt-1">Por que escolher a DURAH</h2></div></div>
       <div class="why">${items.map(([i, t, d]) => `<div class="why__item"><div class="why__icon">${icon(i, 'i--lg')}</div><div><h3>${t}</h3><p>${d}</p></div></div>`).join('')}</div>
     </div>
   </section>`;
@@ -251,7 +251,7 @@ function promoBlock(b) {
           </div>
           ${installmentText(v.price, t.installments) ? `<p class="promo__inst">ou ${installmentText(v.price, t.installments)} · ${esc(t.payment)}</p>` : ''}` : ''}
         <div class="promo__ctas">
-          ${p ? `<a class="btn btn--primary btn--lg" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${esc(b.cta || 'Comprar agora')}</a>
+          ${p ? `<a class="btn btn--primary btn--lg" href="${wa(msgProduct(p, v.key))}" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} ${esc(ctaText(b.cta))}</a>
                  <a class="btn btn--outline" href="${esc(href)}">Ver detalhes</a>`
               : b.cta ? `<a class="btn btn--primary btn--lg" href="${esc(href)}" ${/^https?:/.test(b.link) ? 'target="_blank" rel="noopener"' : ''}>${esc(b.cta)} ${icon('arrow')}</a>` : ''}
         </div>
@@ -475,13 +475,7 @@ function pageProduct(slug) {
       <div class="pinfo">
         <a class="pinfo__brand" href="#/catalogo?marca=${encodeURIComponent(p.brand)}">${esc(p.brand)}</a>
         <h1 class="pinfo__name">${esc(p.name)}</h1>
-        <div class="pinfo__spec">
-          ${!perf ? `<span class="chip chip--solid">${isKit(p) ? icon('box', 'i--sm') + ' ' : ''}${esc(isKit(p) ? 'Kit / Combo' : typeLabel(p))}</span>` : ''}
-          ${p.volume && !isKit(p) ? `<span class="chip ${perf ? 'chip--solid' : ''}">${esc(p.volume)}</span>` : ''}
-          ${perf && p.concentration ? `<span class="chip">${esc(p.concentration)}</span>` : ''}
-          ${p.gender ? `<span class="chip chip--muted">${esc(p.gender)}</span>` : ''}
-          ${p.origin ? `<span class="chip chip--muted">${icon('pin', 'i--sm')} ${esc(p.origin)}</span>` : ''}
-        </div>
+        <p class="pinfo__meta">${[!perf && (isKit(p) ? 'Kit / Combo' : typeLabel(p)), !isKit(p) && p.volume, perf && p.concentration, p.gender, p.origin].filter(Boolean).map(esc).join('<i aria-hidden="true">·</i>')}</p>
 
         <div class="pinfo__price" id="pPrice"></div>
         <p class="pinfo__inst" id="pInst"></p>
@@ -497,7 +491,7 @@ function pageProduct(slug) {
         <div class="pinfo__stock" id="pStock"></div>
 
         <div class="pinfo__buy">
-          <a class="btn btn--primary btn--lg btn--block btn--wa" id="buyWa" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Comprar pelo WhatsApp</span></a>
+          <a class="btn btn--primary btn--lg btn--block btn--wa" id="buyWa" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Tenho interesse</span></a>
           <div class="pinfo__buy-row">
             <button class="btn btn--outline" id="buyAdd" data-add="${p.id}" data-variant="${sel.key}">${icon('bag')} Adicionar à sacola</button>
             <button class="icon-btn card__fav ${fav ? 'is-on' : ''}" style="position:static;width:46px;height:46px;border:1px solid var(--gold-line)" data-fav="${p.id}" aria-label="Lista de desejos" aria-pressed="${fav}">${icon('heart')}</button>
@@ -576,7 +570,7 @@ function pageProduct(slug) {
   </div>
   <div class="buybar">
     <div><span class="price" id="bbPrice"></span></div>
-    <a class="btn btn--primary" id="buyWa2" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Comprar</span></a>
+    <a class="btn btn--primary" id="buyWa2" href="#" target="_blank" rel="noopener">${icon('whatsapp', 'i--fill')} <span>Tenho interesse</span></a>
   </div>
   </div>`;
 
@@ -588,12 +582,12 @@ function pageProduct(slug) {
       <span class="price ${v.price > 0 ? '' : 'price--ask'}" style="width:100%">${priceLabel(v.price)}</span>`;
     $('#pInst').textContent = [installmentText(v.price, t.installments) && 'ou ' + installmentText(v.price, t.installments), t.payment].filter(Boolean).join(' · ');
     $('#pStock').innerHTML = !v.available ? `<span class="dot dot--warn"></span> Sem estoque · disponível sob encomenda em ${esc(shop.backorder)}`
-      : v.key === 'full' && isLastUnits(p) ? '<span class="dot dot--warn"></span> Últimas unidades em estoque'
+      : v.key === 'full' && isLastUnits(p) ? '<span class="dot dot--soft"></span> Poucas unidades disponíveis'
       : `<span class="dot"></span> Disponível · ${esc(t.shipping)}`;
-    const label = v.available ? (v.key === 'full' ? 'Comprar pelo WhatsApp' : `Comprar ${v.label}`) : backorderLabel();
+    const label = v.available ? (v.key === 'full' ? 'Tenho interesse' : `Quero o ${v.label}`) : backorderLabel();
     $('#buyWa').href = $('#buyWa2').href = wa(msgProduct(p, v.key));
     $('#buyWa span').textContent = label;
-    $('#buyWa2 span').textContent = v.available ? 'Comprar' : 'Sob encomenda';
+    $('#buyWa2 span').textContent = v.available ? 'Tenho interesse' : 'Sob encomenda';
     $('#buyWa').classList.toggle('btn--backorder', !v.available); $('#buyWa').classList.toggle('btn--primary', v.available);
     $('#buyWa2').classList.toggle('btn--backorder', !v.available); $('#buyWa2').classList.toggle('btn--primary', v.available);
     $('#bbPrice').textContent = priceLabel(v.price);
@@ -813,6 +807,9 @@ function fmtPhone(n) {
   const m = /^55(\d{2})(\d{4,5})(\d{4})$/.exec(d);
   return m ? `(${m[1]}) ${m[2]}-${m[3]}` : d;
 }
+// botão sem pressão: textos antigos com “Comprar” viram “Tenho interesse”
+function ctaText(t) { return !t || /^\s*compr/i.test(t) ? 'Tenho interesse' : t; }
+
 function safeLink(l) { return /^(https?:\/\/|#\/)/.test(l || '') ? l : '#/catalogo'; }
 
 function applySettings() {
