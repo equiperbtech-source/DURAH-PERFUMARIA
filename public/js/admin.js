@@ -638,16 +638,28 @@ function renderReviews(body) {
 const LOTES = ['data/lotes/arabes-lote-2.json', 'data/lotes/arabes-lote-1.json'];
 const keyOf = (p) => `${p.brand || ''} ${p.name || ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
+// nomes antigos (aka) também contam: assim uma ficha corrigida não vira produto duplicado
+const loteKeys = (lp) => [keyOf(lp), ...(lp.aka || []).map((n) => keyOf({ ...lp, name: n }))];
+const findLote = (lp) => { const ks = loteKeys(lp); return data.products.find((x) => ks.includes(keyOf(x))); };
+// campos da ficha que uma correção do lote pode atualizar (preço, estoque e status do lojista são mantidos)
+const FICHA = ['name', 'volume', 'concentration', 'gender', 'origin', 'description', 'notes', 'family', 'year', 'longevity', 'projection', 'seasons', 'occasions', 'references', 'tags'];
+const loteUpdate = (lp) => {
+  const prod = findLote(lp); if (!prod) return null;
+  const upd = {};
+  if (!(prod.images || []).length && (lp.images || []).length) upd.images = lp.images;
+  if (lp.fix) FICHA.forEach((k) => { if (lp[k] !== undefined && JSON.stringify(lp[k]) !== JSON.stringify(prod[k])) upd[k] = lp[k]; });
+  return Object.keys(upd).length ? { prod, upd } : null;
+};
+
 async function addProducts(list, btn) {
-  const existing = new Set(data.products.map(keyOf));
-  const novos = list.filter((p) => p && p.name && !existing.has(keyOf(p)));
+  const novos = list.filter((p) => p && p.name && !findLote(p));
   if (!novos.length) { toast('Todos esses perfumes já estão na loja.'); return; }
   const semPreco = novos.filter((p) => !(Number(p.price) > 0)).length;
   if (!confirm(`Adicionar ${novos.length} perfume(s) à loja? ${list.length - novos.length ? `(${list.length - novos.length} já existem e serão ignorados) ` : ''}${semPreco ? `${semPreco} entram sem preço (“Sob consulta”).` : 'Todos já vêm com preço sugerido — você pode ajustar depois.'}`)) return;
   if (btn) btn.disabled = true;
   let ok = 0;
   for (const p of novos) {
-    const { id, slug, createdAt, updatedAt, ...clean } = p;
+    const { id, slug, createdAt, updatedAt, aka, fix, ...clean } = p;
     try { await store.saveProduct(clean); ok++; if (btn) btn.textContent = `Adicionando… ${ok}/${novos.length}`; }
     catch (e) { handleError(e); break; }
   }
@@ -665,20 +677,19 @@ async function renderImport(body) {
       <label class="btn btn--outline mt-2">${icon('upload')} Escolher arquivo<input type="file" id="addFile" accept="application/json,.json" hidden></label>
     </section>`;
   const box = $('#lotes');
-  const existing = new Set(data.products.map(keyOf));
   const cards = [];
   for (const url of LOTES) {
     try {
       const lote = await (await fetch(url, { cache: 'no-store' })).json();
       const list = lote.produtos || lote.products || [];
-      const falta = list.filter((p) => !existing.has(keyOf(p))).length;
-      const semFoto = list.filter((p) => (p.images || []).length && data.products.some((x) => keyOf(x) === keyOf(p) && !(x.images || []).length)).length;
+      const falta = list.filter((p) => !findLote(p)).length;
+      const semFoto = list.filter(loteUpdate).length;
       cards.push(`<div class="lote">
         <div><strong>${esc(lote.nome || url)}</strong>
           <p class="muted">${list.map((p) => esc(`${p.brand} ${p.name}`)).join(' · ')}</p></div>
         <div class="lote__actions">
           <button class="btn btn--primary" data-lote="${esc(url)}" ${falta ? '' : 'disabled'}>${falta ? `${icon('plus')} Adicionar ${falta} perfume${falta === 1 ? '' : 's'}` : `${icon('check')} Já adicionados`}</button>
-          ${semFoto ? `<button class="btn btn--outline" data-lotefotos="${esc(url)}">${icon('upload')} Colocar fotos em ${semFoto} perfume${semFoto === 1 ? '' : 's'} já adicionado${semFoto === 1 ? '' : 's'}</button>` : ''}
+          ${semFoto ? `<button class="btn btn--outline" data-lotefotos="${esc(url)}">${icon('upload')} Atualizar fotos/fichas de ${semFoto} perfume${semFoto === 1 ? '' : 's'} já adicionado${semFoto === 1 ? '' : 's'}</button>` : ''}
         </div>
       </div>`);
     } catch { cards.push(`<p class="muted">Não foi possível carregar ${esc(url)}.</p>`); }
@@ -690,16 +701,15 @@ async function renderImport(body) {
   }));
   $$('[data-lotefotos]', box).forEach((b) => b.addEventListener('click', async () => {
     const lote = await (await fetch(b.dataset.lotefotos, { cache: 'no-store' })).json();
-    const comFoto = (lote.produtos || lote.products || []).filter((p) => (p.images || []).length);
     b.disabled = true; let ok = 0;
-    for (const lp of comFoto) {
-      const prod = data.products.find((x) => keyOf(x) === keyOf(lp) && !(x.images || []).length);
-      if (!prod) continue;
-      try { await store.saveProduct({ ...prod, images: lp.images }); ok++; b.textContent = `Colocando fotos… ${ok}`; }
+    for (const lp of lote.produtos || lote.products || []) {
+      const u = loteUpdate(lp);
+      if (!u) continue;
+      try { await store.saveProduct({ ...u.prod, ...u.upd }); ok++; b.textContent = `Atualizando… ${ok}`; }
       catch (e) { handleError(e); break; }
     }
     tab = 'products';
-    await afterChange(`Fotos colocadas em ${ok} perfume(s) ✓`);
+    await afterChange(`${ok} perfume(s) atualizado(s) com foto/ficha ✓`);
   }));
   $('#addFile').addEventListener('change', async (e) => {
     const file = e.target.files[0]; if (!file) return;

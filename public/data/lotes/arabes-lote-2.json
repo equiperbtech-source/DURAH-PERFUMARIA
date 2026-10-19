@@ -4,7 +4,9 @@
     {
       "name": "Pride Pisa",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-pisa.webp"
+      ],
       "price": 289.9,
       "promoPrice": null,
       "volume": "100ml",
@@ -63,7 +65,9 @@
     {
       "name": "Fakhar Gold Extrait",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-fakhar-gold.webp"
+      ],
       "price": 299.9,
       "promoPrice": null,
       "volume": "100ml",
@@ -131,7 +135,9 @@
     {
       "name": "Fakhar Silver",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-fakhar-silver.webp"
+      ],
       "price": 249.9,
       "promoPrice": null,
       "volume": "100ml",
@@ -201,7 +207,9 @@
     {
       "name": "Silver Scent Intense",
       "brand": "Jacques Bogart",
-      "images": [],
+      "images": [
+        "/img/produtos/jacques-bogart-silver-scent-intense.webp"
+      ],
       "price": 219.9,
       "promoPrice": null,
       "volume": "100ml",
@@ -266,16 +274,18 @@
     {
       "name": "Kit Haya — 3 peças",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-kit-haya.webp"
+      ],
       "price": 349.9,
       "promoPrice": null,
-      "volume": "100ml+12ml+50ml",
+      "volume": "100ml+10ml+100ml",
       "concentration": "Eau de Parfum",
       "gender": "Feminino",
       "origin": "Emirados Árabes",
       "stock": 10,
       "status": "disponivel",
-      "description": "O kit presente do Haya traz a fragrância completa em três formatos: Eau de Parfum 100 ml, Eau de Parfum 12 ml para levar na bolsa e perfume para cabelo (hair mist) 50 ml. Haya é um floral frutado festivo: champanhe, morango, rosa, tangerina e laranja sanguínea abrem efervescentes, o coração de gardênia, jasmim e orquídea de baunilha é feminino e delicado, e o fundo de âmbar, sândalo e castanha deixa um rastro cremoso e aconchegante. Ótima opção de presente.",
+      "description": "O kit presente do Haya traz a fragrância em três peças: Eau de Parfum 100 ml, Eau de Parfum 10 ml para levar na bolsa e Hair Fresh (perfume para cabelo) 100 ml. Haya é um floral frutado festivo: champanhe, morango, rosa, tangerina e laranja sanguínea abrem efervescentes, o coração de gardênia, jasmim e orquídea de baunilha é feminino e delicado, e o fundo de âmbar, sândalo e castanha deixa um rastro cremoso e aconchegante. Ótima opção de presente.",
       "notes": {
         "top": [
           "Champanhe",
@@ -325,13 +335,16 @@
       "decant": false,
       "type": "perfume",
       "decant5Price": null,
-      "decant10Price": null
+      "decant10Price": null,
+      "fix": true
     },
     {
-      "name": "Musamam",
+      "name": "Musamam White Intense",
       "brand": "Lattafa",
-      "images": [],
-      "price": 279.9,
+      "images": [
+        "/img/produtos/lattafa-musamam-white-intense.webp"
+      ],
+      "price": 349.9,
       "promoPrice": null,
       "volume": "100ml",
       "concentration": "Eau de Parfum",
@@ -339,44 +352,47 @@
       "origin": "Emirados Árabes",
       "stock": 10,
       "status": "disponivel",
-      "description": "Musamam é um couro amadeirado e defumado com alma árabe: açafrão, lavanda e tangerina italiana abrem especiados e aromáticos, o coração de gerânio egípcio, cedro da Virgínia e amberwood traz estrutura, e o fundo de olíbano somali, akigalawood e cistus deixa um drydown resinoso, escuro e sofisticado. Presença forte e fixação longa.",
+      "description": "Musamam White Intense é um âmbar branco cremoso e luminoso: bergamota, laranja e um toque de especiarias abrem frescos e vivos, o coração de ylang-ylang, coco, ambroxan e mahonial é macio e solar, e o fundo de sândalo, benjoim e almíscar deixa um rastro limpo, aveludado e sofisticado. Frasco icônico com a serpente dourada, presença marcante e fixação longa.",
       "notes": {
         "top": [
-          "Açafrão",
-          "Lavanda",
-          "Tangerina italiana"
+          "Bergamota",
+          "Laranja",
+          "Especiarias"
         ],
         "heart": [
-          "Gerânio egípcio",
-          "Cedro da Virgínia",
-          "Amberwood"
+          "Ylang-ylang",
+          "Coco",
+          "Ambroxan",
+          "Mahonial"
         ],
         "base": [
-          "Olíbano somali",
-          "Akigalawood",
-          "Cistus"
+          "Sândalo",
+          "Benjoim",
+          "Almíscar"
         ]
       },
-      "family": "Couro",
+      "family": "Oriental/Âmbar",
       "perfumer": "",
-      "year": 2022,
+      "year": 2023,
       "longevity": "Muito longa",
       "projection": "Forte",
       "seasons": [
+        "Primavera",
         "Outono",
         "Inverno"
       ],
       "occasions": [
         "Noite",
-        "Festa",
-        "Eventos formais"
+        "Encontro",
+        "Eventos formais",
+        "Dia a dia"
       ],
       "references": [],
       "tags": [
-        "couro",
-        "resinoso",
-        "marcante",
-        "árabe"
+        "âmbar branco",
+        "cremoso",
+        "luxuoso",
+        "unissex"
       ],
       "active": true,
       "featured": false,
@@ -386,12 +402,18 @@
       "decant": false,
       "type": "perfume",
       "decant5Price": null,
-      "decant10Price": null
+      "decant10Price": null,
+      "aka": [
+        "Musamam"
+      ],
+      "fix": true
     },
     {
       "name": "Asad Bourbon",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-asad-bourbon.webp"
+      ],
       "price": 259.9,
       "promoPrice": null,
       "volume": "100ml",
@@ -520,7 +542,9 @@
     {
       "name": "Yara",
       "brand": "Lattafa",
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-yara.webp"
+      ],
       "price": 199.9,
       "promoPrice": null,
       "volume": "100ml",
