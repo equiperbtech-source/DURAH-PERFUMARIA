@@ -37,6 +37,7 @@ export const productType = (p) => p.type || 'perfume';
 export const isPerfume = (p) => productType(p) === 'perfume';
 export const isKit = (p) => productType(p) === 'kit';
 export const isSimple = (p) => ['body-spray', 'victorias-secret'].includes(productType(p));
+export const isSplash = (p) => productType(p) === 'victorias-secret' && p.vsKind !== 'creme';
 export const typeLabel = (p) => isKit(p) ? 'Kit' : productType(p) === 'victorias-secret' ? (p.vsKind === 'creme' ? 'Creme' : 'Body Splash') : productType(p) === 'body-spray' ? 'Body Spray' : 'Perfume';
 const SCENT_ADJ = { Baunilha: 'baunilhado' };
 export const scentAdjective = (name) => SCENT_ADJ[name] || name.toLowerCase();
@@ -48,14 +49,26 @@ export const fullAvailable = (p) => p.status !== 'esgotado' && Number(p.stock) >
 export function variants(p) {
   const kitN = isKit(p) ? (p.kitItems || []).reduce((a, i) => a + (Number(i.qty) || 1), 0) : 0;
   const list = [{ key: 'full', label: isKit(p) ? 'Kit completo' : p.volume ? `Frasco ${p.volume}` : 'Frasco completo', size: isKit(p) ? `Kit com ${kitN} ${kitN === 1 ? 'item' : 'itens'}` : p.volume || 'Frasco completo', price: finalPrice(p), old: discount(p) ? p.price : null, available: fullAvailable(p) }];
+  if (isSplash(p)) {
+    list[0].label = 'Só o Body Splash';
+    if (shop.creamAddon > 0) {
+      const cream = matchingCream(p);
+      list.push({ key: 'creme', label: 'Body Splash + Creme', size: `Body Splash${p.volume ? ' ' + p.volume : ''} + ${cream ? `${cream.name}${cream.volume ? ' ' + cream.volume : ''}` : 'Creme hidratante (fragrância à escolha)'}`, price: Math.round((finalPrice(p) + shop.creamAddon) * 100) / 100, old: null, available: fullAvailable(p), addon: shop.creamAddon });
+    }
+  }
   if (isPerfume(p) && Number(p.decant5Price) > 0) list.push({ key: 'd5', label: 'Decant 5ml', size: 'Decant 5ml', price: Number(p.decant5Price), old: null, available: true });
   if (isPerfume(p) && Number(p.decant10Price) > 0) list.push({ key: 'd10', label: 'Decant 10ml', size: 'Decant 10ml', price: Number(p.decant10Price), old: null, available: true });
   return list;
 }
 export const getVariant = (p, key) => variants(p).find((v) => v.key === key) || variants(p)[0];
 export const defaultVariant = (p) => variants(p).find((v) => v.available) || variants(p)[0];
-export const hasDecants = (p) => variants(p).length > 1;
-export const minDecantPrice = (p) => Math.min(...variants(p).filter((v) => v.key !== 'full').map((v) => v.price));
+const isDecantKey = (k) => k === 'd5' || k === 'd10';
+export const hasDecants = (p) => variants(p).some((v) => isDecantKey(v.key));
+export const hasOptions = (p) => variants(p).length > 1;
+export const minDecantPrice = (p) => Math.min(...variants(p).filter((v) => isDecantKey(v.key)).map((v) => v.price));
+// creme da mesma fragrância do body splash (ex.: Love Spell → creme Love Spell)
+const scentName = (p) => String(p.name || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/\b(body splash|fragrance mist|creme|hidratante|lotion)\b/g, '').replace(/[^a-z0-9]+/g, ' ').trim();
+export const matchingCream = (p) => shop.products.find((x) => productType(x) === 'victorias-secret' && x.vsKind === 'creme' && x.active !== false && scentName(x) === scentName(p)) || null;
 export const isSoldOut = (p) => !variants(p).some((v) => v.available);
 export const isLastUnits = (p) => fullAvailable(p) && Number(p.stock) <= 3;
 export const isDecant = (p) => p.decant || hasDecants(p) || (parseInt(p.volume, 10) > 0 && parseInt(p.volume, 10) <= 10);
@@ -96,7 +109,7 @@ export const DEFAULT_TRUST = {
   shipping: 'Postagem em até 1 dia útil',
 };
 // prazo de "sob encomenda" (atualizado pela loja ao carregar as configurações)
-export const shop = { backorder: DEFAULT_TRUST.backorder, products: [] };
+export const shop = { backorder: DEFAULT_TRUST.backorder, products: [], creamAddon: 99.99 };
 
 // ─── Kits: resolve os itens com o catálogo atual ───
 export function kitItems(p) {
@@ -156,9 +169,9 @@ Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de ent
   return `Olá, DURAH Perfumes e Importados! 👋✨
 Vim pelo catálogo e fiquei apaixonado(a) por esta fragrância:
 
-🖤 Perfume: ${p.name}
+${isPerfume(p) ? '🖤 Perfume' : '🛍️ Produto'}: ${p.name}
 🏷️ Marca: ${p.brand}
-📏 Tamanho: ${v.size}
+📏 ${v.key === 'creme' ? 'Opção' : 'Tamanho'}: ${v.size}
 💰 Valor: ${v.price > 0 ? `R$ ${money(v.price)}` : 'a consultar'}
 
 Ainda está disponível? Gostaria de saber as formas de pagamento e prazo de entrega. Obrigado(a)!`;

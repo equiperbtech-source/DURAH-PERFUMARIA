@@ -462,7 +462,7 @@
         "aconchegante"
       ],
       "active": true,
-      "featured": false,
+      "featured": true,
       "niche": false,
       "launch": false,
       "imported": true,
@@ -593,7 +593,7 @@
         "feminino"
       ],
       "active": true,
-      "featured": false,
+      "featured": true,
       "niche": false,
       "launch": false,
       "imported": true,

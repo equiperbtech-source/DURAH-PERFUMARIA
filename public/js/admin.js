@@ -560,6 +560,7 @@ function renderSettings(body) {
         <div class="field"><label class="label" for="s-inst">Parcelas sem juros (máx.)</label><input class="input" id="s-inst" name="tInst" type="number" min="1" max="24" value="${esc(t.installments)}"><p class="hint">Use 1 para não mostrar parcelamento.</p></div>
         <div class="field"><label class="label" for="s-ship">Prazo de envio</label><input class="input" id="s-ship" name="tShip" value="${esc(t.shipping)}" maxlength="80"></div>
         <div class="field"><label class="label" for="s-back">Prazo “sob encomenda” (produto sem estoque)</label><input class="input" id="s-back" name="tBack" value="${esc(t.backorder)}" maxlength="40" placeholder="5 dias úteis"><p class="hint">Aparece no botão “Sob encomenda (…)” e na mensagem do WhatsApp.</p></div>
+        <div class="field"><label class="label" for="s-cream">Creme junto com o Body Splash (R$)</label><input class="input" id="s-cream" name="creamAddon" type="number" min="0" step="0.01" value="${esc(s.creamAddon ?? 99.99)}"><p class="hint">Na página do body splash o cliente escolhe “levar o creme junto” por este valor a mais. Use 0 para desligar.</p></div>
       </div>
     </section>
 
@@ -588,6 +589,7 @@ function renderSettings(body) {
       hours: fd.get('hours').trim(), city: fd.get('city').trim(),
       announcement: { active: !!fd.get('annActive'), text: fd.get('annText').trim() },
       banner: { active: !!fd.get('bActive'), productId: fd.get('bProduct') || '', tag: fd.get('bTag').trim(), title: fd.get('bTitle').trim(), text: fd.get('bText').trim(), cta: fd.get('bCta').trim(), link: fd.get('bLink'), image: img.get()[0] || '' },
+      creamAddon: Number(fd.get('creamAddon')) || 0,
       trust: { authenticity: fd.get('tAuth').trim(), payment: fd.get('tPay').trim(), installments: parseInt(fd.get('tInst'), 10) || 1, shipping: fd.get('tShip').trim(), backorder: fd.get('tBack').trim() },
     };
     try { await store.saveSettings(out); await afterChange('Configurações salvas ✓'); } catch (err) { handleError(err); }
@@ -635,7 +637,7 @@ function renderReviews(body) {
 }
 
 // ─── Importar perfumes prontos (adiciona sem apagar os atuais) ───
-const LOTES = ['data/lotes/arabes-lote-3.json', 'data/lotes/arabes-lote-2.json', 'data/lotes/arabes-lote-1.json'];
+const LOTES = ['data/lotes/victorias-secret.json', 'data/lotes/arabes-lote-3.json', 'data/lotes/arabes-lote-2.json', 'data/lotes/arabes-lote-1.json'];
 const keyOf = (p) => `${p.brand || ''} ${p.name || ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
 // nomes antigos (aka) também contam: assim uma ficha corrigida não vira produto duplicado
@@ -647,6 +649,7 @@ const loteUpdate = (lp) => {
   const prod = findLote(lp); if (!prod) return null;
   const upd = {};
   if (!(prod.images || []).length && (lp.images || []).length) upd.images = lp.images;
+  if (lp.featured && !prod.featured) upd.featured = true;
   if (lp.fix) FICHA.forEach((k) => { if (lp[k] !== undefined && JSON.stringify(lp[k]) !== JSON.stringify(prod[k])) upd[k] = lp[k]; });
   return Object.keys(upd).length ? { prod, upd } : null;
 };

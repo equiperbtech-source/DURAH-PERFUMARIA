@@ -120,6 +120,7 @@ function normalizeSettings(s, cur) {
       image: isImg(banner.image) ? banner.image : '',
       productId: str(banner.productId, 40),
     },
+    creamAddon: m.creamAddon == null || m.creamAddon === '' ? 99.99 : Math.max(0, Math.round(Number(m.creamAddon) * 100) / 100) || 0,
     trust: {
       authenticity: str(trust.authenticity, 80) || 'Produtos 100% originais',
       payment: str(trust.payment, 80) || 'Pix, débito e crédito',

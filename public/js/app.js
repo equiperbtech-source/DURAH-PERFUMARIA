@@ -2,7 +2,7 @@ import { store } from './store.js';
 import {
   $, $$, esc, money, icon, toast, badges, bottleArt, productImages, finalPrice, discount, isSoldOut, isLastUnits, isArab, isDecant,
   waUrl, msgProduct, msgGeneral, msgHelp, msgList, joinPt, joinOr,
-  variants, getVariant, defaultVariant, hasDecants, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
+  variants, getVariant, defaultVariant, hasDecants, hasOptions, isSplash, minDecantPrice, fullAvailable, DEFAULT_TRUST, installmentText, stars, guessProductByTitle,
   productType, isPerfume, typeLabel, scentEmoji, scentAdjective, INTENSITY,
   isKit, isSimple, kitItems, kitSeparatePrice, kitSavings, igLink, igEmbed,
   shop, backorderLabel, priceLabel,
@@ -486,11 +486,11 @@ function pageProduct(slug) {
         <div class="pinfo__price" id="pPrice"></div>
         <p class="pinfo__inst" id="pInst"></p>
 
-        ${hasDecants(p) ? `<fieldset class="variants">
-          <legend class="label">Escolha o tamanho</legend>
+        ${hasOptions(p) ? `<fieldset class="variants">
+          <legend class="label">${isSplash(p) ? 'Quer levar o creme junto?' : 'Escolha o tamanho'}</legend>
           <div class="variants__list">${variants(p).map((v) => `<label class="variant ${v.available ? '' : 'is-backorder'}">
             <input type="radio" name="variant" value="${v.key}" ${v.key === sel.key ? 'checked' : ''}>
-            <span><strong>${esc(v.label)}</strong><em>${priceLabel(v.price)}</em><small>${!v.available ? 'Sob encomenda' : v.key === 'full' ? 'Lacrado, original' : 'Fracionado do original'}</small></span>
+            <span><strong>${esc(v.label)}</strong><em>${priceLabel(v.price)}</em><small>${!v.available ? 'Sob encomenda' : v.key === 'creme' ? `+ creme por R$ ${money(v.addon)}` : v.key === 'full' ? 'Lacrado, original' : 'Fracionado do original'}</small></span>
           </label>`).join('')}</div>
         </fieldset>` : ''}
 
@@ -821,6 +821,7 @@ function applySettings() {
   ann.hidden = !(st.announcement && st.announcement.active && st.announcement.text);
   ann.innerHTML = `<span>${esc(st.announcement?.text || '')}</span>`;
   shop.backorder = (st.trust && st.trust.backorder) || DEFAULT_TRUST.backorder;
+  shop.creamAddon = st.creamAddon == null ? 99.99 : Number(st.creamAddon) || 0;
   $('#waFloat').href = wa(msgGeneral());
   $('#headerWa').href = wa(msgGeneral());
   $('#footerContact').innerHTML = `
