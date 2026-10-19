@@ -1159,3 +1159,21 @@ h1, h2, h3, h4 { font-weight: 600; }
   .ctable__prod { grid-column: 1 / -1; }
   .ctable__num::before { content: attr(data-label); display: block; font-size: 11px; color: var(--muted); }
 }
+
+/* ─── Foto de fundo do topo: esmaecida à direita (computador) / atrás do texto (celular) ─── */
+.hero__bg { position: absolute; z-index: 0; top: 0; right: 0; height: 100%; width: 100%; object-fit: cover; object-position: 72% 42%; pointer-events: none; user-select: none;
+  opacity: .32; -webkit-mask-image: linear-gradient(to bottom, #000 55%, transparent); mask-image: linear-gradient(to bottom, #000 55%, transparent); }
+.hero:has(.hero__bg) .hero__mark { display: none; }
+/* celular: escurece a área do texto para manter a leitura */
+@media (max-width: 959px) {
+  .hero__bg { width: 78%; object-position: 70% 40%; opacity: .34; -webkit-mask-image: linear-gradient(to right, transparent, #000 55%); mask-image: linear-gradient(to right, transparent, #000 55%); }
+  .hero__inner { text-shadow: 0 2px 14px rgba(0,0,0,.85); }
+  .hero__inner .btn { text-shadow: none; }
+}
+@media (min-width: 960px) {
+  .hero__bg { width: 58%; opacity: .62; object-position: 60% 45%;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 45%), linear-gradient(to bottom, #000 70%, transparent); -webkit-mask-composite: source-in;
+    mask-image: linear-gradient(to right, transparent, #000 45%), linear-gradient(to bottom, #000 70%, transparent); mask-composite: intersect; }
+  .hero .hero__art { display: none; }
+  .hero__ar { display: none; }
+}

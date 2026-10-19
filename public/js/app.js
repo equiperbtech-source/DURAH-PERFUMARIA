@@ -160,6 +160,7 @@ function pageHome() {
   setSeo('DURAH Perfumes e Importados — Perfumes importados, árabes e de nicho');
   app.innerHTML = `<div class="page">
   <section class="hero">
+    <img class="hero__bg" src="img/brand/hero-fundo-1120.webp" srcset="img/brand/hero-fundo-700.webp 700w, img/brand/hero-fundo-1120.webp 1120w" sizes="(min-width: 960px) 55vw, 100vw" alt="" aria-hidden="true" width="1122" height="1402" fetchpriority="high">
     <img class="hero__mark" src="img/brand/monograma.webp" alt="" aria-hidden="true" width="276" height="360">
     <div class="container hero__inner">
       <div>
