@@ -1,0 +1,143 @@
+{
+  "nome": "Perfumes árabes — lote 3 (2 itens, com preço sugerido)",
+  "produtos": [
+    {
+      "promoPrice": null,
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "concentration": "Eau de Parfum",
+      "volume": "100ml",
+      "name": "Delilah Pour Femme",
+      "brand": "Maison Alhambra",
+      "images": [
+        "/img/produtos/maison-alhambra-delilah.webp"
+      ],
+      "price": 199.9,
+      "gender": "Feminino",
+      "description": "Delilah Pour Femme é um floral frutado elegante e romântico: ruibarbo, lichia e bergamota abrem frescos e suculentos, o coração de rosa turca, peônia e lírio é delicado e feminino, e o fundo de baunilha, cashmeran e almíscar branco deixa um rastro macio, limpo e sofisticado. Frasco branco com pingente rosa, perfeito para presentear.",
+      "notes": {
+        "top": [
+          "Ruibarbo",
+          "Lichia",
+          "Bergamota"
+        ],
+        "heart": [
+          "Rosa turca",
+          "Peônia",
+          "Lírio"
+        ],
+        "base": [
+          "Baunilha",
+          "Cashmeran",
+          "Almíscar branco"
+        ]
+      },
+      "family": "Floral",
+      "year": 2023,
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Verão",
+        "Outono"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Encontro"
+      ],
+      "references": [
+        {
+          "name": "Delina",
+          "house": "Parfums de Marly"
+        }
+      ],
+      "tags": [
+        "floral",
+        "rosa",
+        "delicado",
+        "feminino"
+      ]
+    },
+    {
+      "promoPrice": null,
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "concentration": "Eau de Parfum",
+      "volume": "100ml",
+      "name": "Al Noble Wazeer",
+      "brand": "Lattafa",
+      "images": [
+        "/img/produtos/lattafa-al-noble-wazeer.webp"
+      ],
+      "price": 279.9,
+      "gender": "Unissex",
+      "description": "Al Noble Wazeer é um gourmand árabe quente e sedutor: menta, laranja, bergamota e zimbro abrem frescos, o coração de chocolate e caramelo com pera, framboesa e um toque atalcado de íris é doce e viciante, e o fundo de âmbar, baunilha, sândalo, almíscar, cedro e vetiver deixa um rastro cremoso e amadeirado. Frasco marcante com a cabeça de cervo dourada.",
+      "notes": {
+        "top": [
+          "Menta",
+          "Laranja",
+          "Bergamota",
+          "Zimbro"
+        ],
+        "heart": [
+          "Chocolate",
+          "Caramelo",
+          "Pera",
+          "Framboesa",
+          "Íris"
+        ],
+        "base": [
+          "Âmbar",
+          "Baunilha",
+          "Sândalo",
+          "Almíscar",
+          "Cedro",
+          "Vetiver"
+        ]
+      },
+      "family": "Gourmand",
+      "year": null,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [],
+      "tags": [
+        "gourmand",
+        "chocolate",
+        "doce",
+        "marcante"
+      ]
+    }
+  ]
+}

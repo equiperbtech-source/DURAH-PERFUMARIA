@@ -635,7 +635,7 @@ function renderReviews(body) {
 }
 
 // ─── Importar perfumes prontos (adiciona sem apagar os atuais) ───
-const LOTES = ['data/lotes/arabes-lote-2.json', 'data/lotes/arabes-lote-1.json'];
+const LOTES = ['data/lotes/arabes-lote-3.json', 'data/lotes/arabes-lote-2.json', 'data/lotes/arabes-lote-1.json'];
 const keyOf = (p) => `${p.brand || ''} ${p.name || ''}`.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
 
 // nomes antigos (aka) também contam: assim uma ficha corrigida não vira produto duplicado
