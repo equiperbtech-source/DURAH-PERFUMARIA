@@ -346,9 +346,11 @@
       "decant10Price": null
     },
     {
-      "name": "Delilah",
+      "name": "Delilah Pour Femme",
       "brand": "Maison Alhambra",
-      "images": [],
+      "images": [
+        "/img/produtos/maison-alhambra-delilah.webp"
+      ],
       "price": 0,
       "promoPrice": null,
       "volume": "100ml",
@@ -357,7 +359,7 @@
       "origin": "Emirados Árabes",
       "stock": 10,
       "status": "disponivel",
-      "description": "Delilah é a rosa moderna e romântica da Maison Alhambra: lichia suculenta, ruibarbo e bergamota abrem com brilho frutado e levemente ácido. O coração de rosa turca, peônia e lírio é delicado e feminino, e o fundo de baunilha, almíscar branco e cashmeran deixa a pele macia e elegante. Um floral frutado sofisticado para usar do dia a dia aos encontros.",
+      "description": "Delilah Pour Femme é um floral frutado elegante e romântico: ruibarbo, lichia e bergamota abrem frescos e suculentos, o coração de rosa turca, peônia e lírio é delicado e feminino, e o fundo de baunilha, cashmeran e almíscar branco deixa um rastro macio, limpo e sofisticado. Frasco branco com pingente rosa, perfeito para presentear.",
       "notes": {
         "top": [
           "Ruibarbo",
@@ -410,7 +412,11 @@
       "decant": false,
       "type": "perfume",
       "decant5Price": null,
-      "decant10Price": null
+      "decant10Price": null,
+      "aka": [
+        "Delilah"
+      ],
+      "fix": true
     },
     {
       "name": "Kismet Magic",

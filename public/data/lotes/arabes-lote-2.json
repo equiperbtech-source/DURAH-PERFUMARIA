@@ -15,7 +15,7 @@
       "origin": "Emirados Árabes",
       "stock": 10,
       "status": "disponivel",
-      "description": "Pisa, da linha Lattafa Pride, é um amadeirado cítrico limpo e elegante: bergamota, tangerina e limão abrem com frescor luminoso, o coração de cedro traz uma estrutura seca e sofisticada, e o fundo de sândalo e âmbar deixa um drydown cremoso e aconchegante. Um perfume versátil, que vai bem do escritório ao jantar.",
+      "description": "Pisa, da linha Lattafa Pride, é um amadeirado cítrico limpo e elegante: bergamota, tangerina e limão abrem com frescor luminoso, o coração de cedro traz uma estrutura seca e sofisticada, e o fundo de sândalo, âmbar e almíscar deixa um drydown cremoso e aconchegante. Um perfume versátil, que vai bem do escritório ao jantar.",
       "notes": {
         "top": [
           "Bergamota",
@@ -27,7 +27,8 @@
         ],
         "base": [
           "Sândalo",
-          "Âmbar"
+          "Âmbar",
+          "Almíscar"
         ]
       },
       "family": "Amadeirado",
@@ -60,7 +61,8 @@
       "decant": false,
       "type": "perfume",
       "decant5Price": null,
-      "decant10Price": null
+      "decant10Price": null,
+      "fix": true
     },
     {
       "name": "Fakhar Gold Extrait",
@@ -76,7 +78,7 @@
       "origin": "Emirados Árabes",
       "stock": 10,
       "status": "disponivel",
-      "description": "Fakhar Gold Extrait é a versão mais intensa e dourada da linha Fakhar: toranja, cardamomo e pimenta rosa abrem vibrantes e especiados, a tuberosa com notas solares cria um coração radiante, e o fundo de âmbar, cashmeran, labdanum e couro deixa um rastro quente, luxuoso e envolvente. Concentração extrait: fixação e presença de sobra.",
+      "description": "Fakhar Gold Extrait é a versão mais intensa e dourada da linha Fakhar: toranja, cardamomo e pimenta rosa abrem vibrantes e especiados, a tuberosa com um toque herbal de artemísia cria um coração radiante, e o fundo de âmbar, cashmeran, labdanum e couro deixa um rastro quente, luxuoso e envolvente. Concentração extrait: fixação e presença de sobra.",
       "notes": {
         "top": [
           "Toranja",
@@ -85,7 +87,6 @@
         ],
         "heart": [
           "Tuberosa",
-          "Notas solares",
           "Artemísia"
         ],
         "base": [
@@ -130,7 +131,8 @@
       "decant": false,
       "type": "perfume",
       "decant5Price": null,
-      "decant10Price": null
+      "decant10Price": null,
+      "fix": true
     },
     {
       "name": "Fakhar Silver",
@@ -146,27 +148,26 @@
       "origin": "Emirados Árabes",
       "stock": 10,
       "status": "disponivel",
-      "description": "Fakhar Silver (Pride of Lattafa) é um aromático fresco e moderno: maçã, bergamota e gengibre abrem com energia, o coração de lavanda, sálvia, zimbro e gerânio traz o lado herbal e masculino, e o fundo de fava tonka, cedro, vetiver e amberwood garante um drydown amadeirado e levemente adocicado. Um curinga elogiado para o dia a dia.",
+      "description": "Fakhar Silver é um fougère moderno e elegante da Lattafa: maçã verde, bergamota e um toque de especiarias abrem frescos, o coração de lavanda, lírio-do-vale e fava tonka traz o lado limpo e levemente adocicado, e o fundo de musgo de carvalho, patchouli, ambroxan e cedro deixa um drydown amadeirado, masculino e sofisticado. Um curinga elogiado para o dia a dia e o trabalho.",
       "notes": {
         "top": [
-          "Maçã",
+          "Maçã verde",
           "Bergamota",
-          "Gengibre"
+          "Especiarias"
         ],
         "heart": [
           "Lavanda",
-          "Sálvia",
-          "Zimbro",
-          "Gerânio"
+          "Lírio-do-vale",
+          "Fava tonka"
         ],
         "base": [
-          "Fava tonka",
-          "Cedro",
-          "Vetiver",
-          "Amberwood"
+          "Musgo de carvalho",
+          "Patchouli",
+          "Ambroxan",
+          "Cedro"
         ]
       },
-      "family": "Aromático",
+      "family": "Fougère",
       "perfumer": "",
       "year": null,
       "longevity": "Longa",
@@ -182,12 +183,7 @@
         "Noite",
         "Encontro"
       ],
-      "references": [
-        {
-          "name": "Y Eau de Parfum",
-          "house": "Yves Saint Laurent"
-        }
-      ],
+      "references": [],
       "tags": [
         "fresco",
         "elogiado",
@@ -202,7 +198,8 @@
       "decant": false,
       "type": "perfume",
       "decant5Price": null,
-      "decant10Price": null
+      "decant10Price": null,
+      "fix": true
     },
     {
       "name": "Silver Scent Intense",
@@ -237,6 +234,7 @@
           "Fava tonka",
           "Vetiver",
           "Madeira de teca",
+          "Líquen",
           "Oud"
         ]
       },
@@ -269,7 +267,8 @@
       "decant": false,
       "type": "perfume",
       "decant5Price": null,
-      "decant10Price": null
+      "decant10Price": null,
+      "fix": true
     },
     {
       "name": "Kit Haya — 3 peças",
