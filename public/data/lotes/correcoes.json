@@ -1,0 +1,79 @@
+{
+  "nome": "Correções de fichas (Asad Elixir)",
+  "produtos": [
+    {
+      "name": "Asad Elixir",
+      "brand": "Lattafa",
+      "aka": [
+        "Assad Elixir",
+        "Asad Elixir EDP",
+        "Asad Elixir Eau de Parfum",
+        "Asad Elixir Lattafa"
+      ],
+      "fix": true,
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Masculino",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "description": "Asad Elixir é a versão mais intensa e noturna da linha Asad: pimenta rosa, açafrão e toranja abrem com uma explosão picante e vibrante, o coração de tabaco defumado e cedro é suavizado por um toque de baunilha, e o fundo de patchouli, olíbano, cashmeran e âmbar seco deixa um rastro quente, resinoso e marcante. Para quem ama o estilo do Sauvage Elixir com a assinatura árabe da Lattafa.",
+      "notes": {
+        "top": [
+          "Pimenta rosa",
+          "Açafrão",
+          "Toranja"
+        ],
+        "heart": [
+          "Tabaco",
+          "Cedro",
+          "Baunilha"
+        ],
+        "base": [
+          "Patchouli",
+          "Olíbano",
+          "Cashmeran",
+          "Âmbar"
+        ]
+      },
+      "family": "Especiado",
+      "perfumer": "",
+      "year": 2025,
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [
+        {
+          "name": "Sauvage Elixir",
+          "house": "Dior"
+        }
+      ],
+      "tags": [
+        "especiado",
+        "tabaco",
+        "marcante",
+        "noturno"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
+    }
+  ]
+}
