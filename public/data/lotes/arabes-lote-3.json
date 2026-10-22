@@ -1,5 +1,5 @@
 {
-  "nome": "Perfumes árabes — lote 3 (4 itens, com preço sugerido)",
+  "nome": "Perfumes árabes — lote 3 (5 itens)",
   "produtos": [
     {
       "promoPrice": null,
@@ -274,6 +274,67 @@
         "feminino",
         "elogiado"
       ]
+    },
+    {
+      "name": "Vanilla Porn",
+      "brand": "Bidaya",
+      "images": [],
+      "price": 0,
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "gender": "Unissex",
+      "origin": "",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "year": null,
+      "family": "Gourmand",
+      "description": "Vanilla Porn é um oriental gourmand para quem ama perfumes doces, quentes e sofisticados: baunilha e coco abrem cremosos e acolhedores, com o toque atalcado do heliotrópio. No coração, a baunilha de Madagascar encontra um acorde de leite que deixa tudo ainda mais macio, e o fundo de absoluto de baunilha, coco, almíscar e palo santo traz profundidade amadeirada e conforto. Doce, envolvente e elegante, acompanha estojo.",
+      "notes": {
+        "top": [
+          "Baunilha",
+          "Coco",
+          "Heliotrópio",
+          "Notas atalcadas"
+        ],
+        "heart": [
+          "Baunilha de Madagascar",
+          "Leite"
+        ],
+        "base": [
+          "Absoluto de baunilha",
+          "Coco",
+          "Almíscar",
+          "Palo santo"
+        ]
+      },
+      "longevity": "",
+      "projection": "",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro"
+      ],
+      "references": [],
+      "tags": [
+        "baunilha",
+        "doce",
+        "cremoso",
+        "gourmand"
+      ],
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": true,
+      "imported": false,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null
     }
   ]
 }
