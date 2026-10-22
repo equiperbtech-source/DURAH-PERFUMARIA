@@ -1,5 +1,5 @@
 {
-  "nome": "Perfumes árabes — lote 3 (1 item, com preço sugerido)",
+  "nome": "Perfumes árabes — lote 3 (4 itens, com preço sugerido)",
   "produtos": [
     {
       "promoPrice": null,
@@ -68,6 +68,211 @@
         "chocolate",
         "doce",
         "marcante"
+      ]
+    },
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": true,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Liquid Brun",
+      "brand": "French Avenue",
+      "price": 289.9,
+      "gender": "Masculino",
+      "year": null,
+      "family": "Oriental/Âmbar",
+      "description": "Liquid Brun é um oriental baunilhado quente e viciante da French Avenue: bergamota, cardamomo, canela e flor de laranjeira abrem especiados e luminosos, o coração de elemi e baunilha traz cremosidade, e o fundo de ambroxan, pralinê, madeira de guaiaco e almíscar deixa um rastro doce, amadeirado e sofisticado. Um dos árabes mais comentados do momento.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Cardamomo",
+          "Canela",
+          "Flor de laranjeira"
+        ],
+        "heart": [
+          "Elemi",
+          "Baunilha"
+        ],
+        "base": [
+          "Ambroxan",
+          "Pralinê",
+          "Madeira de guaiaco",
+          "Almíscar"
+        ]
+      },
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [
+        {
+          "name": "Althaïr",
+          "house": "Parfums de Marly"
+        }
+      ],
+      "tags": [
+        "baunilha",
+        "especiado",
+        "viciante",
+        "elogiado"
+      ]
+    },
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Salvo",
+      "brand": "Maison Alhambra",
+      "price": 199.9,
+      "gender": "Masculino",
+      "year": 2022,
+      "family": "Fougère",
+      "description": "Salvo é o fougère aromático e fresco da Maison Alhambra: bergamota vibrante na saída, coração de pimenta de Sichuan, lavanda, anis-estrelado e noz-moscada, e um fundo de ambroxan e baunilha que deixa o rastro limpo, magnético e levemente adocicado. Versátil e muito elogiado, vai do trabalho à noite.",
+      "notes": {
+        "top": [
+          "Bergamota"
+        ],
+        "heart": [
+          "Pimenta de Sichuan",
+          "Lavanda",
+          "Anis-estrelado",
+          "Noz-moscada"
+        ],
+        "base": [
+          "Ambroxan",
+          "Baunilha"
+        ]
+      },
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Primavera",
+        "Verão",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Noite",
+        "Encontro"
+      ],
+      "references": [
+        {
+          "name": "Sauvage",
+          "house": "Dior"
+        }
+      ],
+      "tags": [
+        "fresco",
+        "versátil",
+        "elogiado",
+        "magnético"
+      ]
+    },
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "105ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Club de Nuit Woman",
+      "brand": "Armaf",
+      "price": 239.9,
+      "gender": "Feminino",
+      "year": null,
+      "family": "Floral",
+      "description": "Club de Nuit Woman é o chipre floral elegante da Armaf: bergamota, toranja, laranja e pêssego abrem luminosos e frutados, o coração de rosa, jasmim, gerânio e lichia é feminino e sofisticado, e o fundo de patchouli, almíscar, baunilha e vetiver deixa um rastro marcante e refinado. Clássico, elegante e muito elogiado.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Toranja",
+          "Laranja",
+          "Pêssego"
+        ],
+        "heart": [
+          "Rosa",
+          "Jasmim",
+          "Gerânio",
+          "Lichia"
+        ],
+        "base": [
+          "Patchouli",
+          "Almíscar",
+          "Baunilha",
+          "Vetiver"
+        ]
+      },
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Trabalho",
+        "Noite",
+        "Encontro",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "Coco Mademoiselle",
+          "house": "Chanel"
+        }
+      ],
+      "tags": [
+        "elegante",
+        "chipre",
+        "feminino",
+        "elogiado"
       ]
     }
   ]
