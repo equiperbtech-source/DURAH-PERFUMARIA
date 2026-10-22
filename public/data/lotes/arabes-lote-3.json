@@ -71,7 +71,9 @@
       ]
     },
     {
-      "images": [],
+      "images": [
+        "/img/produtos/french-avenue-liquid-brun.webp"
+      ],
       "promoPrice": null,
       "volume": "100ml",
       "concentration": "Eau de Parfum",
@@ -138,7 +140,9 @@
       ]
     },
     {
-      "images": [],
+      "images": [
+        "/img/produtos/maison-alhambra-salvo.webp"
+      ],
       "promoPrice": null,
       "volume": "100ml",
       "concentration": "Eau de Parfum",
@@ -205,7 +209,9 @@
       ]
     },
     {
-      "images": [],
+      "images": [
+        "/img/produtos/armaf-club-de-nuit-woman.webp"
+      ],
       "promoPrice": null,
       "volume": "105ml",
       "concentration": "Eau de Parfum",
@@ -278,7 +284,9 @@
     {
       "name": "Vanilla P*rn",
       "brand": "Bidaya",
-      "images": [],
+      "images": [
+        "/img/produtos/bidaya-vanilla-porn.webp"
+      ],
       "price": 0,
       "promoPrice": null,
       "volume": "100ml",
