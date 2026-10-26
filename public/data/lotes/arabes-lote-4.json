@@ -2,7 +2,9 @@
   "nome": "Perfumes árabes — lote 4 (5 itens, com preço sugerido)",
   "produtos": [
     {
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-pride-tharwah-gold.webp"
+      ],
       "promoPrice": null,
       "volume": "100ml",
       "concentration": "Eau de Parfum",
@@ -67,9 +69,11 @@
       ]
     },
     {
-      "images": [],
+      "images": [
+        "/img/produtos/french-avenue-azzure-aoud.webp"
+      ],
       "promoPrice": null,
-      "volume": "100ml",
+      "volume": "80ml",
       "concentration": "Eau de Parfum",
       "origin": "Emirados Árabes",
       "stock": 10,
@@ -131,12 +135,15 @@
         "maracujá",
         "frutado",
         "marcante"
-      ]
+      ],
+      "fix": true
     },
     {
-      "images": [],
+      "images": [
+        "/img/produtos/al-wataniah-durrat-al-aroos-love.webp"
+      ],
       "promoPrice": null,
-      "volume": "100ml",
+      "volume": "85ml",
       "concentration": "Eau de Parfum",
       "origin": "Emirados Árabes",
       "stock": 10,
@@ -190,10 +197,13 @@
         "especiado",
         "romântico",
         "feminino"
-      ]
+      ],
+      "fix": true
     },
     {
-      "images": [],
+      "images": [
+        "/img/produtos/amaran-pure-aruba.webp"
+      ],
       "promoPrice": null,
       "volume": "100ml",
       "concentration": "Eau de Parfum",
@@ -257,7 +267,9 @@
       ]
     },
     {
-      "images": [],
+      "images": [
+        "/img/produtos/lattafa-fakhar-rose.webp"
+      ],
       "promoPrice": null,
       "volume": "100ml",
       "concentration": "Eau de Parfum",
