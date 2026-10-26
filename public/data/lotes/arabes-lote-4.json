@@ -1,0 +1,334 @@
+{
+  "nome": "Perfumes árabes — lote 4 (5 itens, com preço sugerido)",
+  "produtos": [
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Pride Tharwah Gold",
+      "brand": "Lattafa",
+      "price": 249.9,
+      "gender": "Unissex",
+      "year": 2022,
+      "family": "Floral",
+      "description": "Tharwah Gold, da linha Lattafa Pride, é um floral ambarado luminoso e sofisticado: bergamota e lavanda abrem frescas e elegantes, o coração de flor de laranjeira e jasmim egípcio é radiante e feminino, e o fundo de âmbar, baunilha e vetiver deixa um rastro quente, cremoso e marcante. Para quem ama o contraste entre lavanda e flores brancas.",
+      "notes": {
+        "top": [
+          "Bergamota",
+          "Lavanda"
+        ],
+        "heart": [
+          "Flor de laranjeira",
+          "Jasmim egípcio"
+        ],
+        "base": [
+          "Âmbar",
+          "Baunilha",
+          "Vetiver"
+        ]
+      },
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Trabalho",
+        "Noite",
+        "Encontro"
+      ],
+      "references": [
+        {
+          "name": "Libre",
+          "house": "Yves Saint Laurent"
+        }
+      ],
+      "tags": [
+        "lavanda",
+        "flor de laranjeira",
+        "elegante",
+        "elogiado"
+      ]
+    },
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Azzure Aoud",
+      "brand": "French Avenue",
+      "price": 289.9,
+      "gender": "Masculino",
+      "year": null,
+      "family": "Oud",
+      "description": "Azzure Aoud é um oud frutado e moderno da French Avenue: maracujá, açafrão e rosa abrem suculentos e especiados, o coração de oud, benjoim e patchouli traz a profundidade árabe, e o fundo de couro, madeiras, âmbar e baunilha deixa um rastro quente, resinoso e sofisticado. O equilíbrio perfeito entre o tropical e o oriental.",
+      "notes": {
+        "top": [
+          "Maracujá",
+          "Açafrão",
+          "Rosa"
+        ],
+        "heart": [
+          "Oud",
+          "Benjoim",
+          "Patchouli"
+        ],
+        "base": [
+          "Couro",
+          "Madeiras",
+          "Âmbar",
+          "Baunilha"
+        ]
+      },
+      "longevity": "Muito longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Festa"
+      ],
+      "references": [
+        {
+          "name": "Oud Maracujá",
+          "house": "Maison Crivelli"
+        }
+      ],
+      "tags": [
+        "oud",
+        "maracujá",
+        "frutado",
+        "marcante"
+      ]
+    },
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": true,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Durrat Al Aroos Love",
+      "brand": "Al Wataniah",
+      "price": 219.9,
+      "gender": "Feminino",
+      "year": 2025,
+      "family": "Especiado",
+      "description": "Durrat Al Aroos Love é a nova versão do queridinho da Al Wataniah: almíscar branco e cipriol abrem macios e levemente terrosos, o coração de baunilha, açafrão e cardamomo é quente e especiado, e o fundo de madeira de guaiaco e cumarina deixa um rastro aconchegante, adocicado e envolvente. Romântico e marcante, para noites especiais.",
+      "notes": {
+        "top": [
+          "Almíscar branco",
+          "Cipriol"
+        ],
+        "heart": [
+          "Baunilha",
+          "Açafrão",
+          "Cardamomo"
+        ],
+        "base": [
+          "Madeira de guaiaco",
+          "Cumarina"
+        ]
+      },
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Noite",
+        "Encontro",
+        "Eventos formais"
+      ],
+      "references": [],
+      "tags": [
+        "baunilha",
+        "especiado",
+        "romântico",
+        "feminino"
+      ]
+    },
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Pure Aruba",
+      "brand": "Amaran",
+      "price": 199.9,
+      "gender": "Feminino",
+      "year": null,
+      "family": "Cítrico",
+      "description": "Pure Aruba é um frutado cítrico solar e alegre: laranja, bergamota e limão abrem frescos e vibrantes, o coração de frutas suculentas traz doçura tropical, e o fundo de almíscar branco, baunilha e âmbar deixa um rastro macio, limpo e aconchegante. Leve, gostoso e perfeito para o dia a dia e dias quentes.",
+      "notes": {
+        "top": [
+          "Laranja",
+          "Bergamota",
+          "Limão"
+        ],
+        "heart": [
+          "Frutas suculentas"
+        ],
+        "base": [
+          "Almíscar branco",
+          "Baunilha",
+          "Âmbar"
+        ]
+      },
+      "longevity": "Longa",
+      "projection": "Moderada",
+      "seasons": [
+        "Primavera",
+        "Verão"
+      ],
+      "occasions": [
+        "Dia a dia",
+        "Trabalho",
+        "Encontro"
+      ],
+      "references": [
+        {
+          "name": "Erba Pura",
+          "house": "Xerjoff"
+        }
+      ],
+      "tags": [
+        "frutado",
+        "cítrico",
+        "solar",
+        "versátil"
+      ]
+    },
+    {
+      "images": [],
+      "promoPrice": null,
+      "volume": "100ml",
+      "concentration": "Eau de Parfum",
+      "origin": "Emirados Árabes",
+      "stock": 10,
+      "status": "disponivel",
+      "perfumer": "",
+      "active": true,
+      "featured": false,
+      "niche": false,
+      "launch": false,
+      "imported": true,
+      "decant": false,
+      "type": "perfume",
+      "decant5Price": null,
+      "decant10Price": null,
+      "name": "Fakhar Rose",
+      "brand": "Lattafa",
+      "price": 229.9,
+      "gender": "Feminino",
+      "year": null,
+      "family": "Floral",
+      "description": "Fakhar Rose é o floral branco elegante da linha Fakhar: frutas, romã, lírio e aldeídos abrem luminosos, o coração reúne tuberosa, gardênia, jasmim, ylang-ylang, madressilva, peônia e rosa num buquê sofisticado, e o fundo de baunilha, ambroxan, almíscar e sândalo deixa um rastro cremoso e marcante. Frasco rosé dourado, perfeito para presentear.",
+      "notes": {
+        "top": [
+          "Frutas",
+          "Romã",
+          "Lírio",
+          "Aldeídos"
+        ],
+        "heart": [
+          "Tuberosa",
+          "Gardênia",
+          "Jasmim",
+          "Ylang-ylang",
+          "Madressilva",
+          "Peônia",
+          "Rosa"
+        ],
+        "base": [
+          "Baunilha",
+          "Ambroxan",
+          "Almíscar",
+          "Sândalo"
+        ]
+      },
+      "longevity": "Longa",
+      "projection": "Forte",
+      "seasons": [
+        "Primavera",
+        "Outono",
+        "Inverno"
+      ],
+      "occasions": [
+        "Trabalho",
+        "Noite",
+        "Encontro",
+        "Eventos formais"
+      ],
+      "references": [
+        {
+          "name": "L'Interdit",
+          "house": "Givenchy"
+        }
+      ],
+      "tags": [
+        "flores brancas",
+        "elegante",
+        "feminino",
+        "elogiado"
+      ]
+    }
+  ]
+}
