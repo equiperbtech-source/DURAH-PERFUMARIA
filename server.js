@@ -80,7 +80,7 @@ function normalizeProduct(input, existing = {}) {
     seasons: list(p.seasons, 4),
     occasions: list(p.occasions, 10),
     references: (Array.isArray(p.references) ? p.references : [])
-      .map((r) => ({ name: str(r && r.name, 80), house: str(r && r.house, 80) }))
+      .map((r) => ({ name: str(r && r.name, 80), house: str(r && r.house, 80), image: r && isImg(r.image) ? r.image : '' }))
       .filter((r) => r.name || r.house).slice(0, 8),
     tags: list(p.tags, 15, 40),
     active: bool(p.active),

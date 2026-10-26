@@ -391,8 +391,35 @@ function renderForm(body, p, presetType) {
   const refsEl = $('#f-refs');
   const addRefRow = (r = {}) => {
     const row = document.createElement('div'); row.className = 'ref-row';
-    row.innerHTML = `<input class="input" data-r="name" placeholder="Perfume (ex.: Aventus)" value="${esc(r.name)}"><input class="input" data-r="house" list="dl-houses" placeholder="Casa (ex.: Creed)" value="${esc(r.house)}"><button type="button" class="icon-btn" aria-label="Remover">${icon('trash')}</button>`;
-    $('button', row).addEventListener('click', () => row.remove());
+    row.dataset.img = r.image || '';
+    row.innerHTML = `<div class="ref-photo" title="Foto do perfume de inspiração"></div><input class="input" data-r="name" placeholder="Perfume (ex.: Aventus)" value="${esc(r.name)}"><input class="input" data-r="house" list="dl-houses" placeholder="Casa (ex.: Creed)" value="${esc(r.house)}"><button type="button" class="icon-btn" data-rmref aria-label="Remover">${icon('trash')}</button>`;
+    // bolinha da foto: toque para enviar; com foto, mostra opções de trocar/remover
+    const ph = $('.ref-photo', row);
+    const drawPhoto = () => {
+      const img = row.dataset.img;
+      ph.innerHTML = img
+        ? `<img src="${esc(img)}" alt=""><button type="button" class="ref-photo__x" aria-label="Remover foto">×</button>`
+        : `<label aria-label="Enviar foto da inspiração">${icon('upload', 'i--sm')}<input type="file" accept="image/*" hidden></label><button type="button" class="ref-photo__link" title="Adicionar foto por link">link</button>`;
+      $('.ref-photo__x', ph)?.addEventListener('click', () => { row.dataset.img = ''; drawPhoto(); });
+      $('input[type=file]', ph)?.addEventListener('change', async (e) => {
+        const f = e.target.files[0]; if (!f) return;
+        ph.classList.add('is-loading');
+        try { row.dataset.img = await store.uploadImage(await optimizeImage(f, 500, 0.86)); drawPhoto(); toast('Foto da inspiração adicionada ✓'); }
+        catch (err) { handleError(err); }
+        ph.classList.remove('is-loading');
+      });
+      $('.ref-photo__link', ph)?.addEventListener('click', async () => {
+        const u = (prompt('Cole o link da foto do perfume de inspiração (https://…)') || '').trim();
+        if (!u) return;
+        if (!/^https?:\/\//i.test(u)) { toast('Cole um link começando com https://', true); return; }
+        ph.classList.add('is-loading');
+        try { row.dataset.img = await store.uploadImageFromUrl(u); drawPhoto(); toast('Foto da inspiração adicionada ✓'); }
+        catch (err) { handleError(err); }
+        ph.classList.remove('is-loading');
+      });
+    };
+    drawPhoto();
+    $('[data-rmref]', row).addEventListener('click', () => row.remove());
     refsEl.appendChild(row);
   };
   (p.references && p.references.length ? p.references : [{}]).forEach(addRefRow);
@@ -500,7 +527,7 @@ function renderForm(body, p, presetType) {
       family: fd.get('family'), perfumer: fd.get('perfumer').trim(), year: parseInt(fd.get('year'), 10) || null,
       longevity: fd.get('longevity'), projection: fd.get('projection'),
       seasons: fd.getAll('seasons'), occasions: fd.getAll('occasions'),
-      references: $$('.ref-row', refsEl).map((r) => ({ name: $('[data-r=name]', r).value.trim(), house: $('[data-r=house]', r).value.trim() })).filter((r) => r.name || r.house),
+      references: $$('.ref-row', refsEl).map((r) => ({ name: $('[data-r=name]', r).value.trim(), house: $('[data-r=house]', r).value.trim(), image: r.dataset.img || '' })).filter((r) => r.name || r.house),
       tags: tags.get(),
       active: !!fd.get('active'), featured: !!fd.get('featured'), imported: !!fd.get('imported'),
       niche: !!fd.get('niche'), launch: !!fd.get('launch'), decant: !!fd.get('decant'),
@@ -652,7 +679,14 @@ const loteUpdate = (lp) => {
   const upd = {};
   if (!(prod.images || []).length && (lp.images || []).length) upd.images = lp.images;
   if (lp.featured && !prod.featured) upd.featured = true;
-  if (lp.fix) FICHA.forEach((k) => { if (lp[k] !== undefined && JSON.stringify(lp[k]) !== JSON.stringify(prod[k])) upd[k] = lp[k]; });
+  const refKey = (r) => `${r.name}|${r.house}`.toLowerCase();
+  const withPhotos = (refs) => (refs || []).map((r) => ({ ...r, image: r.image || ((prod.references || []).find((o) => refKey(o) === refKey(r)) || {}).image || '' }));
+  const plain = (refs) => JSON.stringify((refs || []).map(({ name, house }) => ({ name, house })));
+  if (lp.fix) FICHA.forEach((k) => {
+    if (lp[k] === undefined) return;
+    if (k === 'references') { if (plain(lp.references) !== plain(prod.references)) upd.references = withPhotos(lp.references); return; }
+    if (JSON.stringify(lp[k]) !== JSON.stringify(prod[k])) upd[k] = lp[k];
+  });
   return Object.keys(upd).length ? { prod, upd } : null;
 };
 

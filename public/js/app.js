@@ -426,6 +426,7 @@ function pageProduct(slug) {
   const lon = lvl(LONGEVITY, p.longevity), pro = lvl(PROJECTION, p.projection);
   const refs = (p.references || []).filter((r) => r.name || r.house);
   const n = p.notes || {};
+  const refDot = (r, cls = '') => `<span class="ref__mono ${r.image ? 'ref__mono--img' : ''} ${cls}">${r.image ? `<img src="${esc(r.image)}" alt="${esc(r.name || r.house)}" loading="lazy">` : esc(mono(r.house || r.name))}</span>`;
   const fmtRef = (r) => r.name ? `<b>${esc(r.name)}</b>${r.house ? ` (${esc(r.house)})` : ''}` : `<b>${esc(r.house)}</b>`;
   const mono = (s) => String(s || '?').split(/\s+/).filter((w) => /^[A-Za-zÀ-ú]/.test(w)).slice(0, 2).map((w) => w[0]).join('').toUpperCase();
 
@@ -503,9 +504,9 @@ function pageProduct(slug) {
         <div class="seal"><img src="img/brand/monograma.webp" alt="" width="276" height="360" loading="lazy"><p><strong>Vendido e garantido por DURAH</strong><span>Curadoria, procedência e atendimento da nossa equipe do pedido ao drydown.</span></p></div>
         ${isSimple(p) ? scentBlock(p) : ''}
         ${isKit(p) ? kitBlock(p) : ''}
-        ${perf && refs.length ? `<section class="block block--refs"><h2>${icon('star')} Para quem gosta de…</h2>
+        ${perf && refs.length ? `<section class="block block--refs" id="refs"><h2>${icon('star')} Para quem gosta de…</h2>
           <p class="refs-lead">Para quem gosta de ${joinOr(refs.map(fmtRef))}.</p>
-          <div class="refs">${refs.map((r) => `<div class="ref"><span class="ref__mono">${esc(mono(r.house || r.name))}</span><div><strong>${esc(r.name || r.house)}</strong>${r.name && r.house ? `<small>${esc(r.house)}</small>` : ''}</div></div>`).join('')}</div>
+          <div class="refs">${refs.map((r) => `<div class="ref">${refDot(r, 'ref__mono--lg')}<div><strong>${esc(r.name || r.house)}</strong>${r.name && r.house ? `<small>${esc(r.house)}</small>` : ''}</div></div>`).join('')}</div>
           <p class="hint mt-1">Referências de perfil olfativo semelhante, para orientar sua escolha.</p>
         </section>` : ''}
 
